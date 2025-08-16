@@ -1,41 +1,15 @@
 // src/lib/wp.ts
 import { GraphQLClient, gql } from "graphql-request";
 
-/** GraphQL-Client sicher aus ENV holen */
-function getClient() {
-  const endpoint = process.env.WP_GRAPHQL_ENDPOINT;
-  if (!endpoint) {
-    throw new Error("WP_GRAPHQL_ENDPOINT fehlt (.env.local) – Dev-Server neu starten!");
-  }
-  return new GraphQLClient(endpoint, {
-    headers: {
-      "Content-Type": "application/json",
-      // Optional bei Basic-Auth:
-      // Authorization: "Basic " + Buffer.from("USER:PASS").toString("base64"),
-    },
-  });
-}
+const endpoint = process.env.WP_GRAPHQL_ENDPOINT || "";
 
-/** Gemeinsamer Typ für Einträge */
-export type LieferbetriebNode = {
-  id: string;
-  title?: string;
-  slug?: string;
-  content?: string | null;
-  featuredImage?: { node?: { sourceUrl?: string; altText?: string } };
-  acf?: {
-    webshopUrl?: string;
-    stadt?: string;
-    land?: string | string[];
-    kategorien?: string[] | null;
-    mindestbestellwert?: number | null;
-    lieferkosten?: number | null;
-    badges?: string[] | null;
-    liefergebiet?: string | null;
-  };
-};
+export const wp = new GraphQLClient(endpoint, {
+  headers: { "Content-Type": "application/json" },
+});
 
-/* ---------- LISTE ---------- */
+/* =========================
+   Lieferbetriebe (CPT)
+   ========================= */
 
 export const LIEFERBETRIEBE_QUERY = gql`
   query Lieferbetriebe($first: Int = 24) {
@@ -46,25 +20,45 @@ export const LIEFERBETRIEBE_QUERY = gql`
         slug
         featuredImage { node { sourceUrl altText } }
         acf {
-          webshopUrl stadt land kategorien
-          mindestbestellwert lieferkosten badges liefergebiet
+          webshopUrl
+          stadt
+          land
+          kategorien
+          mindestbestellwert
+          lieferkosten
+          badges
+          liefergebiet
         }
       }
     }
   }
 `;
 
+export type LieferbetriebNode = {
+  id: string;
+  title: string;
+  slug: string;
+  featuredImage?: { node?: { sourceUrl?: string; altText?: string } };
+  acf?: {
+    webshopUrl?: string;
+    stadt?: string;
+    land?: string | string[];
+    kategorien?: string[];
+    mindestbestellwert?: number;
+    lieferkosten?: number;
+    badges?: string[];
+    liefergebiet?: string;
+  };
+};
+
 type LieferbetriebeResponse = {
   lieferbetriebe?: { nodes?: LieferbetriebNode[] };
 };
 
 export async function fetchLieferbetriebe(first = 24): Promise<LieferbetriebNode[]> {
-  const wp = getClient();
   const data = await wp.request<LieferbetriebeResponse>(LIEFERBETRIEBE_QUERY, { first });
   return data.lieferbetriebe?.nodes ?? [];
 }
-
-/* ---------- DETAIL ---------- */
 
 export const LIEFERBETRIEB_BY_SLUG = gql`
   query LieferbetriebBySlug($slug: ID!) {
@@ -83,25 +77,90 @@ export const LIEFERBETRIEB_BY_SLUG = gql`
 `;
 
 export const LIEFERBETRIEBE_SLUGS = gql`
-  query {
-    lieferbetriebe(first: 100, where: { status: PUBLISH }) {
+  query { lieferbetriebe(first: 100, where: { status: PUBLISH }) { nodes { slug } } }
+`;
+
+export async function fetchLieferbetriebBySlug(slug: string) {
+  const data = await wp.request<{ lieferbetrieb?: LieferbetriebNode }>(LIEFERBETRIEB_BY_SLUG, { slug });
+  return data?.lieferbetrieb ?? null;
+}
+
+export async function fetchLieferbetriebSlugs(): Promise<string[]> {
+  const data = await wp.request<{ lieferbetriebe?: { nodes?: { slug: string }[] } }>(LIEFERBETRIEBE_SLUGS);
+  return (data?.lieferbetriebe?.nodes ?? []).map((n) => n.slug).filter(Boolean);
+}
+
+/* =========================
+   Guides (WP Beiträge, Kategorie "guides")
+   ========================= */
+
+export type GuideNode = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  content?: string;
+  featuredImage?: { node?: { sourceUrl?: string; altText?: string } };
+  // Wenn du ACF für Guides nutzt, kannst du unten acf einkommentieren
+  acf?: { intro?: string; readingTime?: number };
+};
+
+type GuidesResponse = { posts?: { nodes?: GuideNode[] } };
+type GuideBySlugResponse = { post?: GuideNode };
+
+export const GUIDES_QUERY = gql`
+  query Guides($first: Int = 6) {
+    posts(first: $first, where: { categoryName: "guides", status: PUBLISH }) {
+      nodes {
+        id
+        slug
+        title
+        excerpt
+        featuredImage { node { sourceUrl altText } }
+        # ACF falls vorhanden:
+        # acf { intro readingTime }
+        # oder Alias, wenn deine Fieldgroup guideFields heißt:
+        # acf: guideFields { intro readingTime }
+      }
+    }
+  }
+`;
+
+export const GUIDE_BY_SLUG = gql`
+  query GuideBySlug($slug: ID!) {
+    post(id: $slug, idType: SLUG) {
+      id
+      slug
+      title
+      excerpt
+      content
+      featuredImage { node { sourceUrl altText } }
+      # ACF falls vorhanden:
+      # acf { intro readingTime }
+      # oder: acf: guideFields { intro readingTime }
+    }
+  }
+`;
+
+export const GUIDE_SLUGS = gql`
+  query GuideSlugs {
+    posts(first: 100, where: { categoryName: "guides", status: PUBLISH }) {
       nodes { slug }
     }
   }
 `;
 
-export async function fetchLieferbetriebBySlug(slug: string): Promise<LieferbetriebNode | null> {
-  const wp = getClient();
-  const data = await wp.request<{ lieferbetrieb?: LieferbetriebNode }>(LIEFERBETRIEB_BY_SLUG, { slug });
-  return data.lieferbetrieb ?? null;
+export async function fetchGuides(first = 3): Promise<GuideNode[]> {
+  const data = await wp.request<GuidesResponse>(GUIDES_QUERY, { first });
+  return data.posts?.nodes ?? [];
 }
 
-export async function fetchLieferbetriebSlugs(): Promise<string[]> {
-  const wp = getClient();
-  const data = await wp.request<{ lieferbetriebe?: { nodes?: { slug?: string | null }[] } }>(
-    LIEFERBETRIEBE_SLUGS
-  );
-  return (data.lieferbetriebe?.nodes ?? [])
-    .map((n) => n.slug || "")
-    .filter((s): s is string => Boolean(s));
+export async function fetchGuideBySlug(slug: string): Promise<GuideNode | null> {
+  const data = await wp.request<GuideBySlugResponse>(GUIDE_BY_SLUG, { slug });
+  return data.post ?? null;
+}
+
+export async function fetchGuideSlugs(): Promise<string[]> {
+  const data = await wp.request<{ posts?: { nodes?: { slug: string }[] } }>(GUIDE_SLUGS);
+  return (data.posts?.nodes ?? []).map((n) => n.slug).filter(Boolean);
 }
