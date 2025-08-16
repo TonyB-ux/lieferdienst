@@ -1,9 +1,9 @@
 // src/components/GuidesRow.tsx
 import Link from "next/link";
-import { fetchGuides } from "../lib/wp";
+import { fetchGuides } from "@/lib/wp";
 
-function GlassCard({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={["glass", className].filter(Boolean).join(" ")}>{children}</div>;
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`glass card ${className}`}>{children}</div>;
 }
 
 export default async function GuidesRow() {
@@ -15,40 +15,34 @@ export default async function GuidesRow() {
       { href: "/lieferdienste?q=Gem%C3%BCsekiste", title: "Gemüsekiste – welche Größe passt?" },
       { href: "/lieferdienste?q=Abo", title: "Bio-Abo vs. Einzelkauf: Was lohnt sich?" },
     ];
+
     return (
-      <div className="grid md:grid-cols-3 gap-5">
+      <div className="guides-grid">
         {fallback.map((g) => (
-          <GlassCard key={g.href} className="p-5">
-            <h3 className="text-white font-semibold">{g.title}</h3>
-            <p className="text-muted text-sm mt-1">Kurzer Guide – ideal für Einsteiger.</p>
-            <Link href={g.href} className="btn-ghost mt-4 inline-block">Jetzt lesen</Link>
-          </GlassCard>
+          <Card key={g.href}>
+            <h3>{g.title}</h3>
+            <p className="muted mt-1">Kurzer Guide – ideal für Einsteiger.</p>
+            <Link href={g.href} className="btn btn-ghost mt-3">Jetzt lesen</Link>
+          </Card>
         ))}
       </div>
     );
   }
 
   return (
-    <div className="grid md:grid-cols-3 gap-5">
+    <div className="guides-grid">
       {guides.map((g) => (
-        <GlassCard key={g.id} className="p-5">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+        <Card key={g.id}>
           {g.featuredImage?.node?.sourceUrl && (
-            <img
-              src={g.featuredImage.node.sourceUrl}
-              alt={g.featuredImage.node.altText || g.title}
-              className="w-full h-36 object-cover rounded-lg mb-3 border border-white/10"
-            />
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="guide-img" src={g.featuredImage.node.sourceUrl} alt={g.featuredImage.node.altText || g.title}/>
           )}
-          <h3 className="text-white font-semibold line-clamp-2">{g.title}</h3>
+          <h3>{g.title}</h3>
           {g.excerpt && (
-            <div
-              className="text-muted text-sm mt-1 line-clamp-2"
-              dangerouslySetInnerHTML={{ __html: g.excerpt }}
-            />
+            <div className="muted mt-1" dangerouslySetInnerHTML={{ __html: g.excerpt }} />
           )}
-          <Link href={`/guides/${g.slug}`} className="btn-ghost mt-4 inline-block">Lesen</Link>
-        </GlassCard>
+          <Link href={`/guides/${g.slug}`} className="btn btn-ghost mt-3">Lesen</Link>
+        </Card>
       ))}
     </div>
   );
