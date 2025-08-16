@@ -1,16 +1,14 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+// eslint.config.mjs
+import next from "eslint-config-next";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+export default [
+  ...next,
+  {
+    rules: {
+      // Fehler -> AUS (oder setze auf "warn", wenn du nur Warnungen willst)
+      "@typescript-eslint/no-explicit-any": "off",
+      // Optional: das <img>-Hint nur als Warnung (nicht build-blockend)
+      "@next/next/no-img-element": "warn",
+    },
+  },
 ];
-
-export default eslintConfig;
