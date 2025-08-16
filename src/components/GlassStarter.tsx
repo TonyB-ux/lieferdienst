@@ -34,9 +34,13 @@ function clsx(...x: (string | false | null | undefined)[]) {
   return x.filter(Boolean).join(" ");
 }
 
-function GlassCard({ className = "", children }: { className?: string; children: React.ReactNode }) {
+/** FIX: akzeptiert jetzt id/… alle div-Props */
+function GlassCard(
+  { className = "", children, ...rest }: React.ComponentPropsWithoutRef<'div'>
+) {
   return (
     <div
+      {...rest}
       className={clsx(
         "rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md",
         "shadow-[0_4px_30px_rgba(0,0,0,0.1)]",
@@ -113,10 +117,7 @@ export default function GlassStarter() {
       </div>
 
       <Nav />
-      <Hero
-        query={query}
-        setQuery={setQuery}
-      />
+      <Hero query={query} setQuery={setQuery} />
 
       <main className="mx-auto w-full max-w-6xl px-4 md:px-6 lg:px-8">
         <section className="mt-8">
@@ -197,13 +198,7 @@ function Nav() {
   );
 }
 
-function Hero({
-  query,
-  setQuery,
-}: {
-  query: string;
-  setQuery: (v: string) => void;
-}) {
+function Hero({ query, setQuery }: { query: string; setQuery: (v: string) => void }) {
   return (
     <section className="relative overflow-hidden">
       <div className="mx-auto max-w-5xl px-4 md:px-6 lg:px-8 py-10 md:py-16">
@@ -212,10 +207,7 @@ function Hero({
           <p className="mt-3 text-white/80 max-w-2xl">
             Neutraler Überblick für Deutschland, Österreich und die Schweiz – mit direktem Shop-Link.
           </p>
-          <form
-            onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}
-            className="mt-6 flex flex-col sm:flex-row gap-3"
-          >
+          <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()} className="mt-6 flex flex-col sm:flex-row gap-3">
             <input
               value={query}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
@@ -290,10 +282,7 @@ function NewsletterCTA() {
           <h3 className="text-xl md:text-2xl font-semibold">Die besten Bio-Angebote deiner Region – 1×/Woche</h3>
           <p className="text-white/80 mt-1">Exklusive Deals • Neue Betriebe • Saisonale Favoriten</p>
         </div>
-        <form
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}
-          className="flex gap-2 w-full md:w-auto"
-        >
+        <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()} className="flex gap-2 w-full md:w-auto">
           <input
             type="email"
             required
