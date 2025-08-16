@@ -38,6 +38,8 @@ export type LieferbetriebNode = {
   id: string;
   title: string;
   slug: string;
+  /** Nur in der Detail-Query enthalten – deshalb optional: */
+  content?: string;
   featuredImage?: { node?: { sourceUrl?: string; altText?: string } };
   acf?: {
     webshopUrl?: string;
@@ -77,16 +79,25 @@ export const LIEFERBETRIEB_BY_SLUG = gql`
 `;
 
 export const LIEFERBETRIEBE_SLUGS = gql`
-  query { lieferbetriebe(first: 100, where: { status: PUBLISH }) { nodes { slug } } }
+  query {
+    lieferbetriebe(first: 100, where: { status: PUBLISH }) {
+      nodes { slug }
+    }
+  }
 `;
 
 export async function fetchLieferbetriebBySlug(slug: string) {
-  const data = await wp.request<{ lieferbetrieb?: LieferbetriebNode }>(LIEFERBETRIEB_BY_SLUG, { slug });
+  const data = await wp.request<{ lieferbetrieb?: LieferbetriebNode }>(
+    LIEFERBETRIEB_BY_SLUG,
+    { slug }
+  );
   return data?.lieferbetrieb ?? null;
 }
 
 export async function fetchLieferbetriebSlugs(): Promise<string[]> {
-  const data = await wp.request<{ lieferbetriebe?: { nodes?: { slug: string }[] } }>(LIEFERBETRIEBE_SLUGS);
+  const data = await wp.request<{ lieferbetriebe?: { nodes?: { slug: string }[] } }>(
+    LIEFERBETRIEBE_SLUGS
+  );
   return (data?.lieferbetriebe?.nodes ?? []).map((n) => n.slug).filter(Boolean);
 }
 
@@ -101,7 +112,7 @@ export type GuideNode = {
   excerpt?: string;
   content?: string;
   featuredImage?: { node?: { sourceUrl?: string; altText?: string } };
-  // Wenn du ACF für Guides nutzt, kannst du unten acf einkommentieren
+  // Wenn du ACF für Guides nutzt, kannst du unten acf einkommentieren/als Alias nutzen
   acf?: { intro?: string; readingTime?: number };
 };
 
@@ -117,7 +128,7 @@ export const GUIDES_QUERY = gql`
         title
         excerpt
         featuredImage { node { sourceUrl altText } }
-        # ACF falls vorhanden:
+        # ACF, falls vorhanden:
         # acf { intro readingTime }
         # oder Alias, wenn deine Fieldgroup guideFields heißt:
         # acf: guideFields { intro readingTime }
@@ -135,7 +146,7 @@ export const GUIDE_BY_SLUG = gql`
       excerpt
       content
       featuredImage { node { sourceUrl altText } }
-      # ACF falls vorhanden:
+      # ACF, falls vorhanden:
       # acf { intro readingTime }
       # oder: acf: guideFields { intro readingTime }
     }
