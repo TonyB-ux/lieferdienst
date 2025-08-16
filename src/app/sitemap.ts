@@ -1,20 +1,32 @@
+// src/app/sitemap.ts
 import type { MetadataRoute } from "next";
-import { fetchLieferbetriebSlugs } from "@/lib/wp";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = "https://www.lieferdienst-bio.de"; // später deine echte Domain
-  const slugs = await fetchLieferbetriebSlugs();
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://lieferdienst-bio.de";
 
-  const staticPages: MetadataRoute.Sitemap = [
-    { url: `${base}/`, changeFrequency: "weekly", priority: 0.7, lastModified: new Date() },
-    { url: `${base}/lieferdienste`, changeFrequency: "daily", priority: 0.8, lastModified: new Date() },
-  ];
+  // Optional: dynamisch die Lieferdienst-Slugs beziehen
+  try {
+    const res = await fetch(`${base}/api/slugs`, { next: { revalidate: 60 } });
+    const json = await res.json().catch(() => ({}));
+    const slugs: string[] = Array.isArray(json?.slugs) ? json.slugs : [];
 
-  const detail: MetadataRoute.Sitemap = slugs.map((slug) => ({
-    url: `${base}/lieferdienste/${slug}`,
-    changeFrequency: "weekly",
-    priority: 0.6,
-  }));
+    const items: MetadataRoute.Sitemap = slugs.map((slug) => ({
+      url: `${base}/lieferdienste/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
 
-  return [...staticPages, ...detail];
+    return [
+      { url: `${base}/`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+      { url: `${base}/lieferdienste`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
+      ...items,
+    ];
+  } catch {
+    // Fallback: nur die statischen Seiten, damit es nie 404 gibt
+    return [
+      { url: `${base}/`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+      { url: `${base}/lieferdienste`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    ];
+  }
 }
