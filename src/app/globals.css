@@ -24,3 +24,33 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* ==== Glasmorphism helpers ==== */
+.glass {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px) saturate(125%);
+  -webkit-backdrop-filter: blur(14px) saturate(125%);
+}
+
+/* sanfte, moderne Hintergrund-Gradients */
+.hero-gradient {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(35rem 35rem at 20% 15%, rgba(99, 102, 241, 0.35), transparent 60%),
+    radial-gradient(28rem 28rem at 80% 10%, rgba(236, 72, 153, 0.25), transparent 60%),
+    radial-gradient(36rem 36rem at 50% 90%, rgba(56, 189, 248, 0.25), transparent 60%),
+    linear-gradient(180deg, #0b1220 0%, #0b1220 60%, #0b1220 100%);
+}
+
+/* dezentes Filmkorn für mehr Tiefe */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2P4+fPmfwAJNQOAk4N0pwAAAABJRU5ErkJggg==");
+  opacity: 0.25;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
