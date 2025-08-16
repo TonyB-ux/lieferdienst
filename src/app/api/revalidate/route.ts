@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
+type RevalidateBody = { path?: string; slug?: string };
+
 export async function POST(req: Request) {
   const { searchParams } = new URL(req.url);
   const secret = searchParams.get("secret");
@@ -8,12 +10,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, reason: "bad-secret" }, { status: 401 });
   }
 
-  // { path: "/lieferdienste/slug" } ODER { slug: "…" }
-  const body = await req.json().catch(() => ({} as any));
+  let body: RevalidateBody = {};
+  try {
+    body = (await req.json()) as RevalidateBody; // kein any
+  } catch {
+    // body bleibt {}
+  }
+
   const path =
-    typeof body?.path === "string"
+    typeof body.path === "string"
       ? body.path
-      : typeof body?.slug === "string"
+      : typeof body.slug === "string"
       ? `/lieferdienste/${body.slug}`
       : "/lieferdienste";
 
