@@ -1,6 +1,7 @@
 // src/app/guides/[slug]/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { fetchGuideBySlug, fetchGuideSlugs } from "../../../lib/wp";
 
 export const revalidate = 1800;
@@ -10,36 +11,44 @@ function GlassCard({ children, className }: { children: React.ReactNode; classNa
 }
 
 export async function generateStaticParams() {
-  const slugs = await fetchGuideSlugs();
-  return slugs.map((slug) => ({ slug }));
+  try {
+    const slugs = await fetchGuideSlugs();
+    return (slugs || []).map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
-  const { slug } = await params;
-  const g = await fetchGuideBySlug(slug);
-  return {
-    title: g?.title || "Guide",
-    description: g?.excerpt?.replace(/<[^>]*>/g, "") || "",
-    alternates: { canonical: `https://lieferdienst-bio.de/guides/${slug}` },
-    openGraph: {
-      title: g?.title,
-      description: g?.excerpt?.replace(/<[^>]*>/g, "") || undefined,
-      images: g?.featuredImage?.node?.sourceUrl ? [{ url: g.featuredImage.node.sourceUrl }] : undefined,
-    },
-  };
+  try {
+    const { slug } = await params;
+    const g = await fetchGuideBySlug(slug);
+
+    const desc = g?.excerpt?.replace(/<[^>]*>/g, "") || "";
+    const ogImg = g?.featuredImage?.node?.sourceUrl
+      ? [{ url: g.featuredImage.node.sourceUrl }]
+      : undefined;
+
+    return {
+      title: g?.title || "Guide",
+      description: desc,
+      alternates: { canonical: `https://lieferdienst-bio.de/guides/${slug}` },
+      openGraph: { title: g?.title, description: desc || undefined, images: ogImg },
+    };
+  } catch {
+    return { title: "Guide" };
+  }
 }
 
 export default async function GuidePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const g = await fetchGuideBySlug(slug);
+
   if (!g) {
-    return (
-      <main className="max-w-4xl mx-auto px-5 py-10">
-        <GlassCard className="p-6">Guide nicht gefunden.</GlassCard>
-      </main>
-    );
+    // Keine Daten -> 404 statt 500
+    notFound();
   }
 
   return (
@@ -50,6 +59,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
       <article className="max-w-3xl mx-auto px-5 py-10 prose prose-invert">
         <Link href="/guides" className="underline text-white/80 hover:text-white">← Alle Guides</Link>
         <h1 className="mb-2">{g.title}</h1>
+
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {g.featuredImage?.node?.sourceUrl && (
           <img
@@ -58,6 +68,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             className="w-full rounded-lg border border-white/10"
           />
         )}
+
         <div dangerouslySetInnerHTML={{ __html: g.content || "" }} />
       </article>
     </main>

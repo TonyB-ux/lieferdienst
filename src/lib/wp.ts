@@ -7,6 +7,16 @@ export const wp = new GraphQLClient(endpoint, {
   headers: { "Content-Type": "application/json" },
 });
 
+// Helper: fängt WPGraphQL-Fehler ab, damit Seiten nicht mit 500 sterben
+async function safeRequest<T>(query: any, variables?: Record<string, unknown>): Promise<T | null> {
+  try {
+    return await wp.request<T>(query, variables);
+  } catch (e) {
+    console.error("WPGraphQL error:", e);
+    return null;
+  }
+}
+
 /* =========================
    Lieferbetriebe (CPT)
    ========================= */
@@ -38,8 +48,7 @@ export type LieferbetriebNode = {
   id: string;
   title: string;
   slug: string;
-  /** Nur in der Detail-Query enthalten – deshalb optional: */
-  content?: string;
+  content?: string; // <- wichtig: in Detail-Query vorhanden
   featuredImage?: { node?: { sourceUrl?: string; altText?: string } };
   acf?: {
     webshopUrl?: string;
@@ -53,13 +62,11 @@ export type LieferbetriebNode = {
   };
 };
 
-type LieferbetriebeResponse = {
-  lieferbetriebe?: { nodes?: LieferbetriebNode[] };
-};
+type LieferbetriebeResponse = { lieferbetriebe?: { nodes?: LieferbetriebNode[] } };
 
 export async function fetchLieferbetriebe(first = 24): Promise<LieferbetriebNode[]> {
-  const data = await wp.request<LieferbetriebeResponse>(LIEFERBETRIEBE_QUERY, { first });
-  return data.lieferbetriebe?.nodes ?? [];
+  const data = await safeRequest<LieferbetriebeResponse>(LIEFERBETRIEBE_QUERY, { first });
+  return data?.lieferbetriebe?.nodes ?? [];
 }
 
 export const LIEFERBETRIEB_BY_SLUG = gql`
@@ -87,18 +94,13 @@ export const LIEFERBETRIEBE_SLUGS = gql`
 `;
 
 export async function fetchLieferbetriebBySlug(slug: string) {
-  const data = await wp.request<{ lieferbetrieb?: LieferbetriebNode }>(
-    LIEFERBETRIEB_BY_SLUG,
-    { slug }
-  );
+  const data = await safeRequest<{ lieferbetrieb?: LieferbetriebNode }>(LIEFERBETRIEB_BY_SLUG, { slug });
   return data?.lieferbetrieb ?? null;
 }
 
 export async function fetchLieferbetriebSlugs(): Promise<string[]> {
-  const data = await wp.request<{ lieferbetriebe?: { nodes?: { slug: string }[] } }>(
-    LIEFERBETRIEBE_SLUGS
-  );
-  return (data?.lieferbetriebe?.nodes ?? []).map((n) => n.slug).filter(Boolean);
+  const data = await safeRequest<{ lieferbetriebe?: { nodes?: { slug: string }[] } }>(LIEFERBETRIEBE_SLUGS);
+  return (data?.lieferbetriebe?.nodes ?? []).map(n => n.slug).filter(Boolean);
 }
 
 /* =========================
@@ -112,7 +114,7 @@ export type GuideNode = {
   excerpt?: string;
   content?: string;
   featuredImage?: { node?: { sourceUrl?: string; altText?: string } };
-  // Wenn du ACF für Guides nutzt, kannst du unten acf einkommentieren/als Alias nutzen
+  // Falls ACF-Felder für Guides: Feldgruppe in GraphQL anzeigen und hier typisieren
   acf?: { intro?: string; readingTime?: number };
 };
 
@@ -128,9 +130,9 @@ export const GUIDES_QUERY = gql`
         title
         excerpt
         featuredImage { node { sourceUrl altText } }
-        # ACF, falls vorhanden:
+        # ACF-Beispiel (aktivieren wenn vorhanden):
         # acf { intro readingTime }
-        # oder Alias, wenn deine Fieldgroup guideFields heißt:
+        # oder Alias:
         # acf: guideFields { intro readingTime }
       }
     }
@@ -146,7 +148,7 @@ export const GUIDE_BY_SLUG = gql`
       excerpt
       content
       featuredImage { node { sourceUrl altText } }
-      # ACF, falls vorhanden:
+      # ACF-Beispiel:
       # acf { intro readingTime }
       # oder: acf: guideFields { intro readingTime }
     }
@@ -162,16 +164,16 @@ export const GUIDE_SLUGS = gql`
 `;
 
 export async function fetchGuides(first = 3): Promise<GuideNode[]> {
-  const data = await wp.request<GuidesResponse>(GUIDES_QUERY, { first });
-  return data.posts?.nodes ?? [];
+  const data = await safeRequest<GuidesResponse>(GUIDES_QUERY, { first });
+  return data?.posts?.nodes ?? [];
 }
 
 export async function fetchGuideBySlug(slug: string): Promise<GuideNode | null> {
-  const data = await wp.request<GuideBySlugResponse>(GUIDE_BY_SLUG, { slug });
-  return data.post ?? null;
+  const data = await safeRequest<GuideBySlugResponse>(GUIDE_BY_SLUG, { slug });
+  return data?.post ?? null;
 }
 
 export async function fetchGuideSlugs(): Promise<string[]> {
-  const data = await wp.request<{ posts?: { nodes?: { slug: string }[] } }>(GUIDE_SLUGS);
-  return (data.posts?.nodes ?? []).map((n) => n.slug).filter(Boolean);
+  const data = await safeRequest<{ posts?: { nodes?: { slug: string }[] } }>(GUIDE_SLUGS);
+  return (data?.posts?.nodes ?? []).map(n => n.slug).filter(Boolean);
 }
