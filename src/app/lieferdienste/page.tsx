@@ -1,3 +1,4 @@
+// src/app/lieferdienste/page.tsx
 import Link from "next/link";
 import type { Metadata } from "next";
 import { fetchLieferbetriebe } from "../../lib/wp";
@@ -36,17 +37,35 @@ function normLand(v: string | string[] | undefined) {
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: { q?: string; land?: string };
+  // Next 15: searchParams kommt als Promise
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const q = (searchParams?.q ?? "").toString().trim().toLowerCase();
-  const landFilter = (searchParams?.land ?? "").toString().trim().toUpperCase();
+  const sp =
+    (await (searchParams ?? Promise.resolve({}))) as Record<
+      string,
+      string | string[] | undefined
+    >;
+
+  // q/land robust extrahieren (string oder string[])
+  const qRaw = sp.q;
+  const landRaw = sp.land;
+  const q =
+    (Array.isArray(qRaw) ? qRaw[0] : qRaw)?.toString().trim().toLowerCase() ??
+    "";
+  const landFilter =
+    (Array.isArray(landRaw) ? landRaw[0] : landRaw)
+      ?.toString()
+      .trim()
+      .toUpperCase() ?? "";
 
   const all = (await fetchLieferbetriebe(200)) as Node[];
 
   const items = all.filter((s) => {
     const land = normLand(s.acf?.land);
     const matchesLand = !landFilter || land === landFilter;
-    const hay = `${s.title ?? ""} ${s.acf?.stadt ?? ""} ${s.acf?.liefergebiet ?? ""}`.toLowerCase();
+    const hay = `${s.title ?? ""} ${s.acf?.stadt ?? ""} ${
+      s.acf?.liefergebiet ?? ""
+    }`.toLowerCase();
     const matchesQ = !q || hay.includes(q);
     return matchesLand && matchesQ;
   });
@@ -62,13 +81,19 @@ export default async function Page({
           placeholder="Stadt oder Anbieter..."
           className="flex-1 px-3 py-2 rounded-lg text-slate-900"
         />
-        <select name="land" defaultValue={landFilter} className="px-3 py-2 rounded-lg text-slate-900">
+        <select
+          name="land"
+          defaultValue={landFilter}
+          className="px-3 py-2 rounded-lg text-slate-900"
+        >
           <option value="">Land</option>
           <option value="DE">DE</option>
           <option value="AT">AT</option>
           <option value="CH">CH</option>
         </select>
-        <button className="px-4 py-2 rounded-lg bg-white/90 text-slate-900">Filtern</button>
+        <button className="px-4 py-2 rounded-lg bg-white/90 text-slate-900">
+          Filtern
+        </button>
       </form>
 
       <p className="text-white/70 mt-2">{items.length} Einträge</p>
@@ -86,26 +111,40 @@ export default async function Page({
           const badges = (s.acf?.badges ?? []) as string[];
 
           return (
-            <div key={s.id} className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-4">
+            <div
+              key={s.id}
+              className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-4"
+            >
               <div className="aspect-[16/9] bg-white/10 overflow-hidden rounded-xl">
                 {img ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={img} alt={alt} className="w-full h-full object-cover" loading="lazy" />
+                  <img
+                    src={img}
+                    alt={alt}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
                 ) : (
-                  <div className="w-full h-full grid place-items-center text-white/60 text-xs">Kein Bild</div>
+                  <div className="w-full h-full grid place-items-center text-white/60 text-xs">
+                    Kein Bild
+                  </div>
                 )}
               </div>
 
               <div className="mt-3">
                 <h3 className="text-lg font-semibold">{s.title}</h3>
                 <p className="text-sm text-white/80">
-                  {(s.acf?.stadt ?? "—")}{land ? ` • ${land}` : ""}
+                  {s.acf?.stadt ?? "—"}
+                  {land ? ` • ${land}` : ""}
                 </p>
 
                 {badges.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1 text-[11px]">
                     {badges.map((b) => (
-                      <span key={b} className="px-2 py-0.5 rounded-md bg-white/10 border border-white/20">
+                      <span
+                        key={b}
+                        className="px-2 py-0.5 rounded-md bg-white/10 border border-white/20"
+                      >
                         {b}
                       </span>
                     ))}
@@ -115,7 +154,10 @@ export default async function Page({
                 {kategorien.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1 text-[11px] text-white/80">
                     {kategorien.map((c) => (
-                      <span key={c} className="px-2 py-0.5 rounded-md bg-white/10 border border-white/20">
+                      <span
+                        key={c}
+                        className="px-2 py-0.5 rounded-md bg-white/10 border border-white/20"
+                      >
                         {c}
                       </span>
                     ))}
@@ -124,15 +166,25 @@ export default async function Page({
 
                 <div className="mt-4 flex items-center justify-between">
                   <div className="text-sm text-white/80">
-                    <div>MBW: {s.acf?.mindestbestellwert != null ? `€${s.acf.mindestbestellwert}` : "—"}</div>
-                    <div>Lieferkosten: {s.acf?.lieferkosten != null ? `€${s.acf.lieferkosten}` : "—"}</div>
+                    <div>
+                      MBW:{" "}
+                      {s.acf?.mindestbestellwert != null
+                        ? `€${s.acf.mindestbestellwert}`
+                        : "—"}
+                    </div>
+                    <div>
+                      Lieferkosten:{" "}
+                      {s.acf?.lieferkosten != null
+                        ? `€${s.acf.lieferkosten}`
+                        : "—"}
+                    </div>
                   </div>
 
                   <div className="flex gap-2">
                     {s.acf?.webshopUrl && (
                       <a
-                        className="px-3 py-1.5 rounded-lg bg-white/90 text-slate-900 text-sm"
-                        href={s.acf.webshopUrl}
+                        className="px-3 py-1.5 rounded-lg bg白/90 text-slate-900 text-sm"
+                        href={appendUtm(s.acf.webshopUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -151,7 +203,9 @@ export default async function Page({
                 </div>
 
                 {s.acf?.liefergebiet && (
-                  <p className="mt-2 text-xs text-white/70">{s.acf.liefergebiet}</p>
+                  <p className="mt-2 text-xs text-white/70">
+                    {s.acf.liefergebiet}
+                  </p>
                 )}
               </div>
             </div>
@@ -178,4 +232,16 @@ export default async function Page({
       />
     </main>
   );
+}
+
+function appendUtm(url: string) {
+  try {
+    const u = new URL(url);
+    u.searchParams.set("utm_source", "lieferdienst-bio");
+    u.searchParams.set("utm_medium", "referral");
+    u.searchParams.set("utm_campaign", "directory");
+    return u.toString();
+  } catch {
+    return url;
+  }
 }
