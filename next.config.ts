@@ -3,14 +3,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   eslint: {
-    // Verhindert, dass Vercel den Build wegen ESLint-Fehlern stoppt
+    // verhinder Build-Abbruch durch ESLint-Fehler auf Vercel
     ignoreDuringBuilds: true,
   },
   images: {
     remotePatterns: [
-      // falls du später next/image verwendest
       { protocol: "https", hostname: "lieferdienst-bio.de", pathname: "/wp-content/**" },
       { protocol: "https", hostname: "*.lieferdienst-bio.de", pathname: "/wp-content/**" },
+      { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
     ],
   },
 };
