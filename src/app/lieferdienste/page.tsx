@@ -1,247 +1,155 @@
 // src/app/lieferdienste/page.tsx
-import Link from "next/link";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { fetchLieferbetriebe } from "../../lib/wp";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Bio-Lieferdienste in DE/AT/CH",
+  title: "Lieferdienste – Übersicht | lieferdienst-bio.de",
   description:
-    "Finde Bio-Lieferservices nach Stadt und Land. Übersicht mit Webshop-Link, Mindestbestellwert und Lieferkosten.",
-  alternates: { canonical: "/lieferdienste" },
+    "Alle Bio-Lieferdienste im Überblick. Suche & filtere nach Stadt, Land oder Kategorie – mit direktem Webshop-Link.",
+  alternates: { canonical: "https://lieferdienst-bio.de/lieferdienste" },
 };
 
-type Node = {
-  id: string;
-  title?: string;
-  slug?: string;
-  featuredImage?: { node?: { sourceUrl?: string; altText?: string } };
-  acf?: {
-    webshopUrl?: string;
-    stadt?: string;
-    land?: string | string[];
-    kategorien?: string[] | null;
-    mindestbestellwert?: number | null;
-    lieferkosten?: number | null;
-    badges?: string[] | null;
-    liefergebiet?: string | null;
-  };
-};
+type Node = Awaited<ReturnType<typeof fetchLieferbetriebe>>[number];
 
-function normLand(v: string | string[] | undefined) {
-  if (!v) return "";
-  return Array.isArray(v) ? v[0] : v;
+function GlassCard({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={["glass", className].filter(Boolean).join(" ")}>{children}</div>;
 }
 
-export default async function Page({
-  searchParams,
-}: {
-  // Next 15: searchParams kommt als Promise
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const sp =
-    (await (searchParams ?? Promise.resolve({}))) as Record<
-      string,
-      string | string[] | undefined
-    >;
+function Chip({ children }: { children: React.ReactNode }) {
+  return <span className="chip">{children}</span>;
+}
 
-  // q/land robust extrahieren (string oder string[])
-  const qRaw = sp.q;
-  const landRaw = sp.land;
-  const q =
-    (Array.isArray(qRaw) ? qRaw[0] : qRaw)?.toString().trim().toLowerCase() ??
-    "";
-  const landFilter =
-    (Array.isArray(landRaw) ? landRaw[0] : landRaw)
-      ?.toString()
-      .trim()
-      .toUpperCase() ?? "";
-
-  const all = (await fetchLieferbetriebe(200)) as Node[];
-
-  const items = all.filter((s) => {
-    const land = normLand(s.acf?.land);
-    const matchesLand = !landFilter || land === landFilter;
-    const hay = `${s.title ?? ""} ${s.acf?.stadt ?? ""} ${
-      s.acf?.liefergebiet ?? ""
-    }`.toLowerCase();
-    const matchesQ = !q || hay.includes(q);
-    return matchesLand && matchesQ;
-  });
-
+function Card({ s }: { s: Node }) {
+  const img = s.featuredImage?.node?.sourceUrl || "";
+  const title = s.title || "Lieferdienst";
+  const land = Array.isArray(s.acf?.land) ? s.acf?.land[0] : s.acf?.land;
   return (
-    <main className="max-w-6xl mx-auto px-4 py-10 text-white">
-      <h1 className="text-3xl font-semibold">Lieferdienste</h1>
+    <GlassCard className="p-5 flex flex-col">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={img || "/next.svg"}
+        alt={s.featuredImage?.node?.altText || title}
+        className="w-full h-40 object-cover rounded-lg mb-4 border border-white/10"
+      />
+      <h3 className="text-lg font-semibold text-white">{title}</h3>
+      <p className="text-muted text-sm mt-1">
+        {s.acf?.stadt ?? "—"} {land ? `• ${land}` : ""}
+      </p>
 
-      <form action="/lieferdienste" method="GET" className="mt-4 flex gap-2">
-        <input
-          name="q"
-          defaultValue={q}
-          placeholder="Stadt oder Anbieter..."
-          className="flex-1 px-3 py-2 rounded-lg text-slate-900"
-        />
-        <select
-          name="land"
-          defaultValue={landFilter}
-          className="px-3 py-2 rounded-lg text-slate-900"
-        >
-          <option value="">Land</option>
-          <option value="DE">DE</option>
-          <option value="AT">AT</option>
-          <option value="CH">CH</option>
-        </select>
-        <button className="px-4 py-2 rounded-lg bg-white/90 text-slate-900">
-          Filtern
-        </button>
-      </form>
-
-      <p className="text-white/70 mt-2">{items.length} Einträge</p>
-
-      <div className="grid gap-5 mt-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((s) => {
-          const img =
-            s.featuredImage?.node?.sourceUrl &&
-            s.featuredImage.node.sourceUrl.trim().length > 0
-              ? s.featuredImage.node.sourceUrl
-              : null;
-          const alt = s.featuredImage?.node?.altText || s.title || "";
-          const land = normLand(s.acf?.land);
-          const kategorien = (s.acf?.kategorien ?? []) as string[];
-          const badges = (s.acf?.badges ?? []) as string[];
-
-          return (
-            <div
-              key={s.id}
-              className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-4"
-            >
-              <div className="aspect-[16/9] bg-white/10 overflow-hidden rounded-xl">
-                {img ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={img}
-                    alt={alt}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="w-full h-full grid place-items-center text-white/60 text-xs">
-                    Kein Bild
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-3">
-                <h3 className="text-lg font-semibold">{s.title}</h3>
-                <p className="text-sm text-white/80">
-                  {s.acf?.stadt ?? "—"}
-                  {land ? ` • ${land}` : ""}
-                </p>
-
-                {badges.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1 text-[11px]">
-                    {badges.map((b) => (
-                      <span
-                        key={b}
-                        className="px-2 py-0.5 rounded-md bg-white/10 border border-white/20"
-                      >
-                        {b}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {kategorien.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1 text-[11px] text-white/80">
-                    {kategorien.map((c) => (
-                      <span
-                        key={c}
-                        className="px-2 py-0.5 rounded-md bg-white/10 border border-white/20"
-                      >
-                        {c}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="text-sm text-white/80">
-                    <div>
-                      MBW:{" "}
-                      {s.acf?.mindestbestellwert != null
-                        ? `€${s.acf.mindestbestellwert}`
-                        : "—"}
-                    </div>
-                    <div>
-                      Lieferkosten:{" "}
-                      {s.acf?.lieferkosten != null
-                        ? `€${s.acf.lieferkosten}`
-                        : "—"}
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    {s.acf?.webshopUrl && (
-                      <a
-                        className="px-3 py-1.5 rounded-lg bg白/90 text-slate-900 text-sm"
-                        href={appendUtm(s.acf.webshopUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Zum Webshop
-                      </a>
-                    )}
-                    {s.slug && (
-                      <Link
-                        href={`/lieferdienste/${s.slug}`}
-                        className="px-3 py-1.5 rounded-lg border border-white/40 text-sm"
-                      >
-                        Profil
-                      </Link>
-                    )}
-                  </div>
-                </div>
-
-                {s.acf?.liefergebiet && (
-                  <p className="mt-2 text-xs text-white/70">
-                    {s.acf.liefergebiet}
-                  </p>
-                )}
-              </div>
-            </div>
-          );
-        })}
+      <div className="mt-2 flex flex-wrap gap-1 text-xs">
+        {s.acf?.kategorien?.slice(0, 3)?.map((c) => (
+          <Chip key={c}>{c}</Chip>
+        ))}
+        {s.acf?.badges?.slice(0, 2)?.map((b) => (
+          <Chip key={b}>{b}</Chip>
+        ))}
       </div>
 
-      {/* ItemList-Schema für die ersten 10 Elemente */}
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            itemListElement: items.slice(0, 10).map((s, i) => ({
-              "@type": "ListItem",
-              position: i + 1,
-              name: s.title,
-              url: s.slug ? `/lieferdienste/${s.slug}` : undefined,
-            })),
-          }),
-        }}
-      />
-    </main>
+      <div className="mt-4 flex gap-2">
+        <Link href={`/lieferdienste/${s.slug}`} className="btn-ghost">
+          Details
+        </Link>
+        {s.acf?.webshopUrl && (
+          <a
+            href={s.acf.webshopUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary"
+          >
+            Zum Webshop
+          </a>
+        )}
+      </div>
+    </GlassCard>
   );
 }
 
-function appendUtm(url: string) {
-  try {
-    const u = new URL(url);
-    u.searchParams.set("utm_source", "lieferdienst-bio");
-    u.searchParams.set("utm_medium", "referral");
-    u.searchParams.set("utm_campaign", "directory");
-    return u.toString();
-  } catch {
-    return url;
-  }
+export default async function LieferdienstePage({
+  searchParams,
+}: {
+  searchParams?: { q?: string; land?: string };
+}) {
+  const q = (searchParams?.q || "").toLowerCase().trim();
+  const landFilter = (searchParams?.land || "").toUpperCase().trim();
+
+  const list = await fetchLieferbetriebe(100);
+
+  // Clientseitige Filterung (schnell & robust)
+  const filtered = list.filter((n) => {
+    const hay =
+      `${n.title} ${n.acf?.stadt} ${n.acf?.kategorien?.join(" ")}`.toLowerCase();
+    const qOk = q ? hay.includes(q) : true;
+
+    let landOk = true;
+    if (landFilter) {
+      const land =
+        (Array.isArray(n.acf?.land) ? n.acf?.land[0] : n.acf?.land) || "";
+      landOk = land.toUpperCase() === landFilter;
+    }
+    return qOk && landOk;
+  });
+
+  return (
+    <main className="relative min-h-screen">
+      <div className="hero-gradient" aria-hidden />
+      <div className="noise-overlay" aria-hidden />
+
+      {/* Mini-Hero + Filter */}
+      <section className="max-w-6xl mx-auto px-5 pt-8 pb-4">
+        <GlassCard className="p-6 md:p-8">
+          <h1 className="text-2xl md:text-3xl font-semibold text-white">Lieferdienste</h1>
+          <p className="text-muted mt-1">
+            Filtere nach Stadt, Land oder Kategorie und spring direkt zum Webshop.
+          </p>
+
+          <form action="/lieferdienste" className="mt-4 grid gap-3 md:grid-cols-3">
+            <input
+              name="q"
+              defaultValue={searchParams?.q || ""}
+              className="input"
+              placeholder="z. B. Berlin, Biokiste"
+            />
+            <select
+              name="land"
+              defaultValue={searchParams?.land || ""}
+              className="select"
+            >
+              <option value="">Land</option>
+              <option value="DE">DE</option>
+              <option value="AT">AT</option>
+              <option value="CH">CH</option>
+            </select>
+            <button className="btn-primary">Suchen</button>
+          </form>
+        </GlassCard>
+      </section>
+
+      {/* Grid */}
+      <section className="max-w-6xl mx-auto px-5 pb-16">
+        {filtered.length === 0 ? (
+          <GlassCard className="p-6 md:p-8">
+            <p className="text-muted">
+              Keine Treffer. Passe deine Suche (oben) an oder{" "}
+              <Link href="/lieferdienste" className="underline">zeige alle</Link>.
+            </p>
+          </GlassCard>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filtered.map((s) => (
+              <Card key={s.id} s={s} />
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
+  );
 }

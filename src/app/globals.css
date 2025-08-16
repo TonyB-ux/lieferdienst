@@ -54,3 +54,82 @@ body {
   mix-blend-mode: soft-light;
   pointer-events: none;
 }
+
+:root{
+  --c-bg:#0B1F17;        /* dark forest */
+  --c-bg-2:#0C1410;      /* evergreen */
+  --c-surface:rgba(255,255,255,.06);
+  --c-border:rgba(255,255,255,.16);
+  --c-text:#F8FAFC;
+  --c-muted:#C9D2CD;
+  --c-accent:#22C55E;    /* emerald 500 */
+  --c-accent-2:#BEF264;  /* lime 300 */
+  --c-hero-1:rgba(34,197,94,.28);
+  --c-hero-2:rgba(190,242,100,.22);
+  --c-hero-3:rgba(21,128,61,.28);
+  --c-warm:#F59E0B;      /* amber 500 */
+}
+
+/* Hintergrund: „Night Garden“ */
+.hero-gradient{
+  position:fixed; inset:0; z-index:-2;
+  background:
+    radial-gradient(38rem 32rem at 15% 12%, var(--c-hero-1), transparent 60%),
+    radial-gradient(32rem 28rem at 85% 10%, var(--c-hero-2), transparent 60%),
+    radial-gradient(36rem 36rem at 50% 92%, var(--c-hero-3), transparent 60%),
+    linear-gradient(180deg, var(--c-bg) 0%, var(--c-bg-2) 68%, var(--c-bg-2) 100%);
+}
+
+/* dezentes Filmkorn für Tiefe */
+.noise-overlay{
+  position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2P4+fPmfwAJNQOAk4N0pwAAAABJRU5ErkJggg==");
+  opacity:.22; mix-blend-mode:soft-light;
+}
+
+/* Glasmorphism */
+.glass{
+  background:var(--c-surface);
+  border:1px solid var(--c-border);
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.25),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  border-radius:1rem;
+  color:var(--c-text);
+}
+
+/* UI-Primitives (Buttons/Inputs/Chips) */
+.btn-primary{
+  background:var(--c-accent); color:#0B1F17;
+  border:1px solid color-mix(in srgb, var(--c-accent) 70%, #000 30%);
+  padding:.75rem 1rem; border-radius:.75rem; font-weight:600;
+}
+.btn-primary:hover{ background:color-mix(in srgb, var(--c-accent) 90%, #fff 10%); }
+.btn-ghost{
+  background:rgba(255,255,255,.08); color:var(--c-text);
+  border:1px solid var(--c-border); padding:.6rem .9rem; border-radius:.75rem;
+}
+.input, .select{
+  background:rgba(255,255,255,.08); color:var(--c-text);
+  border:1px solid var(--c-border);
+  padding:.75rem 1rem; border-radius:.75rem; outline:none;
+}
+.input::placeholder{ color:rgba(255,255,255,.60); }
+
+.chip{
+  display:inline-block; padding:.35rem .7rem; font-size:.82rem;
+  background:rgba(255,255,255,.10); border:1px solid var(--c-border);
+  border-radius:999px; color:var(--c-text);
+}
+
+/* Fokus klar & barrierefrei */
+:focus-visible{
+  outline:2px solid color-mix(in srgb, var(--c-accent) 70%, #fff 30%);
+  outline-offset:2px; border-radius:.75rem;
+}
+
+/* Typo-Feinschliff */
+body{ color:var(--c-text); }
+.text-muted{ color:var(--c-muted); }
