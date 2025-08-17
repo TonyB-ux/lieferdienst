@@ -1,97 +1,173 @@
 // src/components/GlassStarter.tsx
 import Link from "next/link";
-import Image from "next/image";
-import GuidesRow from "./GuidesRow"; // deine dynamische Guides-Komponente (falls vorhanden)
+import GuidesRow from "@/components/GuidesRow";
 
-export default function GlassStarter() {
+/**
+ * Hinweis:
+ * - Der Wrapper nutzt sowohl die Klasse `glass` (falls du sie in globals.css definiert hast),
+ *   als auch Tailwind-Utilities als Fallback.
+ * - Alle Links zeigen auf bestehende Routen (/lieferdienste, /guides).
+ * - GuidesRow rendert automatisch die 3 neuesten Guides (oder Fallback-Teaser).
+ */
+
+export default async function GlassStarter() {
   return (
-    <>
-      {/* Background */}
-      <div className="bg-layer" />
-      <div className="bg-photo" />
+    <main className="relative z-0">
+      {/* Seite: max Breite + Paddings */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-6 pb-16 pt-6">
+        {/* Top-Reihe: Hero + Kacheln */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-      {/* Header */}
-      <header className="site-header container">
-        <div className="glass site-nav">
-          <div style={{display:"flex", alignItems:"center", gap:12}}>
-            <Image src="/logo-lb.svg" alt="lieferdienst-bio.de" width={28} height={28} priority />
-            <span style={{fontWeight:700}}>lieferdienst-bio.de</span>
-          </div>
-          <nav style={{display:"flex", gap:12}}>
-            <Link className="btn" href="/lieferdienste">Liste</Link>
-            <Link className="btn" href="/guides">Guides</Link>
-            <Link className="btn" href="/kontakt">Kontakt</Link>
-          </nav>
-        </div>
-      </header>
+          {/* HERO (2 Spalten) */}
+          <section
+            className="lg:col-span-2 rounded-2xl glass
+                       bg-white/70 backdrop-blur-xl shadow-lg ring-1 ring-black/5 p-6 md:p-8"
+          >
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
+              Finde den
+              <br />
+              passenden
+              <br />
+              Bio-
+              <br />
+              Lieferservice –
+              <br />
+              schnell,
+              <br />
+              neutral, DACH-
+              <br />
+              weit.
+            </h1>
 
-      {/* Main */}
-      <main className="container" style={{marginTop: 16}}>
-        <div className="grid-cols">
-          {/* Hero */}
-          <section className="glass col-span-6" style={{padding:24}}>
-            <h1 className="h1">Finde den passenden Bio-Lieferservice – schnell, neutral, DACH-weit.</h1>
-            <p className="muted" style={{marginTop:12, maxWidth:640}}>
-              Wir zeigen dir verifizierte Bio-Betriebe in Deutschland, Österreich und der Schweiz – mit direktem Link zum Webshop.
+            <p className="text-slate-700 mt-5 leading-relaxed">
+              Wir zeigen dir verifizierte Bio-Betriebe in Deutschland, Österreich und der Schweiz – mit
+              direktem Link zum Webshop.
             </p>
-            <div style={{display:"flex", gap:8, marginTop:14, flexWrap:"wrap"}}>
-              <span className="badge">Neutral & unabhängig</span>
-              <span className="badge">DACH-weit</span>
-              <span className="badge">Direkte Links</span>
+
+            <div className="flex flex-wrap gap-2 mt-5">
+              <span className="text-xs px-3 py-1 rounded-full bg-slate-900/5 text-slate-700 border border-slate-900/10">
+                Neutral & unabhängig
+              </span>
+              <span className="text-xs px-3 py-1 rounded-full bg-slate-900/5 text-slate-700 border border-slate-900/10">
+                DACH-weit
+              </span>
+              <span className="text-xs px-3 py-1 rounded-full bg-slate-900/5 text-slate-700 border border-slate-900/10">
+                Direkte Links
+              </span>
             </div>
-            <div style={{display:"flex", gap:10, marginTop:18, flexWrap:"wrap"}}>
-              <Link href="/lieferdienste" className="btn btn-primary">Lieferdienste ansehen</Link>
-              <Link href="/guides" className="btn">Alle Guides</Link>
+
+            <div className="mt-6 flex gap-3 flex-wrap">
+              <Link
+                href="/lieferdienste"
+                className="inline-flex items-center justify-center rounded-xl bg-emerald-700 text-white px-5 py-3 font-semibold shadow hover:bg-emerald-600 transition"
+              >
+                Lieferdienste ansehen
+              </Link>
+              <Link
+                href="/guides"
+                className="inline-flex items-center justify-center rounded-xl bg-white/90 text-slate-900 px-5 py-3 font-semibold ring-1 ring-black/10 hover:bg-white transition"
+              >
+                Alle Guides
+              </Link>
             </div>
           </section>
 
-          {/* Schnellstart */}
-          <section className="glass col-span-3" style={{padding:20}}>
-            <h2 className="h2">Schnellstart</h2>
-            <ul className="muted" style={{margin:"12px 0 16px 18px", lineHeight:1.6}}>
-              <li>Neutral & unabhängig – kein Marktplatz</li>
-              <li>DACH-weit – verifizierte Betriebe</li>
-              <li>Direkte Webshop-Links</li>
+          {/* SCHNELLSTART */}
+          <section
+            className="rounded-2xl glass bg-white/70 backdrop-blur-xl shadow-lg ring-1 ring-black/5 p-6 md:p-6"
+          >
+            <h3 className="font-semibold text-slate-900">Schnellstart</h3>
+            <ul className="mt-3 space-y-2 text-sm text-slate-700">
+              <li>• Neutral & unabhängig – kein Marktplatz</li>
+              <li>• DACH-weit – verifizierte Betriebe</li>
+              <li>• Direkte Webshop-Links</li>
             </ul>
-            <div style={{display:"flex", gap:8, flexWrap:"wrap"}}>
-              <Link className="btn" href="/lieferdienste?land=DE">Deutschland</Link>
-              <Link className="btn" href="/lieferdienste?land=AT">Österreich</Link>
-              <Link className="btn" href="/lieferdienste?land=CH">Schweiz</Link>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link
+                href="/lieferdienste?land=DE"
+                className="text-xs px-3 py-1 rounded-full bg-slate-900/5 text-slate-700 border border-slate-900/10"
+              >
+                Deutschland
+              </Link>
+              <Link
+                href="/lieferdienste?land=AT"
+                className="text-xs px-3 py-1 rounded-full bg-slate-900/5 text-slate-700 border border-slate-900/10"
+              >
+                Österreich
+              </Link>
+              <Link
+                href="/lieferdienste?land=CH"
+                className="text-xs px-3 py-1 rounded-full bg-slate-900/5 text-slate-700 border border-slate-900/10"
+              >
+                Schweiz
+              </Link>
             </div>
           </section>
 
-          {/* Regionen */}
-          <section className="glass col-span-3" style={{padding:20}}>
-            <h2 className="h2">Regionen & Städte</h2>
-            <p className="muted">Finde Anbieter in deiner Nähe – von Berlin bis Zürich.</p>
-            <Link className="btn btn-primary" href="/lieferdienste" style={{marginTop:12}}>Zur Liste</Link>
+          {/* REGIONEN & STÄDTE */}
+          <section
+            className="rounded-2xl glass bg-white/70 backdrop-blur-xl shadow-lg ring-1 ring-black/5 p-6 md:p-6"
+          >
+            <h3 className="font-semibold text-slate-900">Regionen & Städte</h3>
+            <p className="text-sm text-slate-700 mt-2">
+              Finde Anbieter in deiner Nähe – von Berlin bis Zürich.
+            </p>
+            <Link
+              href="/lieferdienste"
+              className="mt-4 inline-flex items-center justify-center rounded-xl bg-white text-slate-900 px-4 py-2 font-semibold ring-1 ring-black/10 hover:bg-slate-50 transition"
+            >
+              Zur Liste
+            </Link>
           </section>
 
-          {/* Kategorien */}
-          <section className="glass col-span-3" style={{padding:20}}>
-            <h2 className="h2">Kategorien</h2>
-            <p className="muted">Gemüsekiste, Abo, Vegan, Familienbox – was passt zu dir?</p>
-            <Link className="btn" href="/lieferdienste?q=Gem%C3%BCsekiste" style={{marginTop:12}}>Entdecken</Link>
+          {/* KATEGORIEN */}
+          <section
+            className="rounded-2xl glass bg-white/70 backdrop-blur-xl shadow-lg ring-1 ring-black/5 p-6 md:p-6"
+          >
+            <h3 className="font-semibold text-slate-900">Kategorien</h3>
+            <p className="text-sm text-slate-700 mt-2">
+              Gemüsekiste, Abo, Vegan, Familienbox – was passt zu dir?
+            </p>
+            <Link
+              href="/lieferdienste"
+              className="mt-4 inline-flex items-center justify-center rounded-xl bg-white text-slate-900 px-4 py-2 font-semibold ring-1 ring-black/10 hover:bg-slate-50 transition"
+            >
+              Entdecken
+            </Link>
           </section>
 
-          {/* Direkt zum Shop */}
-          <section className="glass col-span-3" style={{padding:20}}>
-            <h2 className="h2">Direkt zum Shop</h2>
-            <p className="muted">Verifizierte Bio-Betriebe mit direkter Weiterleitung zum Webshop.</p>
-            <Link className="btn btn-primary" href="/lieferdienste" style={{marginTop:12}}>Jetzt stöbern</Link>
-          </section>
-
-          {/* Guides Row */}
-          <section className="glass col-span-12" style={{padding:20}}>
-            <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10}}>
-              <h2 className="h2" style={{margin:0}}>Guides & Ratgeber</h2>
-              <Link className="btn" href="/guides">Alle Guides</Link>
-            </div>
-            {/* dynamisch; falls du eine statische Variante willst, sag Bescheid */}
-            <GuidesRow />
+          {/* DIREKT ZUM SHOP */}
+          <section
+            className="rounded-2xl glass bg-white/70 backdrop-blur-xl shadow-lg ring-1 ring-black/5 p-6 md:p-6"
+          >
+            <h3 className="font-semibold text-slate-900">Direkt zum Shop</h3>
+            <p className="text-sm text-slate-700 mt-2">
+              Verifizierte Bio-Betriebe mit direkter Weiterleitung zum Webshop.
+            </p>
+            <Link
+              href="/lieferdienste"
+              className="mt-4 inline-flex items-center justify-center rounded-xl bg-emerald-700 text-white px-4 py-2 font-semibold hover:bg-emerald-600 transition"
+            >
+              Jetzt stöbern
+            </Link>
           </section>
         </div>
-      </main>
-    </>
+
+        {/* Guides & Ratgeber */}
+        <section className="mt-10">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-slate-900 text-lg">Guides & Ratgeber</h3>
+            <Link
+              href="/guides"
+              className="inline-flex items-center justify-center rounded-xl bg-white text-slate-900 px-4 py-2 text-sm font-semibold ring-1 ring-black/10 hover:bg-slate-50 transition"
+            >
+              Alle Guides
+            </Link>
+          </div>
+
+          <GuidesRow />
+        </section>
+      </div>
+    </main>
   );
 }
