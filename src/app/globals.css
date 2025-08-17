@@ -22,6 +22,9 @@
   --shadow-2: 0 18px 40px rgba(21, 50, 36, .10);
   --space-1: 6px; --space-2: 10px; --space-3: 14px;
   --space-4: 18px; --space-5: 24px; --space-6: 32px;
+
+  /* Fixer Header-Höhe */
+  --header-h: 68px;
 }
 
 /* ==== Reset / Base ==== */
@@ -30,17 +33,8 @@ html,body{height:100%}
 body{
   margin:0;
   color:var(--text);
-  background:
-    /* weicher Overlay für Lesbarkeit */
-    linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,.80)),
-    /* optional dezente Farbfläche */
-    radial-gradient(52rem 36rem at 15% -10%, rgba(129,199,132,.18), transparent 60%),
-    /* das eigentliche Hintergrundbild */
-    url("/bg/edel-bio.webp");
-  background-size: cover;            /* Bild füllt die Fläche */
-  background-position: center;       /* zentriert */
-  background-repeat: no-repeat;
-  background-attachment: fixed;      /* Parallax-Effekt (bei iOS ggf. janky, kannst du weglassen) */
+  /* Fallback-Hintergrund (ohne Bild) – das eigentliche Bild kommt über .site-bg */
+  background: linear-gradient(180deg, var(--bg-0), var(--bg-1));
   font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -51,7 +45,49 @@ a:hover{opacity:.9}
 .muted{color:var(--muted)}
 hr{border:0;border-top:1px solid rgba(0,0,0,.08);margin:28px 0}
 
-/* ==== Layout ==== */
+/* ==== Globales, fixes Hintergrund-Layer (iOS-freundlich) ==== */
+.site-bg{
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    /* weicher Overlay für Lesbarkeit */
+    linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,.80)),
+    /* dezente Bio-Farbfläche */
+    radial-gradient(52rem 36rem at 15% -10%, rgba(129,199,132,.18), transparent 60%),
+    /* das eigentliche Hintergrundbild */
+    url("/bg/edel-bio.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ==== Fixer Header im Glasmorph-Stil ==== */
+.site-header{
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--header-h);
+  z-index: 999;
+  display: flex; align-items: center;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--card-border);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-1);
+}
+.site-nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+/* ==== Layout: Platz für fixen Header schaffen ==== */
+.page-shell{
+  min-height: 100dvh;
+  padding-top: var(--header-h);
+}
+
 .container{max-width:1180px;margin:0 auto;padding:0 22px}
 .header{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
 .brand{font-weight:800;letter-spacing:.2px}
