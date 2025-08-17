@@ -5,15 +5,8 @@ import GuidesRow from "@/components/GuidesRow";
 export default function HomePage() {
   return (
     <>
-      {/* Header */}
-      <header className="container header">
-        <div className="brand">lieferdienst-bio.de</div>
-        <nav className="nav">
-          <Link href="/lieferdienste">Liste</Link>
-          <Link href="/guides">Guides</Link>
-          <a className="btn btn-ghost" href="mailto:info@lieferdienst-bio.de">Kontakt</a>
-        </nav>
-      </header>
+          {/* Header */}
+
 
       <main className="container">
         {/* Hero */}
