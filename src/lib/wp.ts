@@ -1,25 +1,76 @@
 // src/lib/wp.ts
 import { GraphQLClient, gql } from "graphql-request";
 
+/* ============================================================================
+   GraphQL Client
+   ========================================================================== */
+
 const endpoint = process.env.WP_GRAPHQL_ENDPOINT || "";
 
 export const wp = new GraphQLClient(endpoint, {
   headers: { "Content-Type": "application/json" },
 });
 
-// Helper: fängt WPGraphQL-Fehler ab, damit Seiten nicht mit 500 sterben
-async function safeRequest<T>(query: any, variables?: Record<string, unknown>): Promise<T | null> {
+/** Generische Request-Hilfe mit klarer Fehlerbehandlung (kein any) */
+async function safeRequest<T, V extends Record<string, unknown> | undefined = undefined>(
+  query: string,
+  variables?: V
+): Promise<T | null> {
   try {
-    return await wp.request<T>(query, variables);
+    // graphql-request akzeptiert undefined für variables
+    return await wp.request<T>(query, variables as V);
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error("WPGraphQL error:", e);
     return null;
   }
 }
 
-/* =========================
+/* ============================================================================
+   Gemeinsame Typen
+   ========================================================================== */
+
+export type ImageNode = {
+  sourceUrl?: string | null;
+  altText?: string | null;
+};
+export type FeaturedImage = {
+  node?: ImageNode | null;
+};
+
+/* ============================================================================
    Lieferbetriebe (CPT)
-   ========================= */
+   ========================================================================== */
+
+export type LieferbetriebACF = {
+  webshopUrl?: string | null;
+  stadt?: string | null;
+  land?: string | string[] | null; // ACF select (einfach/mehrfach)
+  kategorien?: string[] | null;
+  mindestbestellwert?: number | null;
+  lieferkosten?: number | null;
+  badges?: string[] | null;
+  liefergebiet?: string | null;
+};
+
+export type LieferbetriebNode = {
+  id: string;
+  title: string;
+  slug: string;
+  content?: string | null;
+  featuredImage?: FeaturedImage | null;
+  acf?: LieferbetriebACF | null;
+};
+
+type LieferbetriebeListResponse = {
+  lieferbetriebe?: { nodes?: LieferbetriebNode[] | null } | null;
+};
+type LieferbetriebBySlugResponse = {
+  lieferbetrieb?: LieferbetriebNode | null;
+};
+type LieferbetriebeSlugsResponse = {
+  lieferbetriebe?: { nodes?: { slug: string }[] | null } | null;
+};
 
 export const LIEFERBETRIEBE_QUERY = gql`
   query Lieferbetriebe($first: Int = 24) {
@@ -44,28 +95,11 @@ export const LIEFERBETRIEBE_QUERY = gql`
   }
 `;
 
-export type LieferbetriebNode = {
-  id: string;
-  title: string;
-  slug: string;
-  content?: string; // <- wichtig: in Detail-Query vorhanden
-  featuredImage?: { node?: { sourceUrl?: string; altText?: string } };
-  acf?: {
-    webshopUrl?: string;
-    stadt?: string;
-    land?: string | string[];
-    kategorien?: string[];
-    mindestbestellwert?: number;
-    lieferkosten?: number;
-    badges?: string[];
-    liefergebiet?: string;
-  };
-};
-
-type LieferbetriebeResponse = { lieferbetriebe?: { nodes?: LieferbetriebNode[] } };
-
 export async function fetchLieferbetriebe(first = 24): Promise<LieferbetriebNode[]> {
-  const data = await safeRequest<LieferbetriebeResponse>(LIEFERBETRIEBE_QUERY, { first });
+  const data = await safeRequest<LieferbetriebeListResponse, { first: number }>(
+    LIEFERBETRIEBE_QUERY,
+    { first }
+  );
   return data?.lieferbetriebe?.nodes ?? [];
 }
 
@@ -78,62 +112,83 @@ export const LIEFERBETRIEB_BY_SLUG = gql`
       content
       featuredImage { node { sourceUrl altText } }
       acf {
-        webshopUrl stadt land kategorien
-        mindestbestellwert lieferkosten badges liefergebiet
+        webshopUrl
+        stadt
+        land
+        kategorien
+        mindestbestellwert
+        lieferkosten
+        badges
+        liefergebiet
       }
     }
   }
 `;
 
+export async function fetchLieferbetriebBySlug(slug: string): Promise<LieferbetriebNode | null> {
+  const data = await safeRequest<LieferbetriebBySlugResponse, { slug: string }>(
+    LIEFERBETRIEB_BY_SLUG,
+    { slug }
+  );
+  return data?.lieferbetrieb ?? null;
+}
+
 export const LIEFERBETRIEBE_SLUGS = gql`
-  query {
-    lieferbetriebe(first: 100, where: { status: PUBLISH }) {
+  query LieferbetriebeSlugs {
+    lieferbetriebe(first: 1000, where: { status: PUBLISH }) {
       nodes { slug }
     }
   }
 `;
 
-export async function fetchLieferbetriebBySlug(slug: string) {
-  const data = await safeRequest<{ lieferbetrieb?: LieferbetriebNode }>(LIEFERBETRIEB_BY_SLUG, { slug });
-  return data?.lieferbetrieb ?? null;
-}
-
 export async function fetchLieferbetriebSlugs(): Promise<string[]> {
-  const data = await safeRequest<{ lieferbetriebe?: { nodes?: { slug: string }[] } }>(LIEFERBETRIEBE_SLUGS);
-  return (data?.lieferbetriebe?.nodes ?? []).map(n => n.slug).filter(Boolean);
+  const data = await safeRequest<LieferbetriebeSlugsResponse>(
+    LIEFERBETRIEBE_SLUGS,
+    undefined
+  );
+  const nodes = data?.lieferbetriebe?.nodes ?? [];
+  return nodes.map((n) => n.slug).filter(Boolean);
 }
 
-/* =========================
-   Guides (WP Beiträge, Kategorie "guides")
-   ========================= */
+/* ============================================================================
+   Guides (WP Posts) – Kategorie per ENV-ID (Fallback: Slug "guides")
+   ========================================================================== */
+
+const GUIDES_CATEGORY_ID = Number.parseInt(process.env.GUIDES_CATEGORY_ID || "0", 10);
 
 export type GuideNode = {
   id: string;
   slug: string;
   title: string;
-  excerpt?: string;
-  content?: string;
-  featuredImage?: { node?: { sourceUrl?: string; altText?: string } };
-  // Falls ACF-Felder für Guides: Feldgruppe in GraphQL anzeigen und hier typisieren
-  acf?: { intro?: string; readingTime?: number };
+  excerpt?: string | null;
+  content?: string | null;
+  featuredImage?: FeaturedImage | null;
+  // Optional: ACF-Felder, falls vorhanden
+  // acf?: { intro?: string | null; readingTime?: number | null } | null;
 };
 
-type GuidesResponse = { posts?: { nodes?: GuideNode[] } };
-type GuideBySlugResponse = { post?: GuideNode };
+type GuidesResponse = { posts?: { nodes?: GuideNode[] | null } | null };
+type GuideBySlugResponse = { post?: GuideNode | null };
+type GuideSlugsResponse = { posts?: { nodes?: { slug: string }[] | null } | null };
 
+/**
+ * Nutzt bevorzugt categoryIn (ID aus ENV), fällt auf categoryName "guides" zurück.
+ * So bekommst du wirklich alle Beiträge in deiner gewünschten Kategorie.
+ */
 export const GUIDES_QUERY = gql`
-  query Guides($first: Int = 6) {
-    posts(first: $first, where: { categoryName: "guides", status: PUBLISH }) {
+  query Guides($first: Int = 6, $catIds: [Int], $catName: String) {
+    posts(
+      first: $first
+      where: { status: PUBLISH, categoryIn: $catIds, categoryName: $catName }
+    ) {
       nodes {
         id
         slug
         title
         excerpt
         featuredImage { node { sourceUrl altText } }
-        # ACF-Beispiel (aktivieren wenn vorhanden):
+        # Optional: ACF-Felder hier rein nehmen, wenn freigeschaltet
         # acf { intro readingTime }
-        # oder Alias:
-        # acf: guideFields { intro readingTime }
       }
     }
   }
@@ -148,32 +203,45 @@ export const GUIDE_BY_SLUG = gql`
       excerpt
       content
       featuredImage { node { sourceUrl altText } }
-      # ACF-Beispiel:
+      # Optional: ACF-Felder
       # acf { intro readingTime }
-      # oder: acf: guideFields { intro readingTime }
     }
   }
 `;
 
 export const GUIDE_SLUGS = gql`
-  query GuideSlugs {
-    posts(first: 100, where: { categoryName: "guides", status: PUBLISH }) {
+  query GuideSlugs($catIds: [Int], $catName: String) {
+    posts(
+      first: 1000
+      where: { status: PUBLISH, categoryIn: $catIds, categoryName: $catName }
+    ) {
       nodes { slug }
     }
   }
 `;
 
 export async function fetchGuides(first = 3): Promise<GuideNode[]> {
-  const data = await safeRequest<GuidesResponse>(GUIDES_QUERY, { first });
+  const variables =
+    GUIDES_CATEGORY_ID > 0
+      ? ({ first, catIds: [GUIDES_CATEGORY_ID], catName: null } as const)
+      : ({ first, catIds: null, catName: "guides" } as const);
+
+  const data = await safeRequest<GuidesResponse, typeof variables>(GUIDES_QUERY, variables);
   return data?.posts?.nodes ?? [];
 }
 
 export async function fetchGuideBySlug(slug: string): Promise<GuideNode | null> {
-  const data = await safeRequest<GuideBySlugResponse>(GUIDE_BY_SLUG, { slug });
+  const data = await safeRequest<GuideBySlugResponse, { slug: string }>(GUIDE_BY_SLUG, { slug });
   return data?.post ?? null;
 }
 
 export async function fetchGuideSlugs(): Promise<string[]> {
-  const data = await safeRequest<{ posts?: { nodes?: { slug: string }[] } }>(GUIDE_SLUGS);
-  return (data?.posts?.nodes ?? []).map(n => n.slug).filter(Boolean);
+  const variables =
+    GUIDES_CATEGORY_ID > 0
+      ? ({ catIds: [GUIDES_CATEGORY_ID], catName: null } as const)
+      : ({ catIds: null, catName: "guides" } as const);
+
+  const data = await safeRequest<GuideSlugsResponse, typeof variables>(GUIDE_SLUGS, variables);
+  const nodes = data?.posts?.nodes ?? [];
+  return nodes.map((n) => n.slug).filter(Boolean);
 }
