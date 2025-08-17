@@ -31,9 +31,16 @@ body{
   margin:0;
   color:var(--text);
   background:
-    radial-gradient(52rem 36rem at 15% -10%, rgba(129,199,132,.25), transparent 60%),
-    radial-gradient(56rem 40rem at 90% -20%, rgba(249,199,79,.18), transparent 60%),
-    linear-gradient(180deg, var(--bg-0), var(--bg-1));
+    /* weicher Overlay für Lesbarkeit */
+    linear-gradient(180deg, rgba(255,255,255,.84), rgba(255,255,255,.80)),
+    /* optional dezente Farbfläche */
+    radial-gradient(52rem 36rem at 15% -10%, rgba(129,199,132,.18), transparent 60%),
+    /* das eigentliche Hintergrundbild */
+    url("/bg/edel-bio.webp");
+  background-size: cover;            /* Bild füllt die Fläche */
+  background-position: center;       /* zentriert */
+  background-repeat: no-repeat;
+  background-attachment: fixed;      /* Parallax-Effekt (bei iOS ggf. janky, kannst du weglassen) */
   font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
