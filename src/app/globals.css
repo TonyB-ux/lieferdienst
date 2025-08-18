@@ -420,3 +420,173 @@ h1, h2, h3, h4,
 
 /* Fließtext-Feinschliff */
 p, .muted { font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif; }
+
+/* =========================
+   Variables & base layout
+   ========================= */
+   :root {
+    --header-h: 88px;
+    --gap: 16px;
+    --radius: 18px;
+  }
+  
+  @media (max-width: 640px) {
+    :root {
+      --header-h: 64px;   /* kompakter Header auf Mobile */
+      --gap: 12px;
+      --radius: 16px;
+    }
+  }
+  
+  .page-main { padding-top: var(--header-h); }
+  
+  /* =========================
+     Header/Nav mobile tweaks
+     ========================= */
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    z-index: 50;
+    backdrop-filter: saturate(160%) blur(8px);
+    -webkit-backdrop-filter: saturate(160%) blur(8px);
+    background: color-mix(in srgb, #0b0f0c 8%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, #fff 10%, transparent);
+  }
+  
+  .site-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .btn-sm {
+    font-size: 14px;
+    line-height: 1.15;
+    padding: 8px 14px;
+    border-radius: 14px;
+  }
+  
+  /* auf sehr kleinen Geräten Buttons nicht umbrechen lassen */
+  @media (max-width: 360px) {
+    .site-nav nav { gap: 6px; }
+    .btn-sm { padding: 7px 12px; font-size: 13px; }
+  }
+  
+  /* =========================
+     Grid – sauberes Mobile-Layout
+     ========================= */
+  .grid-cols {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: 1fr; /* Mobile: 1 Spalte */
+  }
+  
+  /* Desktop: 12 Spalten */
+  @media (min-width: 900px) {
+    .grid-cols { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+    .col-span-3 { grid-column: span 3 / span 3; }
+    .col-span-4 { grid-column: span 4 / span 4; }
+    .col-span-6 { grid-column: span 6 / span 6; }
+    .col-span-8 { grid-column: span 8 / span 8; }
+  }
+  
+  /* Mobile: alle „Spalten“-Karten gestapelt */
+  @media (max-width: 899px) {
+    .col-span-3,
+    .col-span-4,
+    .col-span-6,
+    .col-span-8 { grid-column: 1 / -1; }
+  }
+  
+  /* =========================
+     Cards & glass on iOS
+     ========================= */
+  .card, .glass {
+    border-radius: var(--radius);
+    background: color-mix(in srgb, #0b0f0c 6%, rgba(255,255,255,0.08));
+    border: 1px solid color-mix(in srgb, #fff 10%, transparent);
+    backdrop-filter: saturate(160%) blur(10px);
+    -webkit-backdrop-filter: saturate(160%) blur(10px);
+  
+    /* iOS/Safari: Verhindert Text-„Ghosting“ bei backdrop-filter */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    will-change: transform;
+  }
+  
+  /* geringere Innenabstände auf Mobile */
+  .card { padding: 18px; }
+  @media (max-width: 640px) {
+    .card { padding: 14px; }
+  }
+  
+  /* =========================
+     Hero & Typografie
+     ========================= */
+  .h1 {
+    font-size: clamp(28px, 7vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  
+  /* Untertitel, Chips, Buttons dezenter auf Mobile */
+  .pill {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+  }
+  
+  .row, .row-cta, .section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  @media (max-width: 640px) {
+    .row-cta .btn,
+    .section .btn { padding: 10px 14px; font-size: 14px; }
+  }
+  
+  /* =========================
+     Guides: 1 Spalte mobil, 3 Spalten ab md
+     ========================= */
+  .guides-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap);
+  }
+  
+  @media (min-width: 900px) {
+    .guides-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  
+  /* Bild in Guide-Karten */
+  .guide-img {
+    width: 100%;
+    height: 148px;
+    object-fit: cover;
+    border-radius: calc(var(--radius) - 6px);
+  }
+  
+  /* =========================
+     Hintergrundebenen
+     ========================= */
+  .bg-layer {
+    position: fixed; inset: 0; z-index: -2;
+    background: radial-gradient(60% 40% at 50% 15%, rgba(0,0,0,0.08), rgba(0,0,0,0));
+  }
+  
+  .bg-photo {
+    position: fixed; inset: 0; z-index: -3;
+    background-image: url("/bg.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: saturate(108%) contrast(104%);
+  }
+  
