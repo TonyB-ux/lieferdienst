@@ -12,42 +12,23 @@ export const metadata: Metadata = {
   title: "lieferdienst-bio.de",
   description:
     "Bio-Lieferservices in DE/AT/CH – neutraler Überblick, direkte Webshop-Links, Kategorien & Regionen.",
-  // Icons/Favicons: Next nutzt automatisch /src/app/icon.(png|svg) & /src/app/apple-touch-icon.png, falls vorhanden.
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* --- Fester Hintergrund-Layer (iOS-freundlich) --- */}
-        <div
-          aria-hidden
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: -2,
-            backgroundImage:
-              "radial-gradient(60% 40% at 50% 15%, rgba(0,0,0,0.10), rgba(0,0,0,0)), url('/bg.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
+        {/* --- Hintergrund-Layer (Glasmorph + Foto) --- */}
+        <div className="bg-layer" aria-hidden />
+        <div className="bg-photo" aria-hidden />
 
         {/* --- Fixer Header (Glasmorph) --- */}
-        <header
-          className="fixed top-0 left-0 right-0 z-50"
-          style={{
-            backdropFilter: "saturate(140%) blur(14px)",
-            WebkitBackdropFilter: "saturate(140%) blur(14px)",
-            background: "rgba(255,255,255,0.7)",
-            borderBottom: "1px solid rgba(0,0,0,0.06)",
-          }}
-        >
+        <header className="fixed top-0 left-0 right-0 z-50 glass">
           <div
             className="mx-auto flex items-center justify-between"
             style={{ maxWidth: 1120, padding: "12px 20px" }}
           >
-            {/* Logo (ohne Text) */}
+            {/* Logo */}
             <Link href="/" className="flex items-center" aria-label="lieferdienst-bio.de">
               <Image
                 src="/logo.png"
@@ -61,34 +42,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             {/* Navigation */}
             <nav className="flex items-center gap-3">
-              <Link
-                href="/lieferdienste"
-                className="px-3 py-1.5 rounded-lg text-slate-800"
-                style={{
-                  background: "rgba(255,255,255,0.6)",
-                  border: "1px solid rgba(0,0,0,0.06)",
-                }}
-              >
+              <Link href="/lieferdienste" className="btn">
                 Liste
               </Link>
-              <Link
-                href="/guides"
-                className="px-3 py-1.5 rounded-lg text-slate-800"
-                style={{
-                  background: "rgba(255,255,255,0.6)",
-                  border: "1px solid rgba(0,0,0,0.06)",
-                }}
-              >
+              <Link href="/guides" className="btn">
                 Guides
               </Link>
-              <Link
-                href="/kontakt"
-                className="px-3 py-1.5 rounded-lg text-white"
-                style={{
-                  background: "linear-gradient(180deg,#1e513e,#1b4332)",
-                  border: "1px solid rgba(0,0,0,0.06)",
-                }}
-              >
+              <Link href="/kontakt" className="btn-primary">
                 Kontakt
               </Link>
             </nav>
@@ -96,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
 
         {/* --- Inhalt: Start unter dem fixen Header --- */}
-        <main className="pt-20">{children}</main>
+        <main className="pt-24">{children}</main>
       </body>
     </html>
   );
