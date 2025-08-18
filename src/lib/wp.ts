@@ -15,19 +15,21 @@ export const wp = new GraphQLClient(endpoint, {
 });
 
 /**
- * safeRequest – Overloads:
- * - ohne Variablen
- * - mit Variablen (V extends object)
+ * safeRequest – schlanke Variante kompatibel mit graphql-request (rest args)
+ * - ohne Variablen: wp.request<T>(query)
+ * - mit Variablen:  wp.request<T>(query, variables)
  */
-async function safeRequest<T>(query: string): Promise<T>;
-async function safeRequest<T, V extends object>(query: string, variables: V): Promise<T>;
-async function safeRequest<T, V extends object>(query: string, variables?: V): Promise<T> {
+async function safeRequest<T>(
+  query: string,
+  variables?: Record<string, unknown>
+): Promise<T> {
   if (!endpoint) {
     throw new Error("WP_GRAPHQL_ENDPOINT (oder NEXT_PUBLIC_WP_GRAPHQL) ist nicht gesetzt.");
   }
   try {
     if (typeof variables !== "undefined") {
-      return await wp.request<T, V>(query, variables);
+      // Rest-Param-Signatur – per any cast TS-Strictness umgehen
+      return await wp.request<T>(query, variables as any);
     }
     return await wp.request<T>(query);
   } catch (err: any) {
@@ -177,22 +179,22 @@ export async function fetchGuides(first = 3): Promise<GuideNode[]> {
       ? { first, catIds: [String(GUIDES_CATEGORY_ID)], catName: null }
       : { first, catIds: null, catName: GUIDES_CATEGORY_SLUG };
 
-  const data = await safeRequest<GuidesResponse, typeof variables>(GUIDES, variables);
+  const data = await safeRequest<GuidesResponse>(GUIDES, variables);
   return data?.posts?.nodes ?? [];
 }
 
 export async function fetchGuideBySlug(slug: string): Promise<GuideNode | null> {
-  const data = await safeRequest<GuideBySlugResponse, { slug: string }>(GUIDE_BY_SLUG, { slug });
+  const data = await safeRequest<GuideBySlugResponse>(GUIDE_BY_SLUG, { slug });
   return data?.post ?? null;
 }
 
 export async function fetchGuideSlugs(): Promise<string[]> {
   const variables =
     GUIDES_CATEGORY_ID > 0
-      ? ({ catIds: [String(GUIDES_CATEGORY_ID)], catName: null } as const)
-      : ({ catIds: null, catName: GUIDES_CATEGORY_SLUG } as const);
+      ? { catIds: [String(GUIDES_CATEGORY_ID)], catName: null }
+      : { catIds: null, catName: GUIDES_CATEGORY_SLUG };
 
-  const data = await safeRequest<GuideSlugsResponse, typeof variables>(GUIDE_SLUGS, variables);
+  const data = await safeRequest<GuideSlugsResponse>(GUIDE_SLUGS, variables);
   const nodes = data?.posts?.nodes ?? [];
   return nodes.map((n) => n.slug).filter(Boolean);
 }
@@ -311,32 +313,23 @@ const LIEFERBETRIEB_SLUGS_POSTS = gql`
 
 export async function fetchLieferbetriebe(first = 24): Promise<LieferbetriebNode[]> {
   try {
-    const data = await safeRequest<LieferbetriebeCPTResponse, { first: number }>(
-      LIEFERBETRIEBE_CPT,
-      { first }
-    );
+    const data = await safeRequest<LieferbetriebeCPTResponse>(LIEFERBETRIEBE_CPT, { first });
     return data?.lieferbetriebs?.nodes ?? [];
   } catch {
-    const data = await safeRequest<LieferbetriebePostResponse, { first: number; category: string }>(
-      LIEFERBETRIEBE_POSTS,
-      { first, category: LIEFERBETRIEBE_CATEGORY_SLUG }
-    );
+    const data = await safeRequest<LieferbetriebePostResponse>(LIEFERBETRIEBE_POSTS, {
+      first,
+      category: LIEFERBETRIEBE_CATEGORY_SLUG,
+    });
     return data?.posts?.nodes ?? [];
   }
 }
 
 export async function fetchLieferbetriebBySlug(slug: string): Promise<LieferbetriebNode | null> {
   try {
-    const data = await safeRequest<LieferbetriebCPTBySlugResponse, { slug: string }>(
-      LIEFERBETRIEB_BY_SLUG_CPT,
-      { slug }
-    );
+    const data = await safeRequest<LieferbetriebCPTBySlugResponse>(LIEFERBETRIEB_BY_SLUG_CPT, { slug });
     return data?.lieferbetrieb ?? null;
   } catch {
-    const data = await safeRequest<{ post?: LieferbetriebNode | null }, { slug: string }>(
-      LIEFERBETRIEB_POST_BY_SLUG,
-      { slug }
-    );
+    const data = await safeRequest<{ post?: LieferbetriebNode | null }>(LIEFERBETRIEB_POST_BY_SLUG, { slug });
     return data?.post ?? null;
   }
 }
@@ -349,7 +342,7 @@ export async function fetchLieferbetriebSlugs(): Promise<string[]> {
     const nodes = data?.lieferbetriebs?.nodes ?? [];
     return nodes.map((n) => n.slug).filter(Boolean);
   } catch {
-    const data = await safeRequest<{ posts?: { nodes?: { slug: string }[] | null } | null }, { category: string }>(
+    const data = await safeRequest<{ posts?: { nodes?: { slug: string }[] | null } | null }>(
       LIEFERBETRIEB_SLUGS_POSTS,
       { category: LIEFERBETRIEBE_CATEGORY_SLUG }
     );
