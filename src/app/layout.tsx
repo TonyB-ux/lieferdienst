@@ -5,8 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import "./globals.css";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   title: "lieferdienst-bio.de",
@@ -18,45 +18,39 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* --- Hintergrund-Layer (Glasmorph + Foto) --- */}
-        <div className="bg-layer" aria-hidden />
-        <div className="bg-photo" aria-hidden />
+        {/* Hintergrund-Layer (Gradient + Foto, vollflächig) */}
+        <div
+          aria-hidden
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: -2,
+            backgroundImage:
+              "radial-gradient(60% 40% at 50% 15%, rgba(0,0,0,0.10), rgba(0,0,0,0)), url('/bg.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
 
-        {/* --- Fixer Header (Glasmorph) --- */}
-        <header className="fixed top-0 left-0 right-0 z-50 glass">
-          <div
-            className="mx-auto flex items-center justify-between"
-            style={{ maxWidth: 1120, padding: "12px 20px" }}
-          >
-            {/* Logo */}
+        {/* Vollbreiter, fixer, gläserner Header */}
+        <header className="site-header header-bar">
+          <div className="container site-nav">
             <Link href="/" className="flex items-center" aria-label="lieferdienst-bio.de">
-              <Image
-                src="/logo.png"
-                alt="lieferdienst-bio.de"
-                width={36}
-                height={36}
-                priority
-                className="block"
-              />
+              <Image src="/logo.png" alt="lieferdienst-bio.de Logo" width={36} height={36} priority />
             </Link>
 
-            {/* Navigation */}
             <nav className="flex items-center gap-3">
-              <Link href="/lieferdienste" className="btn">
-                Liste
-              </Link>
-              <Link href="/guides" className="btn">
-                Guides
-              </Link>
-              <Link href="/kontakt" className="btn-primary">
-                Kontakt
-              </Link>
+              <Link href="/lieferdienste" className="btn">Liste</Link>
+              <Link href="/guides" className="btn">Guides</Link>
+              <Link href="/kontakt" className="btn btn-primary">Kontakt</Link>
             </nav>
           </div>
         </header>
 
-        {/* --- Inhalt: Start unter dem fixen Header --- */}
-        <main className="pt-24">{children}</main>
+        {/* Abstand unter fixem Header */}
+        <main style={{ paddingTop: 88 }}>
+          {children}
+        </main>
       </body>
     </html>
   );
