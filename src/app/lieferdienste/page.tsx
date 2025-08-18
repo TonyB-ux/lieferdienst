@@ -1,104 +1,121 @@
 // src/app/lieferdienste/page.tsx
+import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchLieferbetriebe } from "@/lib/wp";
 
 export const revalidate = 3600;
 
-type Search = { q?: string; land?: string };
+export const metadata: Metadata = {
+  title: "Bio-Lieferdienste – Übersicht",
+  description:
+    "Verifizierte Bio-Lieferdienste in Deutschland, Österreich und der Schweiz – neutraler Überblick, direkte Webshop-Links, Kategorien & Regionen.",
+  alternates: { canonical: "https://lieferdienst-bio.de/lieferdienste" },
+};
 
-export default async function LieferdienstePage({
-  searchParams,
-}: {
-  // In Next 15 sind searchParams Promises:
-  searchParams?: Promise<Search>;
-}) {
-  const sp = (await searchParams) || {};
-  const qNorm = sp.q?.toLowerCase().trim() ?? "";
-  const land = sp.land;
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <article className={`glass card ${className}`}>{children}</article>;
+}
 
-  const items = await fetchLieferbetriebe(60);
+function Chip({ children }: { children: React.ReactNode }) {
+  return <span className="chip">{children}</span>;
+}
 
-  const filtered = items.filter((n) => {
-    const hitQ =
-      !qNorm ||
-      n.title?.toLowerCase().includes(qNorm) ||
-      n.slug?.toLowerCase().includes(qNorm) ||
-      n.acf?.stadt?.toLowerCase().includes(qNorm);
-    const landFromWP = Array.isArray(n.acf?.land) ? n.acf?.land[0] : n.acf?.land;
-    const hitLand = !land || landFromWP === land;
-    return hitQ && hitLand;
-  });
+export default async function Page() {
+  const list = await fetchLieferbetriebe(24);
 
   return (
     <main className="relative min-h-screen">
-      <div className="hero-gradient" aria-hidden />
-      <div className="noise-overlay" aria-hidden />
-
-      <section className="max-w-6xl mx-auto px-5 py-10">
-        <h1 className="text-3xl font-semibold text-white mb-1">Lieferdienste</h1>
-        <p className="text-muted mb-6">
-          {filtered.length} von {items.length} Treffern
+      <section className="container" style={{ paddingTop: 24, paddingBottom: 32 }}>
+        <h1 className="h2">Bio-Lieferservices</h1>
+        <p className="muted" style={{ marginTop: 6 }}>
+          Finde verifizierte Anbieter in deiner Region – mit direktem Webshop-Link.
         </p>
 
-        <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((s) => {
+        <div className="grid-cols" style={{ marginTop: 16 }}>
+          {list.map((s) => {
+            // ---------- Robust: ACF defensiv auslesen (typsicher für Vercel)
+            const acf: any = s.acf ?? undefined;
+
             const img = s.featuredImage?.node?.sourceUrl || "";
-            const stadt = s.acf?.stadt ?? "—";
-            const landBadge = Array.isArray(s.acf?.land) ? s.acf?.land[0] : s.acf?.land;
+            const landRaw = acf?.land;
+            const land =
+              Array.isArray(landRaw) ? String(landRaw?.[0] ?? "") :
+              (typeof landRaw === "string" ? landRaw : "");
+
+            const stadt = typeof acf?.stadt === "string" ? acf.stadt : "";
+            const liefergebiet = typeof acf?.liefergebiet === "string" ? acf.liefergebiet : "";
+
+            const mbw = acf?.mindestbestellwert;   // number | string | undefined
+            const lko = acf?.lieferkosten;         // number | string | undefined
+
+            const badges: string[] = Array.isArray(acf?.badges) ? acf.badges : [];
+            const kategorien: string[] = Array.isArray(acf?.kategorien) ? acf.kategorien : [];
+
+            const webshopUrl =
+              typeof acf?.webshopUrl === "string" && acf.webshopUrl.length > 0
+                ? acf.webshopUrl
+                : undefined;
+            // ---------- /Robust
 
             return (
-              <li key={s.id} className="glass p-5">
+              <Card key={s.id} className="col-span-4 p-0 overflow-hidden">
+                {/* Bild */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {img ? (
-                  <img
-                    src={img}
-                    alt={s.title}
-                    className="w-full h-36 object-cover rounded-lg border border-white/10 mb-3"
-                  />
-                ) : (
-                  <div className="h-36 rounded-lg border border-white/10 mb-3 grid place-items-center text-muted">
-                    Kein Bild
-                  </div>
-                )}
+                <img
+                  src={img || "/next.svg"}
+                  alt={s.featuredImage?.node?.altText || s.title || "Bild"}
+                  className="w-full h-[180px] object-cover"
+                />
 
-                <h3 className="text-white font-semibold">{s.title}</h3>
-                <p className="text-muted text-sm mt-1">
-                  {stadt}
-                  {landBadge ? ` • ${landBadge}` : ""}
-                </p>
+                {/* Inhalt */}
+                <div style={{ padding: 16 }}>
+                  <h2 className="h3" style={{ margin: 0 }}>{s.title}</h2>
+                  <p className="text-muted mt-1">
+                    {stadt || "—"} {land ? `• ${land}` : ""}
+                  </p>
 
-                {s.acf?.badges?.length ? (
-                  <div className="flex flex-wrap gap-1 mt-2 text-[11px]">
-                    {s.acf.badges.map((b) => (
-                      <span
-                        key={b}
-                        className="px-2 py-0.5 rounded-md bg-white/10 border border-white/20"
-                      >
-                        {b}
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
-
-                <div className="flex gap-2 mt-4">
-                  <Link href={`/lieferdienste/${s.slug}`} className="btn-ghost">
-                    Profil
-                  </Link>
-                  {s.acf?.webshopUrl && (
-                    <a
-                      href={s.acf.webshopUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-solid"
-                    >
-                      Zum Webshop
-                    </a>
+                  {liefergebiet && (
+                    <p className="mt-2 text-white/80 text-sm">{liefergebiet}</p>
                   )}
+
+                  {/* Kategorien */}
+                  {kategorien.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1 text-[11px]">
+                      {kategorien.map((c) => (
+                        <Chip key={c}>{c}</Chip>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Badges */}
+                  {badges.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1 text-[11px]">
+                      {badges.map((b) => (
+                        <Chip key={b}>{b}</Chip>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Eckdaten */}
+                  <div className="mt-3 text-sm text-white/80 space-y-1">
+                    <div>MBW: {mbw != null && mbw !== "" ? `€${mbw}` : "—"}</div>
+                    <div>Lieferkosten: {lko != null && lko !== "" ? `€${lko}` : "—"}</div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="mt-4 flex items-center gap-2">
+                    <Link href={`/lieferdienste/${s.slug}`} className="btn">Details</Link>
+                    {webshopUrl && (
+                      <a href={webshopUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+                        Zum Webshop
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </li>
+              </Card>
             );
           })}
-        </ul>
+        </div>
       </section>
     </main>
   );

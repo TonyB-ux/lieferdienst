@@ -72,7 +72,7 @@ type GuidesResponse = { posts?: { nodes?: GuideNode[] | null } | null };
 type GuideBySlugResponse = { post?: GuideNode | null };
 type GuideSlugsResponse = { posts?: { nodes?: { slug: string }[] | null } | null };
 
-/** Lieferbetrieb – ACF Felder (erweiterbar) */
+/** Lieferbetrieb – ACF Felder, exakt auf deine Pages abgestimmt */
 export type LieferbetriebACF = {
   region?: string | null;
   kategorie?: string | null;
@@ -81,6 +81,9 @@ export type LieferbetriebACF = {
   stadt?: string | null;
   mindestbestellwert?: number | string | null;
   lieferkosten?: number | string | null;
+  badges?: string[] | null;
+  kategorien?: string[] | null;
+  webshopUrl?: string | null;
 
   /** Sicherheitsnetz: weitere ACF-Felder brechen den Build nicht */
   [k: string]: unknown;
@@ -191,7 +194,7 @@ export async function fetchGuideSlugs(): Promise<string[]> {
    GraphQL – LIEFERBETRIEBE (CPT + Fallback auf Posts)
    ========================================================================== */
 
-/** Primär: Custom Post Type */
+/** Primär: Custom Post Type „lieferbetrieb“ */
 const LIEFERBETRIEBE_CPT = gql`
   query Lieferbetriebe($first: Int = 24) {
     lieferbetriebs(
@@ -205,7 +208,18 @@ const LIEFERBETRIEBE_CPT = gql`
         excerpt
         content
         featuredImage { node { sourceUrl altText } }
-        acf { region kategorie liefergebiet land stadt mindestbestellwert lieferkosten }
+        acf {
+          region
+          kategorie
+          liefergebiet
+          land
+          stadt
+          mindestbestellwert
+          lieferkosten
+          badges
+          kategorien
+          webshopUrl
+        }
       }
     }
   }
@@ -220,7 +234,18 @@ const LIEFERBETRIEB_BY_SLUG_CPT = gql`
       excerpt
       content
       featuredImage { node { sourceUrl altText } }
-      acf { region kategorie liefergebiet land stadt mindestbestellwert lieferkosten }
+      acf {
+        region
+        kategorie
+        liefergebiet
+        land
+        stadt
+        mindestbestellwert
+        lieferkosten
+        badges
+        kategorien
+        webshopUrl
+      }
     }
   }
 `;
@@ -233,7 +258,7 @@ const LIEFERBETRIEB_SLUGS_CPT = gql`
   }
 `;
 
-/** Fallback: normale Posts mit Kategorie-Slug */
+/** Fallback: normale Posts mit Kategorie-Slug (ohne ACF, damit's überall läuft) */
 const LIEFERBETRIEBE_POSTS = gql`
   query LieferbetriebePosts($first: Int = 24, $category: String!) {
     posts(
