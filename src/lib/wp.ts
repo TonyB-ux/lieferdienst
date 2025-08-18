@@ -81,6 +81,9 @@ export type LieferbetriebACF = {
   stadt?: string | null;
   mindestbestellwert?: number | string | null;
   lieferkosten?: number | string | null;
+
+  /** Sicherheitsnetz: weitere ACF-Felder brechen den Build nicht */
+  [k: string]: unknown;
 };
 
 export type LieferbetriebNode = {
