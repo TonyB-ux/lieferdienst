@@ -660,7 +660,6 @@ p, .muted { font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe
    GLAS-KARTEN: einheitlicher Look (Hero + Cards)
    ========================= */
 .glass, .card, .hero{
-  .glass, .card {
   border-radius: var(--radius);
   background: rgba(var(--glass-bg)/var(--card-alpha));
   border: 1px solid rgba(var(--border)/var(--border-alpha));
@@ -813,5 +812,4 @@ p, .muted { font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe
   -webkit-backdrop-filter: blur(4px) saturate(120%) !important;
   border-color: rgba(255,255,255,0.14) !important;
   box-shadow: 0 4px 16px rgba(0,0,0,.08) !important;
-}
 }
