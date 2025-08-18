@@ -77,7 +77,8 @@ export type LieferbetriebACF = {
   region?: string | null;
   kategorie?: string | null;
   liefergebiet?: string | null;
-  land?: string | string[] | null; // ← wichtig: für deinen Code in [slug]/page.tsx
+  land?: string | string[] | null;  // ← für [slug]/page.tsx
+  stadt?: string | null;            // ← für [slug]/page.tsx
 };
 
 export type LieferbetriebNode = {
@@ -199,7 +200,7 @@ const LIEFERBETRIEBE_CPT = gql`
         excerpt
         content
         featuredImage { node { sourceUrl altText } }
-        acf { region kategorie liefergebiet land }  /* ← land ergänzt */
+        acf { region kategorie liefergebiet land stadt }  /* ← land + stadt */
       }
     }
   }
@@ -214,7 +215,7 @@ const LIEFERBETRIEB_BY_SLUG_CPT = gql`
       excerpt
       content
       featuredImage { node { sourceUrl altText } }
-      acf { region kategorie liefergebiet land }   /* ← land ergänzt */
+      acf { region kategorie liefergebiet land stadt }   /* ← land + stadt */
     }
   }
 `;
