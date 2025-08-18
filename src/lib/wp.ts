@@ -14,15 +14,22 @@ export const wp = new GraphQLClient(endpoint, {
   headers: { "Content-Type": "application/json" },
 });
 
-async function safeRequest<T, V extends Record<string, unknown> | undefined = undefined>(
-  query: string,
-  variables?: V
-): Promise<T> {
+/**
+ * safeRequest – Overloads:
+ * - ohne Variablen
+ * - mit Variablen (V extends object)
+ */
+async function safeRequest<T>(query: string): Promise<T>;
+async function safeRequest<T, V extends object>(query: string, variables: V): Promise<T>;
+async function safeRequest<T, V extends object>(query: string, variables?: V): Promise<T> {
   if (!endpoint) {
     throw new Error("WP_GRAPHQL_ENDPOINT (oder NEXT_PUBLIC_WP_GRAPHQL) ist nicht gesetzt.");
   }
   try {
-    return await wp.request<T, V>(query, variables as V);
+    if (typeof variables !== "undefined") {
+      return await wp.request<T, V>(query, variables);
+    }
+    return await wp.request<T>(query);
   } catch (err: any) {
     const msg =
       err?.response?.errors?.[0]?.message ||
