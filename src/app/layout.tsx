@@ -1,12 +1,21 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, /* neu: */ Playfair_Display }from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
+
+// Serif für Überschriften:
+const playfair = Playfair_Display({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "700", "800"], // 700/800 für H1–H3
+});
+
 
 export const metadata: Metadata = {
   title: "lieferdienst-bio.de",

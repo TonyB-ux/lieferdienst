@@ -14,9 +14,10 @@ export default async function GlassStarter() {
               Finde deinen
               passenden
               Bio-
-              Lieferservice –<br />
-              schnell,
-              einfach, in Deutschland, Östereich und der Schweiz.
+              Lieferservice - 
+              schnell und
+              einfach<br/> in
+               Deutschland, Östereich und der Schweiz.
             </h1>
 
             <p className="muted">
