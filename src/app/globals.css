@@ -725,3 +725,75 @@ p, .muted { font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe
 
 /* CTA-Buttons mit identischen Höhen */
 .btn{ min-height: 40px; }
+
+/* === Guides & Ratgeber – mobiles Layout glätten === */
+
+/* Grid: 1 Spalte (≤560px), 2 Spalten (≥560px), 3 Spalten (≥900px) */
+.guides-grid {
+  display: grid;
+  gap: var(--gap, 16px);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 560px) {
+  .guides-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (min-width: 900px) {
+  .guides-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+
+/* Karte: flex column, Button immer unten, einheitliche Innenabstände */
+.guide-card {
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+}
+@media (min-width: 900px) {
+  .guide-card { padding: 18px; }
+}
+
+/* Bild oben: moderat, nicht dominierend */
+.guide-img {
+  width: 100%;
+  height: 140px;            /* mobil etwas kleiner */
+  object-fit: cover;
+  border-radius: calc(var(--radius, 18px) - 6px);
+  margin-bottom: 12px;
+}
+
+/* Titel: kleiner auf Mobil, max 3 Zeilen (Clamping) */
+.guide-title {
+  font-size: clamp(17px, 4.2vw, 20px);
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+  font-weight: 800;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Excerpt: max 2 Zeilen, dezenter */
+.guide-excerpt {
+  margin-top: 6px;
+  color: rgba(255,255,255,.82);
+  font-size: 14px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Button immer an den Kartenboden */
+.guide-actions { margin-top: auto; }
+
+/* Buttons etwas kompakter auf Mobil */
+@media (max-width: 560px) {
+  .guide-actions .btn,
+  .guide-actions .btn-ghost {
+    padding: 10px 14px;
+    font-size: 14px;
+    min-height: 40px;
+  }
+}
