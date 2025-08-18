@@ -35,8 +35,7 @@ export async function generateMetadata(
   if (!s) return { title: "Lieferdienst nicht gefunden" };
   return {
     title: `${s.title} – Bio-Lieferdienst`,
-    description:
-      `Infos, Kategorien & direkter Webshop-Link für ${s.title}.`,
+    description: `Infos, Kategorien & direkter Webshop-Link für ${s.title}.`,
     alternates: {
       canonical: `https://lieferdienst-bio.de/lieferdienste/${slug}`,
     },
@@ -73,7 +72,31 @@ export default async function Page({
   }
 
   const img = s.featuredImage?.node?.sourceUrl || "";
-  const land = Array.isArray(s.acf?.land) ? s.acf?.land[0] : s.acf?.land;
+
+  // ---------- Robust: ACF-Felder sicher lesen (unabhängig von strikten TS-Typen)
+  const acf: any = s.acf ?? undefined;
+
+  const landRaw = acf?.land;
+  const land =
+    Array.isArray(landRaw) ? String(landRaw?.[0] ?? "") :
+    (typeof landRaw === "string" ? landRaw : "");
+
+  const stadt = typeof acf?.stadt === "string" ? acf.stadt : "";
+
+  const liefergebiet =
+    typeof acf?.liefergebiet === "string" ? acf.liefergebiet : "";
+
+  const mbw  = acf?.mindestbestellwert;   // number | string | undefined
+  const lko  = acf?.lieferkosten;         // number | string | undefined
+
+  const kategorien: string[] = Array.isArray(acf?.kategorien) ? acf.kategorien : [];
+  const badges: string[]     = Array.isArray(acf?.badges) ? acf.badges : [];
+
+  const webshopUrl =
+    typeof acf?.webshopUrl === "string" && acf.webshopUrl.length > 0
+      ? acf.webshopUrl
+      : undefined;
+  // ---------- /Robust
 
   return (
     <main className="relative min-h-screen">
@@ -98,37 +121,37 @@ export default async function Page({
           <GlassCard className="p-6 md:p-8">
             <h1 className="text-3xl font-semibold text-white">{s.title}</h1>
             <p className="text-muted mt-1">
-              {s.acf?.stadt ?? "—"} {land ? `• ${land}` : ""}
+              {stadt || "—"} {land ? `• ${land}` : ""}
             </p>
 
-            {s.acf?.liefergebiet && (
-              <p className="mt-3 text-white/80 text-sm">{s.acf.liefergebiet}</p>
+            {liefergebiet && (
+              <p className="mt-3 text-white/80 text-sm">{liefergebiet}</p>
             )}
 
             <div className="mt-4 text-sm text-white/80 space-y-1">
-              <div>MBW: {s.acf?.mindestbestellwert != null ? `€${s.acf.mindestbestellwert}` : "—"}</div>
-              <div>Lieferkosten: {s.acf?.lieferkosten != null ? `€${s.acf.lieferkosten}` : "—"}</div>
+              <div>MBW: {mbw != null && mbw !== "" ? `€${mbw}` : "—"}</div>
+              <div>Lieferkosten: {lko != null && lko !== "" ? `€${lko}` : "—"}</div>
             </div>
 
-            {s.acf?.kategorien?.length ? (
+            {kategorien.length ? (
               <div className="mt-3 flex flex-wrap gap-1">
-                {s.acf.kategorien.map((c: string) => (
+                {kategorien.map((c) => (
                   <Chip key={c}>{c}</Chip>
                 ))}
               </div>
             ) : null}
 
-            {s.acf?.badges?.length ? (
+            {badges.length ? (
               <div className="mt-2 flex flex-wrap gap-1">
-                {s.acf.badges.map((b: string) => (
+                {badges.map((b) => (
                   <Chip key={b}>{b}</Chip>
                 ))}
               </div>
             ) : null}
 
-            {s.acf?.webshopUrl && (
+            {webshopUrl && (
               <a
-                href={s.acf.webshopUrl}
+                href={webshopUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary inline-block mt-5"
@@ -171,9 +194,9 @@ export default async function Page({
             "@type": "Organization",
             name: s.title,
             url: `https://lieferdienst-bio.de/lieferdienste/${s.slug}`,
-            sameAs: s.acf?.webshopUrl ? [s.acf.webshopUrl] : [],
+            sameAs: webshopUrl ? [webshopUrl] : [],
             image: s.featuredImage?.node?.sourceUrl || undefined,
-            address: s.acf?.stadt ? { "@type": "PostalAddress", addressLocality: s.acf.stadt } : undefined
+            address: stadt ? { "@type": "PostalAddress", addressLocality: stadt } : undefined
           }),
         }}
       />
