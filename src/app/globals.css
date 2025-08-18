@@ -589,4 +589,139 @@ p, .muted { font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe
     background-position: center;
     filter: saturate(108%) contrast(104%);
   }
-  
+  /* =========================
+   DESIGN TOKENS (zentral)
+   ========================= */
+:root{
+  /* Layout */
+  --container-max: 1200px;
+  --gap: 18px;
+  --radius: 18px;
+
+  /* Glas-Look */
+  --blur: 6px;
+  --sat: 140%;
+  --hdr-alpha: 0.38;  /* Header-Glas */
+  --card-alpha: 0.30; /* Karten-Glas */
+  --border-alpha: 0.16;
+  --shadow: 0 6px 24px rgba(0,0,0,.12);
+
+  /* Farben (neutral, nicht zu grün/zu grau) */
+  --glass-bg: 255 255 255; /* RGB – wir regeln Transparenz separat */
+  --border: 255 255 255;
+}
+
+@media (max-width: 640px){
+  :root{
+    --gap: 14px;
+    --radius: 16px;
+    --blur: 5px;
+  }
+}
+
+/* Container-Atmung konsistent */
+.container{
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+/* =========================
+   HEADER: weniger milchig, künstlerisch ruhig
+   ========================= */
+.site-header{
+  position: fixed; inset: 0 0 auto 0;
+  height: var(--header-h, 88px);
+  z-index: 50;
+  display: flex; align-items: center;
+
+  /* Glas-Look */
+  background: rgba(var(--glass-bg)/var(--hdr-alpha));
+  backdrop-filter: blur(var(--blur)) saturate(var(--sat));
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat));
+  border-bottom: 1px solid rgba(var(--border)/var(--border-alpha));
+  box-shadow: 0 4px 16px rgba(0,0,0,.06);
+}
+
+/* Buttons im Header kleiner & ruhiger */
+.btn-sm{
+  font-size: 14px; line-height: 1.15;
+  padding: 8px 14px;
+  border-radius: 14px;
+}
+
+/* Abstände unter Header verlässlich */
+.page-main{ padding-top: var(--header-h, 88px); }
+@media (max-width: 640px){
+  :root{ --header-h: 64px; }
+}
+
+/* =========================
+   GLAS-KARTEN: einheitlicher Look (Hero + Cards)
+   ========================= */
+.glass, .card, .hero{
+  border-radius: var(--radius);
+  background: rgba(var(--glass-bg)/var(--card-alpha));
+  border: 1px solid rgba(var(--border)/var(--border-alpha));
+  backdrop-filter: blur(var(--blur)) saturate(var(--sat));
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat));
+  box-shadow: var(--shadow);
+
+  /* iOS: Flackern vermeiden */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Einheitliche Innenabstände */
+.card{ padding: 18px; }
+.hero{ padding: clamp(18px, 3vw, 28px); }
+
+/* =========================
+   GRID: konsistente Abstände
+   ========================= */
+.grid-cols{ display: grid; gap: var(--gap); }
+@media (min-width: 900px){
+  .grid-cols{ grid-template-columns: repeat(12, minmax(0,1fr)); }
+  .col-span-3{ grid-column: span 3 / span 3; }
+  .col-span-4{ grid-column: span 4 / span 4; }
+  .col-span-6{ grid-column: span 6 / span 6; }
+  .col-span-8{ grid-column: span 8 / span 8; }
+}
+@media (max-width: 899px){
+  .col-span-3, .col-span-4, .col-span-6, .col-span-8{ grid-column: 1/-1; }
+}
+
+/* Guides-Grid: sauberer Rhythmus */
+.guides-grid{
+  display:grid; gap: var(--gap);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px){
+  .guides-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+
+/* Guide-Bild */
+.guide-img{
+  width: 100%; height: 160px; object-fit: cover;
+  border-radius: calc(var(--radius) - 6px);
+}
+
+/* =========================
+   TYPO: moderner, ruhiger
+   ========================= */
+.h1{
+  font-size: clamp(30px, 6vw, 48px);
+  line-height: 1.05; letter-spacing: -.01em;
+}
+.h2{ font-size: clamp(20px, 2.4vw, 28px); line-height: 1.15; }
+
+/* Pills/Chips dezenter, nicht dominant */
+.pill, .chip{
+  font-size: 12px; padding: 6px 10px; border-radius: 999px;
+  background: rgba(255 255 255 / .55);
+  border: 1px solid rgba(255 255 255 / .6);
+}
+
+/* CTA-Buttons mit identischen Höhen */
+.btn{ min-height: 40px; }
