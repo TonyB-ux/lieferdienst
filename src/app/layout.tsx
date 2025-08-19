@@ -1,65 +1,67 @@
 // src/app/layout.tsx
+import "./globals.css";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, /* neu: */ Playfair_Display }from "next/font/google";
+import { Geist as FontGeist, Geist_Mono as FontGeistMono, Playfair_Display } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
-import "./globals.css";
+import NavLinks from "@/components/NavLinks";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
+const geistSans = FontGeist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
 
-// Serif für Überschriften:
+const geistMono = FontGeistMono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 const playfair = Playfair_Display({
   variable: "--font-serif",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "700", "800"], // 700/800 für H1–H3
+  weight: ["400", "700", "800"],
 });
-
 
 export const metadata: Metadata = {
   title: "lieferdienst-bio.de",
   description:
     "Bio-Lieferservices in DE/AT/CH – neutraler Überblick, direkte Webshop-Links, Kategorien & Regionen.",
+  metadataBase: new URL("https://lieferdienst-bio.de"),
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "lieferdienst-bio.de",
+    description: "Finde den passenden Bio-Lieferservice – schnell, neutral, DACH-weit.",
+    url: "https://lieferdienst-bio.de",
+    siteName: "lieferdienst-bio.de",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* Hintergrund-Layer (Gradient + Foto, vollflächig) */}
-        <div
-          aria-hidden
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: -2,
-            backgroundImage:
-              "radial-gradient(60% 40% at 50% 15%, rgba(0,0,0,0.10), rgba(0,0,0,0)), url('/bg.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
+      <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}>
+        {/* Hintergrund */}
+        <div className="bg-photo" aria-hidden />
+        <div className="bg-layer" aria-hidden />
 
-        {/* Vollbreiter, fixer, gläserner Header */}
-        <header className="site-header header-bar">
-          <div className="container site-nav">
-            <Link href="/" className="flex items-center" aria-label="lieferdienst-bio.de">
-              <Image src="/logo.png" alt="lieferdienst-bio.de Logo" width={36} height={36} priority />
+        {/* Fixer Header */}
+        <header className="site-header">
+          <div className="container site-bar">
+            {/* Logo links – klickbar */}
+            <Link href="/" className="brand" aria-label="lieferdienst-bio.de">
+              <Image src="/logo.png" alt="lieferdienst-bio.de Logo" width={32} height={32} priority />
             </Link>
 
-            <nav className="flex items-center gap-3">
-              <Link href="/lieferdienste" className="btn">Liste</Link>
-              <Link href="/guides" className="btn">Guides</Link>
-              <Link href="/kontakt" className="btn btn-primary">Kontakt</Link>
-            </nav>
+            {/* Menü rechts – Desktop + mobile CTA-Bar via Komponente */}
+            <NavLinks />
           </div>
         </header>
 
-        {/* Abstand unter fixem Header */}
-        <main style={{ paddingTop: 88 }}>
-          {children}
-        </main>
+        {/* Inhalt unter Header */}
+        <main className="page-main">{children}</main>
       </body>
     </html>
   );
