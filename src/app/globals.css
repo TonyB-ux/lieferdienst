@@ -730,7 +730,7 @@ p, .muted { font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe
 
 /* ==== Farb-Update für Karten & Guides ==== */
 :root{
-  --brand-ink: #002f03;
+  --brand-ink: #ffffff;
 }
 
 /* Card-Überschriften (z. B. "Schnellstart", "Regionen & Städte" ...) */
