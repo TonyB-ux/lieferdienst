@@ -1,17 +1,17 @@
 // src/app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
-import { Geist as FontGeist, Geist_Mono as FontGeistMono, Playfair_Display } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
 
-const geistSans = FontGeist({
+const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-const geistMono = FontGeistMono({
+const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de">
       <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}>
-        {/* Hintergrund (klar, ohne Overlay) */}
+        {/* Hintergrund (klar, ohne Opacity) */}
         <div className="bg-photo" aria-hidden />
         <div className="bg-layer" aria-hidden />
 
@@ -54,7 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Image src="/logo.png" alt="lieferdienst-bio.de Logo" width={32} height={32} priority />
             </Link>
 
-            {/* Desktop-Navigation (nur ≥900px sichtbar) */}
+            {/* Desktop-Navigation */}
             <nav className="nav-desktop" aria-label="Hauptnavigation">
               <Link href="/lieferdienste" className="btn btn-sm">Liste</Link>
               <Link href="/guides" className="btn btn-sm">Guides</Link>
@@ -62,7 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </nav>
           </div>
 
-          {/* Zeile 2: Mobile CTA-Bar (nur <900px sichtbar) */}
+          {/* Zeile 2: Mobile-CTA (nur mobil sichtbar) */}
           <nav className="mobile-cta-bar" aria-label="Schnellzugriff">
             <Link href="/lieferdienste" className="btn btn-cta">Liste</Link>
             <Link href="/guides" className="btn btn-cta">Guides</Link>
@@ -70,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
         </header>
 
-        {/* Inhalt unter dem Header */}
+        {/* Inhalt unter Header */}
         <main className="page-main">{children}</main>
       </body>
     </html>
