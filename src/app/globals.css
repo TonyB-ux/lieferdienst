@@ -725,3 +725,27 @@ p, .muted { font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe
 
 /* CTA-Buttons mit identischen Höhen */
 .btn{ min-height: 40px; }
+
+
+
+/* ==== Farb-Update für Karten & Guides ==== */
+:root{
+  --brand-ink: #002f03;
+}
+
+/* Card-Überschriften (z. B. "Schnellstart", "Regionen & Städte" ...) */
+.card-title,
+.card .card-title {
+  color: var(--brand-ink);
+}
+
+/* Card-Fließtext (deine Klasse .card-text) */
+.card-text,
+.card .card-text {
+  color: var(--brand-ink);
+}
+
+/* Guide-Titel in Guides & Ratgeber */
+.guide-title {
+  color: var(--brand-ink);
+}
