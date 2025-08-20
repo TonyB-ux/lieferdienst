@@ -107,22 +107,27 @@
     pointer-events: none;
   }
   
-  /* =========================
-     Header (Logo links, Menü rechts)
-     ========================= */
-  .site-header{
+/* =========================
+   Header (clean) + Navigation
+   ========================= */
+
+/* Header: KEIN globales Glass – nur eine dezente, transparente Fläche,
+   die den Inhalt darunter nicht „milchig“ macht. */
+   .site-header{
     position: fixed;
     inset: 0 0 auto 0;
     z-index: 50;
   
-    background: rgba(var(--glass-bg)/var(--hdr-alpha));
-    backdrop-filter: blur(var(--blur)) saturate(var(--sat));
-    -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat));
-    border-bottom: 1px solid rgba(var(--border)/var(--border-alpha));
-    box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    /* transparent; optional sehr leichte Top-Fade, fast unsichtbar */
+    background: linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0));
+    border-bottom: 0;
+    box-shadow: none;
+  
+    /* keine backdrop-filter, damit der BG nicht milchig wird */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
   
-  /* Obere Zeile: Brand links + Desktop-Menü rechts */
   .site-bar{
     height: 64px;
     display: flex;
@@ -131,7 +136,6 @@
     gap: 10px;
   }
   
-  /* Logo */
   .brand{
     display: inline-flex;
     align-items: center;
@@ -139,17 +143,19 @@
     text-decoration: none;
   }
   
-  /* Desktop-Menü (nur ≥900px) */
+  /* Desktop-Menü (nur ≥900px sichtbar) */
   .nav-desktop{
     display: none;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
   }
   @media (min-width: 900px){
     .nav-desktop{ display: flex; }
   }
   
-  /* Textlinks: Glas NUR beim Hover/Focus */
+  /* Textlinks: default = PLAIN TEXT (kein Glass),
+     Hover = leichter Glass-Hover,
+     Active (aktueller Pfad) = Glass (filled). */
   .nav-link{
     display: inline-flex;
     align-items: center;
@@ -157,32 +163,46 @@
     height: 36px;
     padding: 0 12px;
     border-radius: 12px;
+  
     font-weight: 700;
     color: #0b0f0c;
     text-decoration: none;
-    border: 1px solid transparent;
+  
     background: transparent;
-    transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, transform .08s ease;
+    border: 1px solid transparent;
+    box-shadow: none;
+  
+    transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, transform .08s ease, color .12s ease;
   }
+  
+  /* Hover = nur Hauch von Glass */
   .nav-link:hover,
   .nav-link:focus-visible{
-    background: rgba(var(--glass-bg)/0.55);
+    background: rgba(255 255 255 / .28);
     backdrop-filter: blur(5px) saturate(130%);
     -webkit-backdrop-filter: blur(5px) saturate(130%);
-    border-color: rgba(var(--border)/0.22);
-    box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    border-color: rgba(255 255 255 / .30);
+  }
+  
+  /* Active = „filled glassy“ (nur der aktive Link wirkt wie ein Glass-Button) */
+  .nav-link[aria-current="page"],
+  .nav-link[data-active="true"]{
+    background: rgba(255 255 255 / .62);
+    backdrop-filter: blur(6px) saturate(135%);
+    -webkit-backdrop-filter: blur(6px) saturate(135%);
+    border: 1px solid rgba(255 255 255 / .26);
+    box-shadow: 0 6px 16px rgba(0,0,0,.08);
     transform: translateY(-1px);
   }
-  .nav-link:active{ transform: translateY(0); }
   
-  /* Kontakt: Primary, „filled glassy“ */
+  /* Kontakt bleibt Primary-Button – kann deinen Brand-Grün nutzen */
   .nav-cta{
     height: 38px;
     padding: 0 14px;
     border-radius: 14px;
   }
   
-  /* Mobile CTA-Bar (nur <900px sichtbar) */
+  /* Mobile CTA-Bar bleibt; kleine aktive Hervorhebung */
   .mobile-cta-bar{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -191,6 +211,21 @@
   }
   @media (min-width: 900px){
     .mobile-cta-bar{ display: none; }
+  }
+  .mobile-cta-bar .btn[aria-current="page"],
+  .mobile-cta-bar .btn[data-active="true"]{
+    box-shadow: 0 6px 16px rgba(0,0,0,.10);
+    border-color: rgba(0,0,0,.10);
+    transform: translateY(-1px);
+  }
+  
+  /* Fokus sichtbar (A11y) */
+  .nav-link:focus-visible,
+  .nav-cta:focus-visible,
+  .mobile-cta-bar .btn:focus-visible{
+    outline: 2px solid rgba(16,58,46,.55);
+    outline-offset: 2px;
+    border-radius: 12px;
   }
   
   /* =========================
@@ -382,4 +417,72 @@
   box-shadow: 0 6px 16px rgba(0,0,0,.10);
   border-color: rgba(0,0,0,.10);
   transform: translateY(-1px);
+}
+
+/* Logo-Badge: sorgt dafür, dass ein weißes Logo auf jedem BG sichtbar ist */
+.brand-logo{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:70px; height:70px; border-radius:10px;
+  background: rgba(67, 104, 70, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.brand-logo img{ display:block; }
+
+/* Wenn du die Badge später nicht willst: einfach background + (webkit)backdrop-filter entfernen */
+
+
+/* Hero – klare Breite, sauberes Spacing */
+.hero{
+  padding-block: 16px 8px;
+}
+.hero-inner{
+  max-width: 980px;     /* angenehme Lesebreite am Desktop */
+  width: 100%;
+}
+
+/* Typo im Hero */
+.hero .h1{
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px 0;
+}
+.hero .muted{
+  max-width: 62ch;
+}
+
+/* Mobile Optimierung */
+@media (max-width: 899px){
+  .hero{ padding-block: 12px 4px; }
+  .hero .h1{ font-size: clamp(28px, 7vw, 38px); }
+}
+
+
+/* ===== Hero – angenehme Breite & sauberes Scaling ===== */
+.hero{
+  padding-block: 16px 8px; /* ober/unter Abstand innerhalb der Spalte */
+}
+
+/* Begrenzt NUR den Textblock im Hero, nicht die Grid-Spalte */
+.hero-inner{
+  max-width: 980px;   /* Desktop-Lesebreite */
+  width: 100%;
+}
+
+/* Typografie-Feinschliff im Hero */
+.hero .h1{
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px 0;
+}
+.hero .muted{
+  max-width: 62ch;  /* Fließtext nicht zu lang werden lassen */
+}
+
+/* Mobil etwas enger/flexibler */
+@media (max-width: 899px){
+  .hero{ padding-block: 12px 4px; }
+  .hero .h1{ font-size: clamp(28px, 7vw, 38px); }
 }

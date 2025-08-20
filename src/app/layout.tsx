@@ -52,7 +52,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="container site-bar">
             {/* Logo links – klickbar */}
             <Link href="/" className="brand" aria-label="lieferdienst-bio.de">
-              <Image src="/logo.png" alt="lieferdienst-bio.de Logo" width={32} height={32} priority />
+            <span className="brand-logo">
+              <Image src="/logo.png" alt="lieferdienst-bio.de Logo" width={80} height={55} priority />
+              </span>
             </Link>
 
             {/* Menü rechts – Desktop + mobile CTA-Bar via Komponente */}
