@@ -601,6 +601,78 @@ html {
 }
 .brand-logo img{ display:block; }
 
+/* ========= Single Nav: nie doppelt, nie Umbruch ========= */
+.main-nav{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+
+  /* niemals in die 2. Zeile rutschen */
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+/* Basis für Links */
+.nav-link{
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  line-height: 1;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0b0f0c; /* oder #002f03 */
+  text-decoration: none;
+  transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, color .12s ease;
+}
+
+/* Hover: leichter Glass */
+.nav-link:hover,
+.nav-link:focus-visible{
+  background: rgba(255 255 255 / .28);
+  backdrop-filter: blur(5px) saturate(130%);
+  -webkit-backdrop-filter: blur(5px) saturate(130%);
+  border-color: rgba(255 255 255 / .30);
+}
+
+/* Aktiv: filled glassy */
+.nav-link[aria-current="page"],
+.nav-link[data-active="true"]{
+  background: rgba(255 255 255 / .62);
+  backdrop-filter: blur(6px) saturate(135%);
+  -webkit-backdrop-filter: blur(6px) saturate(135%);
+  border-color: rgba(255 255 255 / .26);
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+}
+
+/* Kontakt-CTA stabil */
+.nav-cta{
+  box-sizing: border-box;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 14px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+/* --- Responsive Tuning: bleibt EINZEILIG, wird nur kompakter --- */
+@media (max-width: 420px){
+  .main-nav{ gap: 8px; }
+  .nav-link{ font-size: .95rem; padding: 0 10px; }
+  .nav-cta{ font-size: .95rem; padding: 0 12px; }
+}
+@media (max-width: 360px){
+  .main-nav{ gap: 6px; }
+  .nav-link{ font-size: .90rem; padding: 0 8px; }
+  .nav-cta{ font-size: .90rem; padding: 0 10px; }
+}
+
+/* Falls irgendwo noch alte Regeln existieren – deaktivieren */
+.nav-desktop, .mobile-cta-bar{ display: none !important; }
+
+
 
 .bg-photo {
   background: linear-gradient(135deg, #802323 0%, #e0f2f1 50%, #64b367 100%);

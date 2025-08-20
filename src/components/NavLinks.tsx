@@ -12,67 +12,34 @@ function isActive(pathname: string, href: string) {
 export default function NavLinks() {
   const pathname = usePathname();
 
-  const listActive    = isActive(pathname, "/lieferdienste");
-  const guidesActive  = isActive(pathname, "/guides");
-  const kontaktActive = isActive(pathname, "/kontakt");
-
   return (
-    <>
-      {/* Desktop-Navigation */}
-      <nav className="nav-desktop" aria-label="Hauptnavigation">
-        <Link
-          href="/lieferdienste"
-          className="nav-link"
-          aria-current={listActive ? "page" : undefined}
-          data-active={listActive ? "true" : "false"}
-        >
-          Liste
-        </Link>
-        <Link
-          href="/guides"
-          className="nav-link"
-          aria-current={guidesActive ? "page" : undefined}
-          data-active={guidesActive ? "true" : "false"}
-        >
-          Guides
-        </Link>
-        <Link
-          href="/kontakt"
-          className="btn btn-primary nav-cta"
-          aria-current={kontaktActive ? "page" : undefined}
-          data-active={kontaktActive ? "true" : "false"}
-        >
-          Kontakt
-        </Link>
-      </nav>
+    <nav className="main-nav" aria-label="Hauptnavigation">
+      <Link
+        href="/lieferdienste"
+        className="nav-link"
+        aria-current={isActive(pathname, "/lieferdienste") ? "page" : undefined}
+        data-active={isActive(pathname, "/lieferdienste") ? "true" : "false"}
+      >
+        Liste
+      </Link>
 
-      {/* Mobile CTA-Bar (bleibt wie gehabt; aktiver Button wird leicht gehighlightet) */}
-      <nav className="mobile-cta-bar" aria-label="Schnellzugriff">
-        <Link
-          href="/lieferdienste"
-          className="btn btn-cta"
-          aria-current={listActive ? "page" : undefined}
-          data-active={listActive ? "true" : "false"}
-        >
-          Liste
-        </Link>
-        <Link
-          href="/guides"
-          className="btn btn-cta"
-          aria-current={guidesActive ? "page" : undefined}
-          data-active={guidesActive ? "true" : "false"}
-        >
-          Guides
-        </Link>
-        <Link
-          href="/kontakt"
-          className="btn btn-cta btn-primary"
-          aria-current={kontaktActive ? "page" : undefined}
-          data-active={kontaktActive ? "true" : "false"}
-        >
-          Kontakt
-        </Link>
-      </nav>
-    </>
+      <Link
+        href="/guides"
+        className="nav-link"
+        aria-current={isActive(pathname, "/guides") ? "page" : undefined}
+        data-active={isActive(pathname, "/guides") ? "true" : "false"}
+      >
+        Guides
+      </Link>
+
+      <Link
+        href="/kontakt"
+        className="nav-cta btn btn-primary"
+        aria-current={isActive(pathname, "/kontakt") ? "page" : undefined}
+        data-active={isActive(pathname, "/kontakt") ? "true" : "false"}
+      >
+        Kontakt
+      </Link>
+    </nav>
   );
 }
