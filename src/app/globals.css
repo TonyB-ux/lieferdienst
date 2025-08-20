@@ -749,6 +749,16 @@ input, select, textarea {
   margin-bottom: 7rem; /* Abstand zum nächsten Block */
 }
 
+/* ---- Fix: explizite Font-Size für Headings in sectioning elements ---- */
+section h1, article h1, nav h1, aside h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); }
+section h2, article h2, nav h2, aside h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+section h3, article h3, nav h3, aside h3 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+
+/* Optional, wenn du einheitlich auf Klassen setzt (deckt ebenfalls alles ab) */
+.h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); }
+.h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+.h3 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+
 
 
 
@@ -761,5 +771,9 @@ input, select, textarea {
   background-position: center;
   */
 }
+
+
+
+
 
 
