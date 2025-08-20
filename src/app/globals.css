@@ -51,7 +51,7 @@
     -moz-osx-font-smoothing: grayscale;
   
     /* Fließtext: Geist */
-    font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font-poppins), system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
     font-size: 20px;
     line-height: 1.6;
   }
@@ -59,7 +59,7 @@
   /* Headings: Playfair */
   h1, h2, h3, h4,
   .h1, .h2, .h3, .h4{
-    font-family: var(--font-serif), Georgia, "Times New Roman", serif;
+    font-family: var(--font-poppins), Georgia, "Times New Roman", serif;
     color: #e5ede7;
     font-feature-settings: "liga" 1, "kern" 1;
   }
