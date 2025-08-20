@@ -728,6 +728,28 @@ input, select, textarea {
 .font-ui { font-family: var(--font-sans) !important; }
 
 
+/* Abstand oberhalb der CTA-Buttons */
+.row-cta {
+  margin-top: 1.40rem; /* ~20px */
+}
+
+
+/* Abstand & Layout für Button-Reihe */
+.row-cta {
+  margin-top: 1.25rem;   /* Platz oberhalb der Buttons */
+  display: flex;
+  gap: 0.85rem;          /* Abstand zwischen Buttons */
+  flex-wrap: wrap;       /* Buttons umbrechen bei wenig Platz */
+}
+
+
+
+/* Hero Section Abstand nach unten zum nächsten Bereich */
+.hero {
+  margin-bottom: 7rem; /* Abstand zum nächsten Block */
+}
+
+
 
 
 
@@ -739,3 +761,5 @@ input, select, textarea {
   background-position: center;
   */
 }
+
+
