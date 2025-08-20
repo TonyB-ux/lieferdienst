@@ -672,6 +672,60 @@ html {
 /* Falls irgendwo noch alte Regeln existieren – deaktivieren */
 .nav-desktop, .mobile-cta-bar{ display: none !important; }
 
+/* --- UI-Typografie (Buttons, Pills, Nav) --------------------------- */
+/* Stelle sicher, dass Poppins verfügbar ist (via --font-poppins)     */
+/* und überschreibe component-spezifische Familien konsistent.        */
+
+:root {
+  /* Falls noch nicht geschehen: zentrale Sans-Variable */
+  --font-sans: var(--font-poppins), system-ui, -apple-system, "Segoe UI",
+               Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+/* Globale „UI-Basis“ – alles, was klickbar ist */
+button, .btn, .pill, .badge, .chip, .nav-link, a.btn, input[type="submit"] {
+  font-family: var(--font-sans);
+  font-weight: 600;              /* knackiges UI-Gewicht */
+  letter-spacing: 0.01em;        /* minimal mehr Luft für Lesbarkeit */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Pillen (deine Tags/Chips) */
+.pill, .badge, .chip {
+  font-weight: 500;              /* etwas leichter als Buttons */
+  line-height: 1;                /* kompakt */
+}
+
+/* Buttons nach Varianten – falls vorhanden */
+.btn,
+.btn-ghost,
+.btn-primary,
+.btn-outline,
+.btn-link {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+/* Navigation oben rechts */
+.site-header .site-bar a,
+.nav-link {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+/* Kacheltitel/Meta in Cards (optional anpassen) */
+.card-title { font-family: var(--font-sans); font-weight: 700; }
+.card-text  { font-family: var(--font-sans); font-weight: 400; }
+
+/* Form Controls (einheitlich) */
+input, select, textarea {
+  font-family: var(--font-sans);
+  font-weight: 400;
+}
+
+/* Utility: überall schnell Poppins erzwingen */
+.font-ui { font-family: var(--font-sans) !important; }
 
 
 
