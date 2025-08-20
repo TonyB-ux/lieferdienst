@@ -164,7 +164,7 @@
     padding: 0 12px;
     border-radius: 12px;
   
-    font-weight: 700;
+    font-weight: 800;
     color: #0b0f0c;
     text-decoration: none;
   
@@ -423,7 +423,7 @@
 .brand-logo{
   display:inline-flex; align-items:center; justify-content:center;
   width:70px; height:70px; border-radius:10px;
-  background: rgba(67, 104, 70, 0.6);
+  background: rgba(100, 119, 101, 0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
@@ -512,3 +512,101 @@ h3{ font-size: var(--fs-h3); line-height: 1.18; }
 .h1{ font-size: var(--fs-h1); line-height: var(--lh-h); letter-spacing: -0.01em; }
 .h2{ font-size: var(--fs-h2); line-height: var(--lh-h); }
 .h3{ font-size: var(--fs-h3); line-height: 1.18; }
+
+
+
+/* 1) Verhindert horizontales „Springen“, wenn der Scrollbalken erscheint/verschwindet */
+/* Verhindert Springen – aber nur rechts Platz reservieren */
+html {
+  overflow-y: scroll;     /* erzwingt den Scroll-Gutter */
+  scrollbar-gutter: stable;
+}
+
+/* 2) Header-Geometrie hart fixieren, damit nichts „nachfedert“ */
+.site-header { 
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+}
+.site-bar {
+  height: 64px;                 /* fixe Höhe */
+  display: flex;
+  align-items: center;          /* vertikal sauber zentriert */
+  justify-content: space-between;
+  gap: 10px;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  height: 64px;                 /* gleiche Höhe wie .site-bar */
+}
+
+/* 3) Nav-Links: immer gleiche Box-Höhe/Breite – keine Bewegungen */
+.nav-desktop { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
+}
+
+.nav-link {
+  box-sizing: border-box;       /* Border zählt zur Höhe/Breite */
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;/* gleiche Borderbreite in allen Zuständen */
+  line-height: 1;               /* kein Baseline-Geschubse */
+  font-size: 1rem;              /* hier Farbe/Größe anpassen */
+  font-weight: 700;
+  color: #0b0f0c;               /* oder #002f03, wenn du willst */
+  text-decoration: none;
+  transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, color .12s ease;
+}
+
+/* Hover: leichter Glass – OHNE Größenänderung */
+.nav-link:hover,
+.nav-link:focus-visible {
+  background: rgba(255 255 255 / .28);
+  backdrop-filter: blur(5px) saturate(130%);
+  -webkit-backdrop-filter: blur(5px) saturate(130%);
+  border-color: rgba(255 255 255 / .30);
+}
+
+/* Aktiv: „filled glassy“, aber OHNE translateY */
+.nav-link[aria-current="page"],
+.nav-link[data-active="true"] {
+  background: rgba(255 255 255 / .62);
+  backdrop-filter: blur(6px) saturate(135%);
+  -webkit-backdrop-filter: blur(6px) saturate(135%);
+  border-color: rgba(255 255 255 / .26);
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  transform: none;              /* <— wichtig: keine vertikale Verschiebung */
+}
+
+/* Primary-CTA im Header (Kontakt) – ebenfalls stabil */
+.nav-cta {
+  box-sizing: border-box;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 14px;
+  line-height: 1;
+}
+
+/* Optional: Logo-Badge, falls das Logo auf hellem BG „verschwindet“ */
+.brand-logo{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:10px;
+  background: rgba(255,255,255,.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.brand-logo img{ display:block; }
+
+
+.bg-photo {
+  background: linear-gradient(135deg, #802323 0%, #e0f2f1 50%, #64b367 100%);
+  /* später wieder:
+  background-image: url('/dein-bild.jpg');
+  background-size: cover;
+  background-position: center;
+  */
+}
