@@ -38,8 +38,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Image
                 src="/logo.png"
                 alt="lieferdienst-bio.de Logo"
-                width={32}
-                height={32}
+                width={65}
+                height={39}
                 priority
               />
             </Link>

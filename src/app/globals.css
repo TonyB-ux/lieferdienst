@@ -422,7 +422,7 @@
 /* Logo-Badge: sorgt dafür, dass ein weißes Logo auf jedem BG sichtbar ist */
 .brand-logo{
   display:inline-flex; align-items:center; justify-content:center;
-  width:70px; height:70px; border-radius:10px;
+  width:80px; height:70px; border-radius:10px;
   background: rgba(100, 119, 101, 0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -594,7 +594,7 @@ html {
 /* Optional: Logo-Badge, falls das Logo auf hellem BG „verschwindet“ */
 .brand-logo{
   display:inline-flex; align-items:center; justify-content:center;
-  width:40px; height:40px; border-radius:10px;
+  width:80px; height:40px; border-radius:10px;
   background: rgba(255,255,255,.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
