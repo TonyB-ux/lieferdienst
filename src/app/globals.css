@@ -60,7 +60,7 @@
   h1, h2, h3, h4,
   .h1, .h2, .h3, .h4{
     font-family: var(--font-serif), Georgia, "Times New Roman", serif;
-    color: #0b0f0c;
+    color: #e5ede7;
     font-feature-settings: "liga" 1, "kern" 1;
   }
   
@@ -486,3 +486,29 @@
   .hero{ padding-block: 12px 4px; }
   .hero .h1{ font-size: clamp(28px, 7vw, 38px); }
 }
+
+
+/* ===== Headings: explizite Größen (Deprecation-Fix) ===== */
+:root{
+  /* Skaliert responsiv und ist leicht zu tweaken */
+  --fs-h1: clamp(2.25rem, 4.2vw, 3.5rem);   /* ~36px – 56px */
+  --fs-h2: clamp(1.5rem,  2.6vw, 2.25rem);  /* ~24px – 36px */
+  --fs-h3: clamp(1.25rem, 1.8vw, 1.5rem);   /* ~20px – 24px */
+  --lh-h: 1.12;
+}
+
+/* Globale Defaults für Headings (egal wo sie stehen) */
+h1{ font-size: var(--fs-h1); line-height: var(--lh-h); }
+h2{ font-size: var(--fs-h2); line-height: var(--lh-h); }
+h3{ font-size: var(--fs-h3); line-height: 1.18; }
+
+/* Spezifisch: Headings innerhalb section/article/aside/nav explizit absichern */
+:where(section, article, aside, nav) h1{ font-size: var(--fs-h1); }
+:where(section, article, aside, nav) h2{ font-size: var(--fs-h2); }
+:where(section, article, aside, nav) h3{ font-size: var(--fs-h3); }
+
+/* Wenn du bereits .h1/.h2/.h3 Klassen nutzt, bleiben sie gültig.
+   Optional: kleine Veredelung für die "Design-Headings" */
+.h1{ font-size: var(--fs-h1); line-height: var(--lh-h); letter-spacing: -0.01em; }
+.h2{ font-size: var(--fs-h2); line-height: var(--lh-h); }
+.h3{ font-size: var(--fs-h3); line-height: 1.18; }
