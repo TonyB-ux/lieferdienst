@@ -674,8 +674,11 @@ html {
 
 
 
+
+
+
 .bg-photo {
-  background: linear-gradient(135deg, #802323 0%, #e0f2f1 50%, #64b367 100%);
+  background: linear-gradient(135deg, #257083 0%, #e0f2f1 50%, #64b367 100%);
   /* später wieder:
   background-image: url('/dein-bild.jpg');
   background-size: cover;

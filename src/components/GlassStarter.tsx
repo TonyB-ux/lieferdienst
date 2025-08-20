@@ -34,8 +34,8 @@ export default async function GlassStarter() {
               </div>
 
               <div className="row-cta">
-                <Link href="/lieferdienste" className="btn btn-primary">Lieferdienste ansehen</Link>
-                <Link href="/guides" className="btn">Alle Guides</Link>
+                <Link href="/lieferdienste" className="btn btn-primary">Lieferdienste entdecken</Link>
+                <Link href="/guides" className="btn">Alle Beiträge</Link>
               </div>
             </div>
           </section>

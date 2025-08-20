@@ -1,29 +1,12 @@
 // src/app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
-import { Geist as FontGeist, Geist_Mono as FontGeistMono, Playfair_Display } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
 import NavLinks from "@/components/NavLinks";
 
-const geistSans = FontGeist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = FontGeistMono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "700", "800"],
-});
+// Relativer Import statt Alias – stabil, auch wenn der Alias nicht greift
+import { poppins } from "../fonts/poppins";
 
 export const metadata: Metadata = {
   title: "lieferdienst-bio.de",
@@ -42,7 +25,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}>
+      <body className={`${poppins.variable} antialiased`}>
         {/* Hintergrund */}
         <div className="bg-photo" aria-hidden />
         <div className="bg-layer" aria-hidden />
@@ -52,17 +35,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="container site-bar">
             {/* Logo links – klickbar */}
             <Link href="/" className="brand" aria-label="lieferdienst-bio.de">
-            <span className="brand-logo">
-              <Image src="/logo.png" alt="lieferdienst-bio.de Logo" width={80} height={55} priority />
-              </span>
+              <Image
+                src="/logo.png"
+                alt="lieferdienst-bio.de Logo"
+                width={32}
+                height={32}
+                priority
+              />
             </Link>
 
-            {/* Menü rechts – Desktop + mobile CTA-Bar via Komponente */}
+            {/* Eine einzige Nav */}
             <NavLinks />
           </div>
         </header>
 
-        {/* Inhalt unter Header */}
+        {/* Inhalt unter dem fixen Header */}
         <main className="page-main">{children}</main>
       </body>
     </html>
