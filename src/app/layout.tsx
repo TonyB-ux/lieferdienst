@@ -1,16 +1,12 @@
 // src/app/layout.tsx
 import "./globals.css";
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import NavLinks from "@/components/NavLinks";
-import { poppins } from "../fonts/poppins";
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover", // ⬅︎ WICHTIG für iOS Safe-Area
-};
+// Relativer Import statt Alias – stabil, auch wenn der Alias nicht greift
+import { poppins } from "../fonts/poppins";
 
 export const metadata: Metadata = {
   title: "lieferdienst-bio.de",
@@ -24,11 +20,6 @@ export const metadata: Metadata = {
     url: "https://lieferdienst-bio.de",
     siteName: "lieferdienst-bio.de",
   },
-  // sorgt dafür, dass die Statusleiste in iOS/Android nicht weiß ist
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#0d3f33" },
-    { media: "(prefers-color-scheme: dark)",  color: "#0d3f33" },
-  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -42,9 +33,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Fixer Header */}
         <header className="site-header">
           <div className="container site-bar">
+            {/* Logo links – klickbar */}
             <Link href="/" className="brand" aria-label="lieferdienst-bio.de">
-              <Image src="/logo.png" alt="lieferdienst-bio.de Logo" width={32} height={32} priority />
+              <Image
+                src="/logo.png"
+                alt="lieferdienst-bio.de Logo"
+                width={6}
+                height={39}
+                priority
+              />
             </Link>
+
+            {/* Eine einzige Nav */}
             <NavLinks />
           </div>
         </header>
