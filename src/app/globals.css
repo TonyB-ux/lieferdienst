@@ -778,8 +778,17 @@ section h3, article h3, nav h3, aside h3 {
 
 
 
+/* Mobile: weniger Abstand oben */
+@media (max-width: 768px) {
+  .hero {
+    margin-top: 0,4rem;   /* hier anpassen nach Wunsch */
+    margin-bottom: 2rem;
+  }
+}
+
+
 .bg-photo {
-  background: linear-gradient(135deg, #257083 0%, #e0f2f1 50%, #64b367 100%);
+  background: linear-gradient(145deg, #257083 0%, #e0f2f1 50%, #64b367 100%);
   /* später wieder:
   background-image: url('/dein-bild.jpg');
   background-size: cover;
