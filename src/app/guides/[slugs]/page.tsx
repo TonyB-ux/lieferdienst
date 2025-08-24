@@ -77,7 +77,7 @@ export default async function GuidePage(props: any) {
               "@context": "https://schema.org",
               "@type": "Article",
               headline: g.title,
-              datePublished: g.date,
+              // datePublished weggelassen, weil im Typ nicht vorhanden
               image: img ? [img] : undefined,
               mainEntityOfPage: `https://lieferdienst-bio.de/guides/${slug}`,
             }),
