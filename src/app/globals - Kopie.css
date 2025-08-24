@@ -1,751 +1,799 @@
-/* Baseline */
-:root {
-  --bg: #f7f7f6;
-  --text: #0f172a;           /* slate-900 */
-  --muted: #475569;          /* slate-600 */
-  --primary: #1b4332;        /* edles Bio-Grün */
-  --primary-acc: #d4a373;    /* warmes Beige */
-  --glass-bg: rgba(255,255,255,0.7);
-  --glass-brd: rgba(255,255,255,0.35);
-  --glass-sh: 0 10px 25px rgba(16,24,40,.08);
-}
-
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-body {
-  margin: 0;
-  color: var(--text);
-  background: var(--bg);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Utilities */
-.container {
-  max-width: 1200px;
-  margin-inline: auto;
-  padding: 24px;
-}
-
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: saturate(140%) blur(12px);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
-  border: 1px solid var(--glass-brd);
-  border-radius: 20px;
-  box-shadow: var(--glass-sh);
-}
-
-.btn {
-  display: inline-flex; align-items: center; gap:.5rem;
-  height: 44px; padding: 0 18px;
-  border-radius: 10px;
-  border: 1px solid rgba(0,0,0,.08);
-  background: #fff;
-  color: var(--text); font-weight: 600;
-  text-decoration: none;
-}
-.btn:hover { background: #fafafa; }
-
-.btn-primary {
-  background: linear-gradient(180deg,#1e513e,#1b4332);
-  color:#fff; border:none;
-}
-.btn-primary:hover { filter: brightness(1.05); }
-
-.badge {
-  font-size: .85rem; padding: 6px 10px; border-radius: 999px;
-  border:1px solid var(--glass-brd); background: rgba(255,255,255,.8);
-  color: var(--muted);
-}
-
-/* Typo helpers (Tailwind-ähnlich) */
-.h1 { font-size: clamp(2.2rem, 3vw + 1rem, 3.4rem); line-height: 1.05; font-weight: 800; letter-spacing: -0.02em; }
-.h2 { font-size: clamp(1.4rem, 1.1vw + 1rem, 1.8rem); font-weight: 700; }
-.muted { color: var(--muted); }
-
-/* Background layer */
-.bg-layer {
-  position: fixed; inset: 0; z-index: -1;
-  background:
-    radial-gradient(1200px 600px at 15% -10%, rgba(27,67,50,.12), transparent),
-    radial-gradient(1000px 600px at 110% 10%, rgba(212,163,115,.10), transparent),
-    var(--bg);
-}
-.bg-photo {
-  position: fixed; inset: 0; z-index: -2;
-  background-image: url("/public/bg.jpg"); 
-  background-size: cover;
-  background-position: center;
-  opacity: .12;
-  pointer-events: none;
-}
-
-/* iOS fix: kein fixed-attachment → Layer bleiben, aber ohne Parallax */
-@supports (-webkit-touch-callout: none) {
-  .bg-photo { position: absolute; }
-}
-
-
-/* Header */
-.site-header {
-  /* vorher: sticky + top:12px */
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 50;
-  /* Glasfläche kommt über .glass/.glass-full */
-}
-.site-nav {
-  display:flex; align-items:center; justify-content:space-between;
-  gap:16px; padding:12px 16px;
-}
-
-/* Vollbreite Glasfläche (keine Rundung am Headerrand) */
-.glass-full { border-radius: 0; border-bottom: 1px solid rgba(0,0,0,.06); }
-
-
-/* Cards layout helpers */
-.grid-cols {
-  display:grid; gap: 18px;
-  grid-template-columns: repeat(12, minmax(0,1fr));
-}
-.col-span-4 { grid-column: span 4 / span 4; }
-.col-span-3 { grid-column: span 3 / span 3; }
-.col-span-2 { grid-column: span 2 / span 2; }
-.col-span-6 { grid-column: span 6 / span 6; }
-@media (max-width: 1024px){
-  .col-span-4,.col-span-3,.col-span-2,.col-span-6{ grid-column: 1 / -1; }
-}
-/* Bessere Sichtbarkeit für Tastaturfokus */
-:focus-visible {
-  outline: 3px solid #1b4332; /* nutzt dein Primary */
-  outline-offset: 2px;
-  border-radius: 6px;
-}
-
-/* Skip-Link (sichtbar bei Fokus) */
-.skip-link {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  z-index: 100;
-  background: #fff;
-  padding: 10px 14px;
-  box-shadow: var(--glass-sh);
-  border-radius: 10px;
-}
-.skip-link:focus {
-  left: 12px;
-  top: 12px;
-}
-
-/* Motion-Reduce: Blur/Filter abschwächen für Nutzer mit eingeschränkter Bewegung */
-@media (prefers-reduced-motion: reduce) {
-  .bg-photo { opacity: .08; }
-  .glass {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: rgba(255,255,255,0.9);
-  }
-}
-
-
-/* --- Cards & Hero (neu) --- */
-.card {
-  border-radius: 20px;
-  background: var(--glass-bg);
-  backdrop-filter: saturate(140%) blur(12px);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
-  border: 1px solid var(--glass-brd);
-  box-shadow: var(--glass-sh);
-  padding: 24px;
-}
-.card:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(16,24,40,.10); transition: box-shadow .2s ease, transform .2s ease; }
-
-.card-title { font-weight: 700; font-size: 1.1rem; color: var(--text); margin: 0 0 6px; }
-.card-text  { color: var(--muted); font-size: .95rem; line-height: 1.6; margin: 8px 0 0; }
-
-.hero {
-  border-radius: 20px;
-  background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.70));
-  backdrop-filter: saturate(140%) blur(12px);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
-  border: 1px solid var(--glass-brd);
-  box-shadow: var(--glass-sh);
-  padding: 28px;
-}
-.hero .h1 { margin: 0; }
-.hero .muted { margin-top: 16px; line-height: 1.65; }
-
-/* Abstände & Layout */
-.section { margin-top: 22px; }
-.row       { display:flex; gap:12px; flex-wrap:wrap; }
-.row-cta   { display:flex; gap:12px; flex-wrap:wrap; margin-top: 18px; }
-
-/* Chips kompakter */
-.pill { font-size: .95rem; padding: 6px 10px; border-radius: 999px;
-  border: 1px solid var(--glass-brd); background: rgba(255,255,255,.85); color: var(--muted);
-}
-
-/* Grid-Tuning: mehr Luft zwischen Karten */
-.grid-cols { gap: 22px; }
-
-/* Responsiv-Feinschliff */
-@media (max-width: 1024px){
-  .hero, .card { padding: 20px; }
-  .grid-cols { gap: 16px; }
-}
-
-/* (optional) Links in Glas etwas dunkler für Lesbarkeit */
-.card a, .hero a { text-decoration: none; }
-
-
-
-/* Header (vollbreit + fixiert) */
-.site-header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 50;
-}
-.site-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 16px;
-}
-
-/* Vollbreite Glasfläche für den Header (ohne Rundung) */
-.header-bar {
-  background: var(--glass-bg);
-  backdrop-filter: saturate(140%) blur(12px);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
-  border-bottom: 1px solid var(--glass-brd);
-  box-shadow: var(--glass-sh);
-  border-radius: 0;
-}
-/* --- Guides Grid: 3 Spalten, responsiv --- */
-.guides-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px; /* orientiert sich an deinem Grid-Gap */
-}
-
-/* === Guides Grid – FIX (3 Spalten, responsiv, Cards bleiben echte Boxen) === */
-.guides-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-  align-items: stretch; /* Cards gleich hoch, wenn Inhalt ähnlich */
-}
-
-/* Jede direkte Kindbox ist ein Grid-Item (keine contents-Hacks!) */
-.guides-grid > * { display: block; }
-
-/* Breakpoints */
-@media (max-width: 1100px) {
-  .guides-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 640px) {
-  .guides-grid { grid-template-columns: 1fr; }
-}
-
-/* Falls noch nicht drin: Card-/Button-/Bild-Styles */
-.card {
-  border-radius: 20px;
-  background: var(--glass-bg);
-  backdrop-filter: saturate(140%) blur(12px);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
-  border: 1px solid var(--glass-brd);
-  box-shadow: var(--glass-sh);
-  padding: 24px;
-}
-
-.btn-ghost { background:#fff; border:1px solid rgba(0,0,0,.08); }
-.btn-ghost:hover { background:#fafafa; }
-
-.guide-img {
-  width: 100%;
-  height: auto;
-  border-radius: 14px;
-  display: block;
-  margin-bottom: 12px;
-}
-
-
-/* Falls GuidesRow eine Liste rendert */
-.guides-grid > ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-}
-.guides-grid > ul > li { margin: 0; }
-
-/* Responsiv: 2 Spalten ab ~Tablet, 1 Spalte am Handy */
-@media (max-width: 1100px) {
-  .guides-grid,
-  .guides-grid > ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 640px) {
-  .guides-grid,
-  .guides-grid > ul { grid-template-columns: 1fr; }
-}
-
-
-/* === Guides Grid – 3 Spalten mit Abstand, responsiv === */
-.guides-grid,
-.guides-grid > ul {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-  align-items: stretch;
-}
-
-.guides-grid > li,
-.guides-grid > ul > li {
-  min-width: 0; /* wichtige Schutzmaßnahme gegen overflowende Inhalte */
-}
-
-/* Responsiv: 2 Spalten ab ~Tablet, 1 Spalte am Handy */
-@media (max-width: 1100px) {
-  .guides-grid,
-  .guides-grid > ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 640px) {
-  .guides-grid,
-  .guides-grid > ul { grid-template-columns: 1fr; }
-}
-
-/* (Falls noch nicht vorhanden) */
-.card {
-  border-radius: 20px;
-  background: var(--glass-bg);
-  backdrop-filter: saturate(140%) blur(12px);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
-  border: 1px solid var(--glass-brd);
-  box-shadow: var(--glass-sh);
-  padding: 24px;
-}
-.btn-ghost { background:#fff; border:1px solid rgba(0,0,0,.08); }
-.btn-ghost:hover { background:#fafafa; }
-
-.guide-img {
-  width: 100%;
-  height: auto;
-  border-radius: 14px;
-  display: block;
-  margin-bottom: 12px;
-}
-
-/* Stellschrauben Hover Kacheln*/
-:root{
-  /* 0px = kein Anheben | -0.25px sehr weich | -0.5px dezent | -1px merklich | -2px stark */
-  --card-lift-y: -0.8px;
-
-  /* Schatten: offset-x offset-y blur rgba(...)  → mehr blur/alpha = stärkerer Lift */
-  --card-shadow: 0 8px 20px rgba(16,24,40,.07);
-
-  /* Tempo & Kurve: kürzer/schneller = knackiger, länger = ruhiger */
-  --card-speed: .12s;
-  --card-ease: cubic-bezier(.2,.7,.2,1); /* angenehm weich; Alternativen s.u. */
-}
-
-.card{
-  transition: box-shadow var(--card-speed) var(--card-ease),
-              transform var(--card-speed) var(--card-ease);
-  will-change: transform;
-}
-.card:hover{
-  transform: translateY(var(--card-lift-y));
-  box-shadow: var(--card-shadow);
-}
-
-/* Bewegungs-Reduktion respektieren */
-@media (prefers-reduced-motion: reduce){
-  .card{ transition:none; }
-  .card:hover{ transform:none; }
-}
-
-
-/* 12-Spalten-Grid + Spans */
-.grid-cols { display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 22px; }
-.col-span-12 { grid-column: 1 / -1; }
-.col-span-4  { grid-column: span 4 / span 4; }
-
-/* Guides: 3-Spalten-Grid (wird von GuidesRow genutzt) */
-.guides-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 22px; }
-@media (max-width:1100px){ .guides-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
-@media (max-width:640px){  .guides-grid{ grid-template-columns: 1fr; } }
-
-
-/* === Typografie-Mapping === */
-/* Body/Fließtext » Geist (Sans) */
-body {
-  font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 20px;
-  line-height: 1.6;
-  letter-spacing: 0;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Headings » Playfair (Serif) */
-h1, h2, h3, h4,
-.h1, .h2, .h3, .h4 {
-  font-family: var(--font-serif), Georgia, "Times New Roman", serif;
-  color: var(--text);
-  font-feature-settings: "liga" 1, "kern" 1;
-}
-
-/* Mono-Utility (falls benötigt) */
-.mono { font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
-
-/* === Größen/Weights (responsive mit clamp) === */
-.h1, h1 { font-weight: 600; line-height: 1.06; letter-spacing: -0.01em;
-  font-size: clamp(2.4rem, 3.6vw + 1rem, 4rem);
-}
-.h2, h2 { font-weight: 700; line-height: 1.15; letter-spacing: -0.005em;
-  font-size: clamp(1.5rem, 1.4vw + 1rem, 2.1rem);
-}
-.h3, h3 { font-weight: 700; line-height: 1.2;
-  font-size: clamp(1.25rem, 1vw + 1rem, 1.6rem);
-}
-.h4, h4 { font-weight: 700; line-height: 1.25;
-  font-size: clamp(1.1rem, 0.6vw + 1rem, 1.3rem);
-}
-
-/* Fließtext-Feinschliff */
-p, .muted { font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif; }
-
 /* =========================
-   Variables & base layout
+   Design Tokens
    ========================= */
-   :root {
-    --header-h: 88px;
-    --gap: 16px;
+   :root{
+    --container-max: 1200px;
+    --gap: 18px;
     --radius: 18px;
+  
+    /* Glas-Look */
+    --blur: 6px;
+    --sat: 140%;
+    --hdr-alpha: 0.38;
+    --card-alpha: 0.30;
+    --border-alpha: 0.16;
+    --shadow: 0 6px 24px rgba(0,0,0,.12);
+  
+    /* Farben */
+    --glass-bg: 255 255 255; /* für rgba(var(--glass-bg)/x) */
+    --border:   255 255 255;
+  
+    /* Brand-Farbe für Card/Guide-Titel (wie gewünscht) */
+    --brand-ink: #002f03;
+  
+    /* Headerhöhen */
+    --header-h: 88px;     /* Desktop */
   }
   
-  @media (max-width: 640px) {
-    :root {
-      --header-h: 64px;   /* kompakter Header auf Mobile */
-      --gap: 12px;
+  @media (max-width: 900px){
+    :root{
+      --header-h: 128px;  /* Mobil: + CTA-Zeile */
+      --gap: 14px;
       --radius: 16px;
+      --blur: 5px;
     }
   }
   
-  .page-main { padding-top: var(--header-h); }
-  
   /* =========================
-     Header/Nav mobile tweaks
+     Reset & Grundtypografie
      ========================= */
-  .site-header {
-    position: fixed;
-    inset: 0 0 auto 0;
-    height: var(--header-h);
-    display: flex;
-    align-items: center;
-    z-index: 50;
-    backdrop-filter: saturate(160%) blur(8px);
-    -webkit-backdrop-filter: saturate(160%) blur(8px);
-    background: color-mix(in srgb, #0b0f0c 8%, transparent);
-    border-bottom: 1px solid color-mix(in srgb, #fff 10%, transparent);
+  *,
+  *::before,
+  *::after { box-sizing: border-box; }
+  
+  html, body { height: 100%; }
+  
+  body{
+    margin: 0;
+    color: #0b0f0c;
+    background: transparent; /* kein Milchfilm */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  
+    /* Fließtext: Geist */
+    font-family: var(--font-poppins), system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 20px;
+    line-height: 1.6;
   }
   
-  .site-nav {
+  /* Headings: Playfair */
+  h1, h2, h3, h4,
+  .h1, .h2, .h3, .h4{
+    font-family: var(--font-poppins), Georgia, "Times New Roman", serif;
+    color: #e5ede7;
+    font-feature-settings: "liga" 1, "kern" 1;
+  }
+  
+  /* Headline-Helpers */
+  .h1{ font-size: clamp(30px, 6vw, 48px); line-height: 1.05; letter-spacing: -.01em; }
+  .h2{ font-size: clamp(20px, 2.4vw, 28px); line-height: 1.15; }
+  
+  /* =========================
+     Layout-Helfer
+     ========================= */
+  .container{
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: 16px;
+  }
+  
+  .page-main{ padding-top: var(--header-h); }
+  
+  .row, .row-cta, .section{ display:flex; flex-wrap:wrap; gap:8px; }
+  
+  /* =========================
+     Hintergrundebenen (klar)
+     ========================= */
+  /* Foto – ohne Filter/Opacity */
+  .bg-photo{
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    background-image: url("/bg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;
+    filter: none;
+    pointer-events: none;
+  }
+  
+  /* Overlay-Schicht – standardmäßig aus */
+  .bg-layer{
+    position: fixed;
+    inset: 0;
+    z-index: -9;
+    background: transparent;
+    pointer-events: none;
+  }
+  
+/* =========================
+   Header (clean) + Navigation
+   ========================= */
+
+/* Header: KEIN globales Glass – nur eine dezente, transparente Fläche,
+   die den Inhalt darunter nicht „milchig“ macht. */
+   .site-header{
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+  
+    /* transparent; optional sehr leichte Top-Fade, fast unsichtbar */
+    background: linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0));
+    border-bottom: 0;
+    box-shadow: none;
+  
+    /* keine backdrop-filter, damit der BG nicht milchig wird */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  
+  .site-bar{
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
   }
   
-  .btn-sm {
-    font-size: 14px;
-    line-height: 1.15;
-    padding: 8px 14px;
+  .brand{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  
+  /* Desktop-Menü (nur ≥900px sichtbar) */
+  .nav-desktop{
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+  @media (min-width: 900px){
+    .nav-desktop{ display: flex; }
+  }
+  
+  /* Textlinks: default = PLAIN TEXT (kein Glass),
+     Hover = leichter Glass-Hover,
+     Active (aktueller Pfad) = Glass (filled). */
+  .nav-link{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 12px;
+  
+    font-weight: 800;
+    color: #0b0f0c;
+    text-decoration: none;
+  
+    background: transparent;
+    border: 1px solid transparent;
+    box-shadow: none;
+  
+    transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, transform .08s ease, color .12s ease;
+  }
+  
+  /* Hover = nur Hauch von Glass */
+  .nav-link:hover,
+  .nav-link:focus-visible{
+    background: rgba(255 255 255 / .28);
+    backdrop-filter: blur(5px) saturate(130%);
+    -webkit-backdrop-filter: blur(5px) saturate(130%);
+    border-color: rgba(255 255 255 / .30);
+  }
+  
+  /* Active = „filled glassy“ (nur der aktive Link wirkt wie ein Glass-Button) */
+  .nav-link[aria-current="page"],
+  .nav-link[data-active="true"]{
+    background: rgba(255 255 255 / .62);
+    backdrop-filter: blur(6px) saturate(135%);
+    -webkit-backdrop-filter: blur(6px) saturate(135%);
+    border: 1px solid rgba(255 255 255 / .26);
+    box-shadow: 0 6px 16px rgba(0,0,0,.08);
+    transform: translateY(-1px);
+  }
+  
+  /* Kontakt bleibt Primary-Button – kann deinen Brand-Grün nutzen */
+  .nav-cta{
+    height: 38px;
+    padding: 0 14px;
     border-radius: 14px;
   }
   
-  /* auf sehr kleinen Geräten Buttons nicht umbrechen lassen */
-  @media (max-width: 360px) {
-    .site-nav nav { gap: 6px; }
-    .btn-sm { padding: 7px 12px; font-size: 13px; }
-  }
-  
-  /* =========================
-     Grid – sauberes Mobile-Layout
-     ========================= */
-  .grid-cols {
+  /* Mobile CTA-Bar bleibt; kleine aktive Hervorhebung */
+  .mobile-cta-bar{
     display: grid;
-    gap: var(--gap);
-    grid-template-columns: 1fr; /* Mobile: 1 Spalte */
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    padding: 8px 16px 12px;
+  }
+  @media (min-width: 900px){
+    .mobile-cta-bar{ display: none; }
+  }
+  .mobile-cta-bar .btn[aria-current="page"],
+  .mobile-cta-bar .btn[data-active="true"]{
+    box-shadow: 0 6px 16px rgba(0,0,0,.10);
+    border-color: rgba(0,0,0,.10);
+    transform: translateY(-1px);
   }
   
-  /* Desktop: 12 Spalten */
-  @media (min-width: 900px) {
-    .grid-cols { grid-template-columns: repeat(12, minmax(0, 1fr)); }
-    .col-span-3 { grid-column: span 3 / span 3; }
-    .col-span-4 { grid-column: span 4 / span 4; }
-    .col-span-6 { grid-column: span 6 / span 6; }
-    .col-span-8 { grid-column: span 8 / span 8; }
-  }
-  
-  /* Mobile: alle „Spalten“-Karten gestapelt */
-  @media (max-width: 899px) {
-    .col-span-3,
-    .col-span-4,
-    .col-span-6,
-    .col-span-8 { grid-column: 1 / -1; }
+  /* Fokus sichtbar (A11y) */
+  .nav-link:focus-visible,
+  .nav-cta:focus-visible,
+  .mobile-cta-bar .btn:focus-visible{
+    outline: 2px solid rgba(16,58,46,.55);
+    outline-offset: 2px;
+    border-radius: 12px;
   }
   
   /* =========================
-     Cards & glass on iOS
+     Buttons (Basis)
      ========================= */
-  .card, .glass {
-    border-radius: var(--radius);
-    background: color-mix(in srgb, #0b0f0c 6%, rgba(255,255,255,0.08));
-    border: 1px solid color-mix(in srgb, #fff 10%, transparent);
-    backdrop-filter: saturate(160%) blur(10px);
-    -webkit-backdrop-filter: saturate(160%) blur(10px);
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
   
-    /* iOS/Safari: Verhindert Text-„Ghosting“ bei backdrop-filter */
+    padding:12px 16px;
+    border-radius:16px;
+    background:#fff;
+    color:#0b0f0c;
+    text-decoration:none;
+    font-weight:700;
+  
+    border:1px solid rgba(0,0,0,.06);
+    box-shadow:0 4px 10px rgba(0,0,0,.06);
+    transition: transform .08s ease, box-shadow .12s ease, background-color .12s ease;
+    will-change: transform;
+  }
+  .btn:hover{ transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.08); }
+  .btn:active{ transform: translateY(0);   box-shadow: 0 3px  8px rgba(0,0,0,.08); }
+  
+  .btn-primary{
+    background: #103a2e;
+    color: #fff;
+    border-color: rgba(16,58,46,.2);
+  }
+  
+  .btn-sm{
+    font-size:14px; line-height:1.15;
+    padding:8px 14px;
+    border-radius:14px;
+  }
+  
+  .btn-cta{
+    font-size:16px;
+    padding:12px 0;
+    min-height:44px;
+    width:100%;
+    border-radius:16px;
+  }
+  
+  /* =========================
+     Glas-Karten
+     ========================= */
+  .glass,
+  .card{
+    border-radius: var(--radius);
+    background: rgba(var(--glass-bg)/var(--card-alpha));
+    border: 1px solid rgba(var(--border)/var(--border-alpha));
+    backdrop-filter: blur(var(--blur)) saturate(var(--sat));
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat));
+    box-shadow: var(--shadow);
+  
+    /* iOS/Safari: Flackern verhindern */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     backface-visibility: hidden;
-    -webkit-font-smoothing: antialiased;
-    will-change: transform;
   }
+  .card{ padding: 18px; }
   
-  /* geringere Innenabstände auf Mobile */
-  .card { padding: 18px; }
-  @media (max-width: 640px) {
-    .card { padding: 14px; }
+  /* =========================
+     Grid-System (Cards)
+     ========================= */
+  .grid-cols{ display:grid; gap:var(--gap); grid-template-columns: 1fr; }
+  
+  @media (min-width: 900px){
+    .grid-cols{ grid-template-columns: repeat(12, minmax(0,1fr)); }
+    .col-span-2{ grid-column: span 2 / span 2; }
+    .col-span-3{ grid-column: span 3 / span 3; }
+    .col-span-4{ grid-column: span 4 / span 4; }
+    .col-span-6{ grid-column: span 6 / span 6; }
+    .col-span-8{ grid-column: span 8 / span 8; }
+  }
+  @media (max-width: 899px){
+    .col-span-2,
+    .col-span-3,
+    .col-span-4,
+    .col-span-6,
+    .col-span-8{ grid-column: 1 / -1; }
   }
   
   /* =========================
-     Hero & Typografie
+     Guides & Ratgeber – Farben & Layout
      ========================= */
-  .h1 {
-    font-size: clamp(28px, 7vw, 48px);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
+  /* Farb-Update wie gewünscht */
+  .card-title, .card .card-title,
+  .card-text,  .card .card-text,
+  .guide-title{
+    color: var(--brand-ink);
   }
   
-  /* Untertitel, Chips, Buttons dezenter auf Mobile */
-  .pill {
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: 999px;
-  }
-  
-  .row, .row-cta, .section {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  @media (max-width: 640px) {
-    .row-cta .btn,
-    .section .btn { padding: 10px 14px; font-size: 14px; }
-  }
-  
-  /* =========================
-     Guides: 1 Spalte mobil, 3 Spalten ab md
-     ========================= */
-  .guides-grid {
-    display: grid;
-    grid-template-columns: 1fr;
+  .guides-grid{
+    display:grid;
     gap: var(--gap);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 560px){
+    .guides-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+  @media (min-width: 900px){
+    .guides-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
   }
   
-  @media (min-width: 900px) {
-    .guides-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  }
+  /* Karte: flex column; Button unten */
+  .guide-card{ display:flex; flex-direction:column; padding:14px; }
+  @media (min-width: 900px){ .guide-card{ padding:18px; } }
   
-  /* Bild in Guide-Karten */
-  .guide-img {
-    width: 100%;
-    height: 148px;
-    object-fit: cover;
+  .guide-img{
+    width:100%;
+    height:140px;
+    object-fit:cover;
     border-radius: calc(var(--radius) - 6px);
+    margin-bottom:12px;
   }
   
+  /* Titel max 3 Zeilen */
+  .guide-title{
+    font-size: clamp(17px, 4.2vw, 20px);
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    font-weight: 800;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Excerpt max 2 Zeilen */
+  .guide-excerpt{
+    margin-top: 6px;
+    color: rgba(0,0,0,.75);
+    font-size: 14px;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Button ans Kartenende */
+  .guide-actions{ margin-top: auto; }
+  
   /* =========================
-     Hintergrundebenen
+     iOS Viewport Stabilisierung (sanft)
      ========================= */
-  .bg-layer {
-    position: fixed; inset: 0; z-index: -2;
-    background: radial-gradient(60% 40% at 50% 15%, rgba(0,0,0,0.08), rgba(0,0,0,0));
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
   }
+  @supports not (overflow-x: clip) {
+    html, body { overflow-x: hidden; }
+  }
+  :where(.grid-cols > *, .card, .glass) { min-width: 0; max-width: 100%; }
+  :where(img, video, svg, canvas) { display:block; max-width:100%; height:auto; }
+  :where(.btn, .pill, .badge) { max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   
-  .bg-photo {
-    position: fixed; inset: 0; z-index: -3;
-    background-image: url("/bg.jpg");
-    background-size: cover;
-    background-position: center;
-    filter: saturate(108%) contrast(104%);
-  }
-  /* =========================
-   DESIGN TOKENS (zentral)
-   ========================= */
-:root{
-  /* Layout */
-  --container-max: 1200px;
-  --gap: 18px;
-  --radius: 18px;
 
-  /* Glas-Look */
-  --blur: 6px;
-  --sat: 140%;
-  --hdr-alpha: 0.38;  /* Header-Glas */
-  --card-alpha: 0.30; /* Karten-Glas */
-  --border-alpha: 0.16;
-  --shadow: 0 6px 24px rgba(0,0,0,.12);
+  /* === Active & Focus Styles für Navigation (inkrementell) === */
 
-  /* Farben (neutral, nicht zu grün/zu grau) */
-  --glass-bg: 255 255 255; /* RGB – wir regeln Transparenz separat */
-  --border: 255 255 255;
+/* Textlinks Desktop: aktiver Zustand */
+.nav-link[aria-current="page"],
+.nav-link[data-active="true"] {
+  background: rgba(var(--glass-bg)/0.62);
+  backdrop-filter: blur(6px) saturate(135%);
+  -webkit-backdrop-filter: blur(6px) saturate(135%);
+  border: 1px solid rgba(var(--border)/0.26);
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
 }
 
-@media (max-width: 640px){
-  :root{
-    --gap: 14px;
-    --radius: 16px;
-    --blur: 5px;
-  }
+/* Fokus für Tastatur-Nutzer – sichtbar, aber dezent */
+.nav-link:focus-visible,
+.nav-cta:focus-visible,
+.mobile-cta-bar .btn:focus-visible {
+  outline: 2px solid rgba(16,58,46,.55);       /* grünlich */
+  outline-offset: 2px;
+  border-radius: 12px;
 }
 
-/* Container-Atmung konsistent */
-.container{
-  max-width: var(--container-max);
-  margin-inline: auto;
-  padding-inline: 16px;
+/* Mobile CTA-Bar: aktiver Button subtil hervorgehoben */
+.mobile-cta-bar .btn[aria-current="page"],
+.mobile-cta-bar .btn[data-active="true"] {
+  box-shadow: 0 6px 16px rgba(0,0,0,.10);
+  border-color: rgba(0,0,0,.10);
+  transform: translateY(-1px);
 }
 
-/* =========================
-   HEADER: weniger milchig, künstlerisch ruhig
-   ========================= */
-.site-header{
-  position: fixed; inset: 0 0 auto 0;
-  height: var(--header-h, 88px);
-  z-index: 50;
-  display: flex; align-items: center;
+/* Logo-Badge: sorgt dafür, dass ein weißes Logo auf jedem BG sichtbar ist */
+.brand-logo{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:80px; height:70px; border-radius:10px;
+  background: rgba(100, 119, 101, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.brand-logo img{ display:block; }
 
-  /* Glas-Look */
-  background: rgba(var(--glass-bg)/var(--hdr-alpha));
-  backdrop-filter: blur(var(--blur)) saturate(var(--sat));
-  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat));
-  border-bottom: 1px solid rgba(var(--border)/var(--border-alpha));
-  box-shadow: 0 4px 16px rgba(0,0,0,.06);
+/* Wenn du die Badge später nicht willst: einfach background + (webkit)backdrop-filter entfernen */
+
+
+/* Hero – klare Breite, sauberes Spacing */
+.hero{
+  padding-block: 16px 8px;
+}
+.hero-inner{
+  max-width: 980px;     /* angenehme Lesebreite am Desktop */
+  width: 100%;
 }
 
-/* Buttons im Header kleiner & ruhiger */
-.btn-sm{
-  font-size: 14px; line-height: 1.15;
-  padding: 8px 14px;
-  border-radius: 14px;
+/* Typo im Hero */
+.hero .h1{
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px 0;
+}
+.hero .muted{
+  max-width: 62ch;
 }
 
-/* Abstände unter Header verlässlich */
-.page-main{ padding-top: var(--header-h, 88px); }
-@media (max-width: 640px){
-  :root{ --header-h: 64px; }
-}
-
-/* =========================
-   GLAS-KARTEN: einheitlicher Look (Hero + Cards)
-   ========================= */
-.glass, .card, .hero{
-  border-radius: var(--radius);
-  background: rgba(var(--glass-bg)/var(--card-alpha));
-  border: 1px solid rgba(var(--border)/var(--border-alpha));
-  backdrop-filter: blur(var(--blur)) saturate(var(--sat));
-  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat));
-  box-shadow: var(--shadow);
-
-  /* iOS: Flackern vermeiden */
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-/* Einheitliche Innenabstände */
-.card{ padding: 18px; }
-.hero{ padding: clamp(18px, 3vw, 28px); }
-
-/* =========================
-   GRID: konsistente Abstände
-   ========================= */
-.grid-cols{ display: grid; gap: var(--gap); }
-@media (min-width: 900px){
-  .grid-cols{ grid-template-columns: repeat(12, minmax(0,1fr)); }
-  .col-span-3{ grid-column: span 3 / span 3; }
-  .col-span-4{ grid-column: span 4 / span 4; }
-  .col-span-6{ grid-column: span 6 / span 6; }
-  .col-span-8{ grid-column: span 8 / span 8; }
-}
+/* Mobile Optimierung */
 @media (max-width: 899px){
-  .col-span-3, .col-span-4, .col-span-6, .col-span-8{ grid-column: 1/-1; }
+  .hero{ padding-block: 12px 4px; }
+  .hero .h1{ font-size: clamp(28px, 7vw, 38px); }
 }
 
-/* Guides-Grid: sauberer Rhythmus */
-.guides-grid{
-  display:grid; gap: var(--gap);
-  grid-template-columns: 1fr;
-}
-@media (min-width: 900px){
-  .guides-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+
+/* ===== Hero – angenehme Breite & sauberes Scaling ===== */
+.hero{
+  padding-block: 16px 8px; /* ober/unter Abstand innerhalb der Spalte */
 }
 
-/* Guide-Bild */
-.guide-img{
-  width: 100%; height: 160px; object-fit: cover;
-  border-radius: calc(var(--radius) - 6px);
+/* Begrenzt NUR den Textblock im Hero, nicht die Grid-Spalte */
+.hero-inner{
+  max-width: 980px;   /* Desktop-Lesebreite */
+  width: 100%;
 }
 
-/* =========================
-   TYPO: moderner, ruhiger
-   ========================= */
-.h1{
-  font-size: clamp(30px, 6vw, 48px);
-  line-height: 1.05; letter-spacing: -.01em;
+/* Typografie-Feinschliff im Hero */
+.hero .h1{
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px 0;
 }
-.h2{ font-size: clamp(20px, 2.4vw, 28px); line-height: 1.15; }
-
-/* Pills/Chips dezenter, nicht dominant */
-.pill, .chip{
-  font-size: 12px; padding: 6px 10px; border-radius: 999px;
-  background: rgba(255 255 255 / .55);
-  border: 1px solid rgba(255 255 255 / .6);
+.hero .muted{
+  max-width: 62ch;  /* Fließtext nicht zu lang werden lassen */
 }
 
-/* CTA-Buttons mit identischen Höhen */
-.btn{ min-height: 40px; }
+/* Mobil etwas enger/flexibler */
+@media (max-width: 899px){
+  .hero{ padding-block: 12px 4px; }
+  .hero .h1{ font-size: clamp(28px, 7vw, 38px); }
+}
 
 
-
-/* ==== Farb-Update für Karten & Guides ==== */
+/* ===== Headings: explizite Größen (Deprecation-Fix) ===== */
 :root{
-  --brand-ink: #ffffff;
+  /* Skaliert responsiv und ist leicht zu tweaken */
+  --fs-h1: clamp(2.25rem, 4.2vw, 3.5rem);   /* ~36px – 56px */
+  --fs-h2: clamp(1.5rem,  2.6vw, 2.25rem);  /* ~24px – 36px */
+  --fs-h3: clamp(1.25rem, 1.8vw, 1.5rem);   /* ~20px – 24px */
+  --lh-h: 1.12;
 }
 
-/* Card-Überschriften (z. B. "Schnellstart", "Regionen & Städte" ...) */
-.card-title,
-.card .card-title {
-  color: var(--brand-ink);
+/* Globale Defaults für Headings (egal wo sie stehen) */
+h1{ font-size: var(--fs-h1); line-height: var(--lh-h); }
+h2{ font-size: var(--fs-h2); line-height: var(--lh-h); }
+h3{ font-size: var(--fs-h3); line-height: 1.18; }
+
+/* Spezifisch: Headings innerhalb section/article/aside/nav explizit absichern */
+:where(section, article, aside, nav) h1{ font-size: var(--fs-h1); }
+:where(section, article, aside, nav) h2{ font-size: var(--fs-h2); }
+:where(section, article, aside, nav) h3{ font-size: var(--fs-h3); }
+
+/* Wenn du bereits .h1/.h2/.h3 Klassen nutzt, bleiben sie gültig.
+   Optional: kleine Veredelung für die "Design-Headings" */
+.h1{ font-size: var(--fs-h1); line-height: var(--lh-h); letter-spacing: -0.01em; }
+.h2{ font-size: var(--fs-h2); line-height: var(--lh-h); }
+.h3{ font-size: var(--fs-h3); line-height: 1.18; }
+
+
+
+/* 1) Verhindert horizontales „Springen“, wenn der Scrollbalken erscheint/verschwindet */
+/* Verhindert Springen – aber nur rechts Platz reservieren */
+html {
+  overflow-y: scroll;     /* erzwingt den Scroll-Gutter */
+  scrollbar-gutter: stable;
 }
 
-/* Card-Fließtext (deine Klasse .card-text) */
-.card-text,
-.card .card-text {
-  color: var(--brand-ink);
+/* 2) Header-Geometrie hart fixieren, damit nichts „nachfedert“ */
+.site-header { 
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+}
+.site-bar {
+  height: 64px;                 /* fixe Höhe */
+  display: flex;
+  align-items: center;          /* vertikal sauber zentriert */
+  justify-content: space-between;
+  gap: 10px;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  height: 64px;                 /* gleiche Höhe wie .site-bar */
 }
 
-/* Guide-Titel in Guides & Ratgeber */
-.guide-title {
-  color: var(--brand-ink);
+/* 3) Nav-Links: immer gleiche Box-Höhe/Breite – keine Bewegungen */
+.nav-desktop { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
 }
+
+.nav-link {
+  box-sizing: border-box;       /* Border zählt zur Höhe/Breite */
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;/* gleiche Borderbreite in allen Zuständen */
+  line-height: 1;               /* kein Baseline-Geschubse */
+  font-size: 1rem;              /* hier Farbe/Größe anpassen */
+  font-weight: 700;
+  color: #0b0f0c;               /* oder #002f03, wenn du willst */
+  text-decoration: none;
+  transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, color .12s ease;
+}
+
+/* Hover: leichter Glass – OHNE Größenänderung */
+.nav-link:hover,
+.nav-link:focus-visible {
+  background: rgba(255 255 255 / .28);
+  backdrop-filter: blur(5px) saturate(130%);
+  -webkit-backdrop-filter: blur(5px) saturate(130%);
+  border-color: rgba(255 255 255 / .30);
+}
+
+/* Aktiv: „filled glassy“, aber OHNE translateY */
+.nav-link[aria-current="page"],
+.nav-link[data-active="true"] {
+  background: rgba(255 255 255 / .62);
+  backdrop-filter: blur(6px) saturate(135%);
+  -webkit-backdrop-filter: blur(6px) saturate(135%);
+  border-color: rgba(255 255 255 / .26);
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  transform: none;              /* <— wichtig: keine vertikale Verschiebung */
+}
+
+/* Primary-CTA im Header (Kontakt) – ebenfalls stabil */
+.nav-cta {
+  box-sizing: border-box;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 14px;
+  line-height: 1;
+}
+
+/* Optional: Logo-Badge, falls das Logo auf hellem BG „verschwindet“ */
+.brand-logo{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:80px; height:40px; border-radius:10px;
+  background: rgba(255,255,255,.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.brand-logo img{ display:block; }
+
+/* ========= Single Nav: nie doppelt, nie Umbruch ========= */
+.main-nav{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+
+  /* niemals in die 2. Zeile rutschen */
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+/* Basis für Links */
+.nav-link{
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  line-height: 1;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0b0f0c; /* oder #002f03 */
+  text-decoration: none;
+  transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, color .12s ease;
+}
+
+/* Hover: leichter Glass */
+.nav-link:hover,
+.nav-link:focus-visible{
+  background: rgba(255 255 255 / .28);
+  backdrop-filter: blur(5px) saturate(130%);
+  -webkit-backdrop-filter: blur(5px) saturate(130%);
+  border-color: rgba(255 255 255 / .30);
+}
+
+/* Aktiv: filled glassy */
+.nav-link[aria-current="page"],
+.nav-link[data-active="true"]{
+  background: rgba(255 255 255 / .62);
+  backdrop-filter: blur(6px) saturate(135%);
+  -webkit-backdrop-filter: blur(6px) saturate(135%);
+  border-color: rgba(255 255 255 / .26);
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+}
+
+/* Kontakt-CTA stabil */
+.nav-cta{
+  box-sizing: border-box;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 14px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+/* --- Responsive Tuning: bleibt EINZEILIG, wird nur kompakter --- */
+@media (max-width: 420px){
+  .main-nav{ gap: 8px; }
+  .nav-link{ font-size: .95rem; padding: 0 10px; }
+  .nav-cta{ font-size: .95rem; padding: 0 12px; }
+}
+@media (max-width: 360px){
+  .main-nav{ gap: 6px; }
+  .nav-link{ font-size: .90rem; padding: 0 8px; }
+  .nav-cta{ font-size: .90rem; padding: 0 10px; }
+}
+
+/* Falls irgendwo noch alte Regeln existieren – deaktivieren */
+.nav-desktop, .mobile-cta-bar{ display: none !important; }
+
+/* --- UI-Typografie (Buttons, Pills, Nav) --------------------------- */
+/* Stelle sicher, dass Poppins verfügbar ist (via --font-poppins)     */
+/* und überschreibe component-spezifische Familien konsistent.        */
+
+:root {
+  /* Falls noch nicht geschehen: zentrale Sans-Variable */
+  --font-sans: var(--font-poppins), system-ui, -apple-system, "Segoe UI",
+               Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+/* Globale „UI-Basis“ – alles, was klickbar ist */
+button, .btn, .pill, .badge, .chip, .nav-link, a.btn, input[type="submit"] {
+  font-family: var(--font-sans);
+  font-weight: 600;              /* knackiges UI-Gewicht */
+  letter-spacing: 0.01em;        /* minimal mehr Luft für Lesbarkeit */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Pillen (deine Tags/Chips) */
+.pill, .badge, .chip {
+  font-weight: 500;              /* etwas leichter als Buttons */
+  line-height: 1;                /* kompakt */
+}
+
+/* Buttons nach Varianten – falls vorhanden */
+.btn,
+.btn-ghost,
+.btn-primary,
+.btn-outline,
+.btn-link {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+/* Navigation oben rechts */
+.site-header .site-bar a,
+.nav-link {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+/* Kacheltitel/Meta in Cards (optional anpassen) */
+.card-title { font-family: var(--font-sans); font-weight: 700; }
+.card-text  { font-family: var(--font-sans); font-weight: 400; }
+
+/* Form Controls (einheitlich) */
+input, select, textarea {
+  font-family: var(--font-sans);
+  font-weight: 400;
+}
+
+/* Utility: überall schnell Poppins erzwingen */
+.font-ui { font-family: var(--font-sans) !important; }
+
+
+/* Abstand oberhalb der CTA-Buttons */
+.row-cta {
+  margin-top: 1.40rem; /* ~20px */
+}
+
+
+/* Abstand & Layout für Button-Reihe */
+.row-cta {
+  margin-top: 1.25rem;   /* Platz oberhalb der Buttons */
+  display: flex;
+  gap: 0.85rem;          /* Abstand zwischen Buttons */
+  flex-wrap: wrap;       /* Buttons umbrechen bei wenig Platz */
+}
+
+
+
+/* Hero Section Abstand nach unten zum nächsten Bereich */
+.hero {
+  margin-bottom: 7rem; /* Abstand zum nächsten Block */
+}
+
+/* ---- Fix: explizite Font-Size für Headings in sectioning elements ---- */
+section h1, article h1, nav h1, aside h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); }
+section h2, article h2, nav h2, aside h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+section h3, article h3, nav h3, aside h3 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+
+/* Optional, wenn du einheitlich auf Klassen setzt (deckt ebenfalls alles ab) */
+.h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); }
+.h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+.h3 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+
+
+/* Fix für Lighthouse Warnung: explizite font-size bei Headings in section/article/nav/aside */
+section h1, article h1, nav h1, aside h1 {
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  line-height: 1.2;
+}
+
+section h2, article h2, nav h2, aside h2 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  line-height: 1.3;
+}
+
+section h3, article h3, nav h3, aside h3 {
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+  line-height: 1.4;
+}
+
+
+
+/* Mobile: weniger Abstand oben */
+@media (max-width: 768px) {
+  .hero {
+    margin-top: 0,4rem;   /* hier anpassen nach Wunsch */
+    margin-bottom: 1rem;
+  }
+}
+
+
+.bg-photo {
+  background: linear-gradient(145deg, #257083 0%, #e0f2f1 50%, #64b367 100%);
+  /* später wieder:
+  background-image: url('/dein-bild.jpg');
+  background-size: cover;
+  background-position: center;
+  */
+}
+
+

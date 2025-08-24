@@ -4,6 +4,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import NavLinks from "@/components/NavLinks";
+import ConsentProvider from "@/components/ConsentProvider";
+import ConsentBanner from "@/components/ConsentBanner";
+import GA4 from "@/components/GA4";
+import ConsentEvents from "@/components/ConsentEvents";
+// alt (macht Ärger, wenn der Alias nicht greift)
+// import SkipLink from "@/components/SkipLink";
+
+// neu (robust):
+import SkipLink from "../components/SkipLink";
+import SiteFooter from "../components/SiteFooter";
 
 // Relativer Import statt Alias – stabil, auch wenn der Alias nicht greift
 import { poppins } from "../fonts/poppins";
@@ -30,27 +40,40 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="bg-photo" aria-hidden />
         <div className="bg-layer" aria-hidden />
 
-        {/* Fixer Header */}
-        <header className="site-header">
-          <div className="container site-bar">
-            {/* Logo links – klickbar */}
-            <Link href="/" className="brand" aria-label="lieferdienst-bio.de">
-              <Image
-                src="/logo.png"
-                alt="lieferdienst-bio.de Logo"
-                width={60}
-                height={39}
-                priority
-              />
-            </Link>
+        <SkipLink />
 
-            {/* Eine einzige Nav */}
-            <NavLinks />
-          </div>
-        </header>
+        <ConsentProvider>
+          <GA4 />
+          <ConsentEvents />
 
-        {/* Inhalt unter dem fixen Header */}
-        <main className="page-main">{children}</main>
+          {/* Fixer Header */}
+          <header className="site-header">
+            <div className="container site-bar">
+              {/* Logo links – klickbar */}
+              <Link href="/" className="brand" aria-label="lieferdienst-bio.de">
+                <Image
+                  src="/logo.png"
+                  alt="lieferdienst-bio.de Logo"
+                  width={60}
+                  height={39}
+                  priority
+                />
+              </Link>
+
+              {/* Eine einzige Nav */}
+              <NavLinks />
+            </div>
+          </header>
+
+          {/* Inhalt unter dem fixen Header */}
+          <main id="main" className="page-main">{children}</main>
+
+          {/* Footer jetzt innerhalb des Providers */}
+          <SiteFooter />
+
+          {/* Consent-Banner am Ende */}
+          <ConsentBanner />
+        </ConsentProvider>
       </body>
     </html>
   );

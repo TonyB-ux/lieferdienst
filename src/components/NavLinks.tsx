@@ -1,45 +1,36 @@
-// src/components/NavLinks.tsx
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-function isActive(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(href + "/");
-}
-
 export default function NavLinks() {
   const pathname = usePathname();
 
+  const links = [
+    { href: "/lieferdienste", label: "Liste" },
+    { href: "/guides", label: "Guides" },
+    { href: "/kontakt", label: "Kontakt", primary: true },
+  ];
+
   return (
-    <nav className="main-nav" aria-label="Hauptnavigation">
-      <Link
-        href="/lieferdienste"
-        className="nav-link"
-        aria-current={isActive(pathname, "/lieferdienste") ? "page" : undefined}
-        data-active={isActive(pathname, "/lieferdienste") ? "true" : "false"}
-      >
-        Liste
-      </Link>
+    <nav className="site-nav">
+      {links.map((l) => {
+        const isActive =
+          pathname === l.href || pathname?.startsWith(l.href + "/");
+        const base = l.primary ? "btn btn-primary" : "nav-link";
+        const cls = !l.primary && isActive ? base + " is-active" : base;
 
-      <Link
-        href="/guides"
-        className="nav-link"
-        aria-current={isActive(pathname, "/guides") ? "page" : undefined}
-        data-active={isActive(pathname, "/guides") ? "true" : "false"}
-      >
-        Guides
-      </Link>
-
-      <Link
-        href="/kontakt"
-        className="nav-cta btn btn-primary"
-        aria-current={isActive(pathname, "/kontakt") ? "page" : undefined}
-        data-active={isActive(pathname, "/kontakt") ? "true" : "false"}
-      >
-        Kontakt
-      </Link>
+        return (
+          <Link
+            key={l.href}
+            href={l.href}
+            className={cls}
+            aria-current={isActive ? "page" : undefined}
+          >
+            {l.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

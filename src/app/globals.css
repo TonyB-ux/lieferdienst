@@ -782,8 +782,104 @@ section h3, article h3, nav h3, aside h3 {
 @media (max-width: 768px) {
   .hero {
     margin-top: 0,4rem;   /* hier anpassen nach Wunsch */
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
+}
+
+/* ===== Consent Banner ===== */
+.consent-backdrop {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.45);
+  display: grid; place-items: end center;
+  padding: 16px;
+}
+
+.consent-modal {
+  width: min(680px, 100%);
+  background: rgba(255,255,255,0.88);
+  color: #002f03; /* passt zu deinem Brand-Grün */
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.consent-switches { display: grid; gap: 8px; margin: 12px 0; }
+.switch { display: flex; gap: 8px; align-items: center; color: #002f03; }
+.cc-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+/* Basis (Desktop luftig) */
+.hero {
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+}
+
+/* Tablet/Mobil: kompakter oben */
+@media (max-width: 900px) {
+  .hero { margin-top: 1.25rem; margin-bottom: 2.5rem; }
+}
+@media (max-width: 480px) {
+  .hero { margin-top: 0.75rem; margin-bottom: 2rem; }
+  .hero .h1 { margin-bottom: 0.5rem; }
+}
+
+
+/* Nav: clean default, Glass bei active/hover */
+.site-nav { display: flex; align-items: center; gap: 12px; }
+.nav-link {
+  padding: 8px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #3a423e;
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.nav-link:hover {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+.nav-link.is-active {
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.22);
+  backdrop-filter: blur(8px);
+}
+
+/* Skip-Link sichtbar beim Fokus */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: #fff;
+  color: #002f03;
+  padding: 8px 12px;
+  border-radius: 8px;
+  z-index: 9999;
+}
+.skip-link:focus {
+  left: 12px;
+  top: 12px;
+  outline: 2px solid #002f03;
+}
+
+/* ===== Footer ===== */
+.site-footer {
+  margin-top: 40px;
+  padding: 24px 0 24px; /* kein Extra-Padding mehr, da keine Floating-Bar */
+  background: rgba(0,0,0,0.06);
+  backdrop-filter: blur(6px);
+}
+.footer-inner {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.footer-nav { display: flex; flex-wrap: wrap; gap: 12px; }
+.footer-nav a, .footer-nav .link, .footer-nav button.link {
+  background: none; border: 0; padding: 0;
+  color: #eafff5; text-decoration: underline; cursor: pointer;
+}
+@media (max-width: 768px) {
+  .footer-inner { flex-direction: column; }
 }
 
 
@@ -795,9 +891,5 @@ section h3, article h3, nav h3, aside h3 {
   background-position: center;
   */
 }
-
-
-
-
 
 
