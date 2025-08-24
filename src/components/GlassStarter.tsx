@@ -64,7 +64,6 @@ export default function GlassStarter() {
           </section>
 
           {/* Reihe 2: 2 Karten */}
-          {/* Kategorien */}
           <section className="col-span-3 card">
             <h2 className="card-title">Kategorien</h2>
             <p className="card-text">Gemüsekiste, Abo, Vegan, Familienbox – was passt zu dir?</p>
@@ -73,7 +72,6 @@ export default function GlassStarter() {
             </div>
           </section>
 
-          {/* Direkt zum Shop */}
           <section className="col-span-3 card">
             <h2 className="card-title">Direkt zum Shop</h2>
             <p className="card-text">Verifizierte Bio-Betriebe mit direkter Weiterleitung zum Webshop.</p>
@@ -83,7 +81,7 @@ export default function GlassStarter() {
           </section>
         </div>
 
-        {/* Guides & Ratgeber – nur unten sichtbar */}
+        {/* Guides & Ratgeber – nur **ein** Grid (aus GuidesRow) */}
         <section id="home-guides" className="home-guides" aria-labelledby="guides-heading" style={{ marginTop: 36 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
             <h2 id="guides-heading" className="card-title" style={{ fontSize: "1.25rem" }}>
@@ -92,9 +90,8 @@ export default function GlassStarter() {
             <Link href="/guides" className="btn">Alle Guides</Link>
           </div>
 
-          <div className="guides-grid" role="list">
-            <GuidesRow />
-          </div>
+          {/* ⚠️ KEIN zusätzlicher Wrapper mit role="list" mehr */}
+          <GuidesRow />
         </section>
       </div>
     </main>
