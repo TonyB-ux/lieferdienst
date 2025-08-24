@@ -1,79 +1,56 @@
-// src/app/guides/[slugs]/page.tsx
+// src/app/guides/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { fetchGuideBySlug, fetchGuideSlugs } from "../../../lib/wp";
+import { fetchGuides } from "@/lib/wp"; // ✅ korrigiert (vorher ../../../lib/wp)
 
-export const revalidate = 1800;
+export const revalidate = 600; // ISR 10min
 
-export async function generateStaticParams(): Promise<{ slugs: string }[]> {
-  try {
-    const slugs = await fetchGuideSlugs();
-    return (slugs || []).map((s) => ({ slugs: s }));
-  } catch {
-    return [];
-  }
+export const metadata: Metadata = {
+  title: "Guides & Ratgeber | lieferdienst-bio.de",
+  robots: { index: true, follow: true },
+};
+
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`glass card ${className}`}>{children}</div>;
 }
 
-function strip(html?: string) {
-  return html ? html.replace(/<[^>]*>/g, "").trim() : "";
-}
-
-export async function generateMetadata(
-  { params }: { params: { slugs: string } }
-): Promise<Metadata> {
-  try {
-    const slug = params.slugs;
-    const g = await fetchGuideBySlug(slug);
-
-    const desc = strip(g?.excerpt);
-    const ogImg = g?.featuredImage?.node?.sourceUrl
-      ? [{ url: g.featuredImage.node.sourceUrl }]
-      : undefined;
-
-    return {
-      title: g?.title || "Guide",
-      description: desc || undefined,
-      alternates: { canonical: `https://lieferdienst-bio.de/guides/${slug}` },
-      openGraph: { title: g?.title, description: desc || undefined, images: ogImg },
-    };
-  } catch {
-    return { title: "Guide" };
-  }
-}
-
-export default async function GuidePage(
-  { params }: { params: { slugs: string } }
-) {
-  const slug = params.slugs;
-  const g = await fetchGuideBySlug(slug);
-
-  if (!g) {
-    return notFound();
-  }
+export default async function GuidesIndex() {
+  const guides = await fetchGuides(12);
 
   return (
-    <main className="relative min-h-screen">
-      <div className="hero-gradient" aria-hidden />
-      <div className="noise-overlay" aria-hidden />
+    <main className="container" style={{ paddingTop: 96, paddingBottom: 48 }}>
+      <h1 className="h2" style={{ marginBottom: 12, color: "#002f03" }}>Guides & Ratgeber</h1>
 
-      <article className="max-w-3xl mx-auto px-5 py-10 prose prose-invert">
-        <Link href="/guides" className="underline text-white/80 hover:text-white">
-          ← Alle Guides
-        </Link>
-        <h1 className="mb-2">{g.title}</h1>
-
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        {g.featuredImage?.node?.sourceUrl && (
-          <img
-            src={g.featuredImage.node.sourceUrl}
-            alt={g.featuredImage.node.altText || g.title}
-            className="w-full rounded-lg border border-white/10"
-          />
+      <div className="guides-grid" role="list">
+        {guides.length === 0 ? (
+          <Card className="guide-card" role="listitem">
+            <h3 className="guide-title">Noch keine Beiträge vorhanden</h3>
+            <p className="guide-excerpt">
+              Sobald Inhalte in WordPress (Kategorie „guides“) veröffentlicht sind, erscheinen sie hier.
+            </p>
+          </Card>
+        ) : (
+          guides.map((g) => (
+            <Card key={g.id} className="guide-card" role="listitem">
+              {g.featuredImage?.node?.sourceUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className="guide-img"
+                  src={g.featuredImage.node.sourceUrl}
+                  alt={g.featuredImage.node.altText || g.title}
+                />
+              )}
+              <h3 className="guide-title">{g.title}</h3>
+              {g.excerpt && (
+                <div className="guide-excerpt" dangerouslySetInnerHTML={{ __html: g.excerpt }} />
+              )}
+              <div className="guide-actions">
+                <Link href={`/guides/${g.slug}`} className="btn btn-ghost">Lesen</Link>
+              </div>
+            </Card>
+          ))
         )}
-
-        <div dangerouslySetInnerHTML={{ __html: g.content || "" }} />
-      </article>
+      </div>
     </main>
   );
 }
