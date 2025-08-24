@@ -3,19 +3,18 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { Suspense } from "react"; // ⬅️ wichtig: für GA4
 import NavLinks from "@/components/NavLinks";
 import ConsentProvider from "@/components/ConsentProvider";
 import ConsentBanner from "@/components/ConsentBanner";
 import GA4 from "@/components/GA4";
 import ConsentEvents from "@/components/ConsentEvents";
-// alt (macht Ärger, wenn der Alias nicht greift)
-// import SkipLink from "@/components/SkipLink";
 
-// neu (robust):
+// robust: relative Imports (entspricht deiner aktuellen Struktur)
 import SkipLink from "../components/SkipLink";
 import SiteFooter from "../components/SiteFooter";
 
-// Relativer Import statt Alias – stabil, auch wenn der Alias nicht greift
+// Font-Variante
 import { poppins } from "../fonts/poppins";
 
 export const metadata: Metadata = {
@@ -43,7 +42,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SkipLink />
 
         <ConsentProvider>
-          <GA4 />
+          {/* GA4 nutzt useSearchParams → muss in Suspense */}
+          <Suspense fallback={null}>
+            <GA4 />
+          </Suspense>
+
           <ConsentEvents />
 
           {/* Fixer Header */}
