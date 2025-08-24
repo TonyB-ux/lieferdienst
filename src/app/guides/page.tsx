@@ -1,7 +1,7 @@
 // src/app/guides/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
-import { fetchGuides } from "@/lib/wp"; // ✅ korrigiert (vorher ../../../lib/wp)
+import { fetchGuides } from "@/lib/wp";
 
 export const revalidate = 600; // ISR 10min
 
@@ -18,7 +18,7 @@ export default async function GuidesIndex() {
   const guides = await fetchGuides(12);
 
   return (
-    <main className="container" style={{ paddingTop: 96, paddingBottom: 48 }}>
+    <main className="container guides-index" style={{ paddingTop: 96, paddingBottom: 48 }}>
       <h1 className="h2" style={{ marginBottom: 12, color: "#002f03" }}>Guides & Ratgeber</h1>
 
       <div className="guides-grid" role="list">

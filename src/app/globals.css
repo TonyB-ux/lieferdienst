@@ -896,6 +896,22 @@
 /* Der dedizierte Block unten bleibt sichtbar */
 .home-guides .guides-grid { display: grid !important; }
 
+/* --- Sichtbarkeit der Guides-Kacheln steuern (robust) --- */
+.guides-grid { 
+  display: none !important;          /* standardmäßig überall ausblenden */
+}
+
+/* Nur im dedizierten Home-Block unten sichtbar */
+.home-guides .guides-grid { 
+  display: grid !important; 
+}
+
+/* Und auf der /guides Indexseite sichtbar */
+.guides-index .guides-grid { 
+  display: grid !important; 
+}
+
+
   /* Hintergrund: Gradient-Variante (optional) */
   .bg-photo {
     background: linear-gradient(145deg, #257083 0%, #e0f2f1 50%, #64b367 100%);
