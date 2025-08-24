@@ -10,7 +10,6 @@ export default function GlassStarter() {
         <div className="grid-cols">
           {/* HERO */}
           <section className="col-span-6 hero">
-            {/* Breiten-Wrapper – begrenzt nur den Inhalt, nicht die Spalte */}
             <div className="hero-inner">
               <h1 className="h1">
                 Finde den<br />
@@ -84,8 +83,8 @@ export default function GlassStarter() {
           </section>
         </div>
 
-        {/* Guides & Ratgeber – nur unten */}
-        <section aria-labelledby="guides-heading" style={{ marginTop: 36 }}>
+        {/* Guides & Ratgeber – nur unten sichtbar */}
+        <section id="home-guides" className="home-guides" aria-labelledby="guides-heading" style={{ marginTop: 36 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
             <h2 id="guides-heading" className="card-title" style={{ fontSize: "1.25rem" }}>
               Guides & Ratgeber

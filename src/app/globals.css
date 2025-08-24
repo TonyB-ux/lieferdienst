@@ -888,6 +888,14 @@
     .footer-inner { flex-direction: column; }
   }
   
+
+  /* --- Sichtbarkeit der Guides auf der Startseite steuern --- */
+/* Falls irgendwo im oberen Grid (.grid-cols) versehentlich ein guides-grid gerendert wird: verstecken */
+.grid-cols .guides-grid { display: none !important; }
+
+/* Der dedizierte Block unten bleibt sichtbar */
+.home-guides .guides-grid { display: grid !important; }
+
   /* Hintergrund: Gradient-Variante (optional) */
   .bg-photo {
     background: linear-gradient(145deg, #257083 0%, #e0f2f1 50%, #64b367 100%);
