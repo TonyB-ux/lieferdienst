@@ -1,6 +1,7 @@
 // src/app/guides/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { HTMLAttributes, ReactNode } from "react";
 import { fetchGuides } from "@/lib/wp";
 
 export const revalidate = 600; // ISR 10min
@@ -10,8 +11,17 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`glass card ${className}`}>{children}</div>;
+type CardProps = HTMLAttributes<HTMLDivElement> & {
+  className?: string;
+  children: ReactNode;
+};
+
+function Card({ children, className = "", ...rest }: CardProps) {
+  return (
+    <div {...rest} className={`glass card ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 export default async function GuidesIndex() {
