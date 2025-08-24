@@ -14,8 +14,6 @@ export async function generateStaticParams(): Promise<{ slugs: string }[]> {
 const strip = (html?: string) =>
   html ? html.replace(/<[^>]*>/g, "").trim() : "";
 
-// Wir entspannen hier die Typen absichtlich, um dein globales PageProps-Mismatch zu umgehen.
-/* @ts-expect-error – wir akzeptieren das gelockerte Props-Typing bewusst */
 export async function generateMetadata({ params }: any): Promise<Metadata> {
   const slug: string | undefined = params?.slugs ?? params?.slug;
   if (!slug) {
@@ -41,7 +39,6 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
   };
 }
 
-/* @ts-expect-error – gelockertes Props-Typing (siehe oben) */
 export default async function GuidePage(props: any) {
   const slug: string | undefined = props?.params?.slugs ?? props?.params?.slug;
   if (!slug) return notFound();
