@@ -107,13 +107,13 @@
     pointer-events: none;
   }
   
-/* =========================
-   Header (clean) + Navigation
-   ========================= */
-
-/* Header: KEIN globales Glass – nur eine dezente, transparente Fläche,
-   die den Inhalt darunter nicht „milchig“ macht. */
-   .site-header{
+  /* =========================
+     Header (clean) + Navigation
+     ========================= */
+  
+  /* Header: KEIN globales Glass – nur eine dezente, transparente Fläche,
+     die den Inhalt darunter nicht „milchig“ macht. */
+  .site-header{
     position: fixed;
     inset: 0 0 auto 0;
     z-index: 50;
@@ -322,25 +322,30 @@
     color: var(--brand-ink);
   }
   
+  /* >>>> BEREINIGT / VERBESSERT: Guides-Grid <<<< */
   .guides-grid{
     display:grid;
     gap: var(--gap);
-    grid-template-columns: 1fr;
-  }
-  @media (min-width: 560px){
-    .guides-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-  }
-  @media (min-width: 900px){
-    .guides-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    align-items: stretch;
   }
   
-  /* Karte: flex column; Button unten */
-  .guide-card{ display:flex; flex-direction:column; padding:14px; }
-  @media (min-width: 900px){ .guide-card{ padding:18px; } }
+  /* Karte: flex column; Button unten + sanfter Hover */
+  .guide-card{
+    display:flex;
+    flex-direction:column;
+    padding:16px;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .guide-card:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  }
   
+  /* Bild 16:9 statt fixer Höhe */
   .guide-img{
     width:100%;
-    height:140px;
+    aspect-ratio: 16 / 9;
     object-fit:cover;
     border-radius: calc(var(--radius) - 6px);
     margin-bottom:12px;
@@ -372,7 +377,11 @@
   }
   
   /* Button ans Kartenende */
-  .guide-actions{ margin-top: auto; }
+  .guide-actions{
+    margin-top: auto;
+    display:flex;
+    justify-content:flex-start;
+  }
   
   /* =========================
      iOS Viewport Stabilisierung (sanft)
@@ -389,555 +398,503 @@
   :where(img, video, svg, canvas) { display:block; max-width:100%; height:auto; }
   :where(.btn, .pill, .badge) { max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   
-
   /* === Active & Focus Styles für Navigation (inkrementell) === */
-
-/* Textlinks Desktop: aktiver Zustand */
-.nav-link[aria-current="page"],
-.nav-link[data-active="true"] {
-  background: rgba(var(--glass-bg)/0.62);
-  backdrop-filter: blur(6px) saturate(135%);
-  -webkit-backdrop-filter: blur(6px) saturate(135%);
-  border: 1px solid rgba(var(--border)/0.26);
-  box-shadow: 0 6px 16px rgba(0,0,0,.08);
-}
-
-/* Fokus für Tastatur-Nutzer – sichtbar, aber dezent */
-.nav-link:focus-visible,
-.nav-cta:focus-visible,
-.mobile-cta-bar .btn:focus-visible {
-  outline: 2px solid rgba(16,58,46,.55);       /* grünlich */
-  outline-offset: 2px;
-  border-radius: 12px;
-}
-
-/* Mobile CTA-Bar: aktiver Button subtil hervorgehoben */
-.mobile-cta-bar .btn[aria-current="page"],
-.mobile-cta-bar .btn[data-active="true"] {
-  box-shadow: 0 6px 16px rgba(0,0,0,.10);
-  border-color: rgba(0,0,0,.10);
-  transform: translateY(-1px);
-}
-
-/* Logo-Badge: sorgt dafür, dass ein weißes Logo auf jedem BG sichtbar ist */
-.brand-logo{
-  display:inline-flex; align-items:center; justify-content:center;
-  width:80px; height:70px; border-radius:10px;
-  background: rgba(100, 119, 101, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-.brand-logo img{ display:block; }
-
-/* Wenn du die Badge später nicht willst: einfach background + (webkit)backdrop-filter entfernen */
-
-
-/* Hero – klare Breite, sauberes Spacing */
-.hero{
-  padding-block: 16px 8px;
-}
-.hero-inner{
-  max-width: 980px;     /* angenehme Lesebreite am Desktop */
-  width: 100%;
-}
-
-/* Typo im Hero */
-.hero .h1{
-  font-size: clamp(32px, 5vw, 56px);
-  line-height: 1.06;
-  letter-spacing: -0.01em;
-  margin: 0 0 12px 0;
-}
-.hero .muted{
-  max-width: 62ch;
-}
-
-/* Mobile Optimierung */
-@media (max-width: 899px){
-  .hero{ padding-block: 12px 4px; }
-  .hero .h1{ font-size: clamp(28px, 7vw, 38px); }
-}
-
-
-/* ===== Hero – angenehme Breite & sauberes Scaling ===== */
-.hero{
-  padding-block: 16px 8px; /* ober/unter Abstand innerhalb der Spalte */
-}
-
-/* Begrenzt NUR den Textblock im Hero, nicht die Grid-Spalte */
-.hero-inner{
-  max-width: 980px;   /* Desktop-Lesebreite */
-  width: 100%;
-}
-
-/* Typografie-Feinschliff im Hero */
-.hero .h1{
-  font-size: clamp(32px, 5vw, 56px);
-  line-height: 1.06;
-  letter-spacing: -0.01em;
-  margin: 0 0 12px 0;
-}
-.hero .muted{
-  max-width: 62ch;  /* Fließtext nicht zu lang werden lassen */
-}
-
-/* Mobil etwas enger/flexibler */
-@media (max-width: 899px){
-  .hero{ padding-block: 12px 4px; }
-  .hero .h1{ font-size: clamp(28px, 7vw, 38px); }
-}
-
-
-/* ===== Headings: explizite Größen (Deprecation-Fix) ===== */
-:root{
-  /* Skaliert responsiv und ist leicht zu tweaken */
-  --fs-h1: clamp(2.25rem, 4.2vw, 3.5rem);   /* ~36px – 56px */
-  --fs-h2: clamp(1.5rem,  2.6vw, 2.25rem);  /* ~24px – 36px */
-  --fs-h3: clamp(1.25rem, 1.8vw, 1.5rem);   /* ~20px – 24px */
-  --lh-h: 1.12;
-}
-
-/* Globale Defaults für Headings (egal wo sie stehen) */
-h1{ font-size: var(--fs-h1); line-height: var(--lh-h); }
-h2{ font-size: var(--fs-h2); line-height: var(--lh-h); }
-h3{ font-size: var(--fs-h3); line-height: 1.18; }
-
-/* Spezifisch: Headings innerhalb section/article/aside/nav explizit absichern */
-:where(section, article, aside, nav) h1{ font-size: var(--fs-h1); }
-:where(section, article, aside, nav) h2{ font-size: var(--fs-h2); }
-:where(section, article, aside, nav) h3{ font-size: var(--fs-h3); }
-
-/* Wenn du bereits .h1/.h2/.h3 Klassen nutzt, bleiben sie gültig.
-   Optional: kleine Veredelung für die "Design-Headings" */
-.h1{ font-size: var(--fs-h1); line-height: var(--lh-h); letter-spacing: -0.01em; }
-.h2{ font-size: var(--fs-h2); line-height: var(--lh-h); }
-.h3{ font-size: var(--fs-h3); line-height: 1.18; }
-
-
-
-/* 1) Verhindert horizontales „Springen“, wenn der Scrollbalken erscheint/verschwindet */
-/* Verhindert Springen – aber nur rechts Platz reservieren */
-html {
-  overflow-y: scroll;     /* erzwingt den Scroll-Gutter */
-  scrollbar-gutter: stable;
-}
-
-/* 2) Header-Geometrie hart fixieren, damit nichts „nachfedert“ */
-.site-header { 
-  position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 50;
-}
-.site-bar {
-  height: 64px;                 /* fixe Höhe */
-  display: flex;
-  align-items: center;          /* vertikal sauber zentriert */
-  justify-content: space-between;
-  gap: 10px;
-}
-.brand {
-  display: inline-flex;
-  align-items: center;
-  height: 64px;                 /* gleiche Höhe wie .site-bar */
-}
-
-/* 3) Nav-Links: immer gleiche Box-Höhe/Breite – keine Bewegungen */
-.nav-desktop { 
-  display: flex; 
-  align-items: center; 
-  gap: 10px;
-}
-
-.nav-link {
-  box-sizing: border-box;       /* Border zählt zur Höhe/Breite */
-  height: 36px;
-  padding: 0 12px;
-  border-radius: 12px;
-  border: 1px solid transparent;/* gleiche Borderbreite in allen Zuständen */
-  line-height: 1;               /* kein Baseline-Geschubse */
-  font-size: 1rem;              /* hier Farbe/Größe anpassen */
-  font-weight: 700;
-  color: #0b0f0c;               /* oder #002f03, wenn du willst */
-  text-decoration: none;
-  transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, color .12s ease;
-}
-
-/* Hover: leichter Glass – OHNE Größenänderung */
-.nav-link:hover,
-.nav-link:focus-visible {
-  background: rgba(255 255 255 / .28);
-  backdrop-filter: blur(5px) saturate(130%);
-  -webkit-backdrop-filter: blur(5px) saturate(130%);
-  border-color: rgba(255 255 255 / .30);
-}
-
-/* Aktiv: „filled glassy“, aber OHNE translateY */
-.nav-link[aria-current="page"],
-.nav-link[data-active="true"] {
-  background: rgba(255 255 255 / .62);
-  backdrop-filter: blur(6px) saturate(135%);
-  -webkit-backdrop-filter: blur(6px) saturate(135%);
-  border-color: rgba(255 255 255 / .26);
-  box-shadow: 0 6px 16px rgba(0,0,0,.08);
-  transform: none;              /* <— wichtig: keine vertikale Verschiebung */
-}
-
-/* Primary-CTA im Header (Kontakt) – ebenfalls stabil */
-.nav-cta {
-  box-sizing: border-box;
-  height: 38px;
-  padding: 0 14px;
-  border-radius: 14px;
-  line-height: 1;
-}
-
-/* Optional: Logo-Badge, falls das Logo auf hellem BG „verschwindet“ */
-.brand-logo{
-  display:inline-flex; align-items:center; justify-content:center;
-  width:80px; height:40px; border-radius:10px;
-  background: rgba(255,255,255,.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-.brand-logo img{ display:block; }
-
-/* ========= Single Nav: nie doppelt, nie Umbruch ========= */
-.main-nav{
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-
-  /* niemals in die 2. Zeile rutschen */
-  flex-wrap: nowrap;
-  white-space: nowrap;
-}
-
-/* Basis für Links */
-.nav-link{
-  box-sizing: border-box;
-  height: 36px;
-  padding: 0 12px;
-  border-radius: 12px;
-  border: 1px solid transparent;
-  line-height: 1;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #0b0f0c; /* oder #002f03 */
-  text-decoration: none;
-  transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, color .12s ease;
-}
-
-/* Hover: leichter Glass */
-.nav-link:hover,
-.nav-link:focus-visible{
-  background: rgba(255 255 255 / .28);
-  backdrop-filter: blur(5px) saturate(130%);
-  -webkit-backdrop-filter: blur(5px) saturate(130%);
-  border-color: rgba(255 255 255 / .30);
-}
-
-/* Aktiv: filled glassy */
-.nav-link[aria-current="page"],
-.nav-link[data-active="true"]{
-  background: rgba(255 255 255 / .62);
-  backdrop-filter: blur(6px) saturate(135%);
-  -webkit-backdrop-filter: blur(6px) saturate(135%);
-  border-color: rgba(255 255 255 / .26);
-  box-shadow: 0 6px 16px rgba(0,0,0,.08);
-}
-
-/* Kontakt-CTA stabil */
-.nav-cta{
-  box-sizing: border-box;
-  height: 38px;
-  padding: 0 14px;
-  border-radius: 14px;
-  line-height: 1;
-  font-weight: 700;
-}
-
-/* --- Responsive Tuning: bleibt EINZEILIG, wird nur kompakter --- */
-@media (max-width: 420px){
-  .main-nav{ gap: 8px; }
-  .nav-link{ font-size: .95rem; padding: 0 10px; }
-  .nav-cta{ font-size: .95rem; padding: 0 12px; }
-}
-@media (max-width: 360px){
-  .main-nav{ gap: 6px; }
-  .nav-link{ font-size: .90rem; padding: 0 8px; }
-  .nav-cta{ font-size: .90rem; padding: 0 10px; }
-}
-
-/* Falls irgendwo noch alte Regeln existieren – deaktivieren */
-.nav-desktop, .mobile-cta-bar{ display: none !important; }
-
-/* --- UI-Typografie (Buttons, Pills, Nav) --------------------------- */
-/* Stelle sicher, dass Poppins verfügbar ist (via --font-poppins)     */
-/* und überschreibe component-spezifische Familien konsistent.        */
-
-:root {
-  /* Falls noch nicht geschehen: zentrale Sans-Variable */
-  --font-sans: var(--font-poppins), system-ui, -apple-system, "Segoe UI",
-               Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-}
-
-/* Globale „UI-Basis“ – alles, was klickbar ist */
-button, .btn, .pill, .badge, .chip, .nav-link, a.btn, input[type="submit"] {
-  font-family: var(--font-sans);
-  font-weight: 600;              /* knackiges UI-Gewicht */
-  letter-spacing: 0.01em;        /* minimal mehr Luft für Lesbarkeit */
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-/* Pillen (deine Tags/Chips) */
-.pill, .badge, .chip {
-  font-weight: 500;              /* etwas leichter als Buttons */
-  line-height: 1;                /* kompakt */
-}
-
-/* Buttons nach Varianten – falls vorhanden */
-.btn,
-.btn-ghost,
-.btn-primary,
-.btn-outline,
-.btn-link {
-  font-family: var(--font-sans);
-  font-weight: 600;
-}
-
-/* Navigation oben rechts */
-.site-header .site-bar a,
-.nav-link {
-  font-family: var(--font-sans);
-  font-weight: 600;
-}
-
-/* Kacheltitel/Meta in Cards (optional anpassen) */
-.card-title { font-family: var(--font-sans); font-weight: 700; }
-.card-text  { font-family: var(--font-sans); font-weight: 400; }
-
-/* Form Controls (einheitlich) */
-input, select, textarea {
-  font-family: var(--font-sans);
-  font-weight: 400;
-}
-
-/* Utility: überall schnell Poppins erzwingen */
-.font-ui { font-family: var(--font-sans) !important; }
-
-
-/* Abstand oberhalb der CTA-Buttons */
-.row-cta {
-  margin-top: 1.40rem; /* ~20px */
-}
-
-
-/* Abstand & Layout für Button-Reihe */
-.row-cta {
-  margin-top: 1.25rem;   /* Platz oberhalb der Buttons */
-  display: flex;
-  gap: 0.85rem;          /* Abstand zwischen Buttons */
-  flex-wrap: wrap;       /* Buttons umbrechen bei wenig Platz */
-}
-
-
-
-/* Hero Section Abstand nach unten zum nächsten Bereich */
-.hero {
-  margin-bottom: 7rem; /* Abstand zum nächsten Block */
-}
-
-/* ---- Fix: explizite Font-Size für Headings in sectioning elements ---- */
-section h1, article h1, nav h1, aside h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); }
-section h2, article h2, nav h2, aside h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
-section h3, article h3, nav h3, aside h3 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
-
-/* Optional, wenn du einheitlich auf Klassen setzt (deckt ebenfalls alles ab) */
-.h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); }
-.h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
-.h3 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
-
-
-/* Fix für Lighthouse Warnung: explizite font-size bei Headings in section/article/nav/aside */
-section h1, article h1, nav h1, aside h1 {
-  font-size: clamp(2.2rem, 6vw, 4.5rem);
-  line-height: 1.2;
-}
-
-section h2, article h2, nav h2, aside h2 {
-  font-size: clamp(1.6rem, 4vw, 2.4rem);
-  line-height: 1.3;
-}
-
-section h3, article h3, nav h3, aside h3 {
-  font-size: clamp(1.35rem, 3vw, 1.8rem);
-  line-height: 1.4;
-}
-
-
-
-/* Mobile: weniger Abstand oben */
-@media (max-width: 768px) {
-  .hero {
-    margin-top: 0,4rem;   /* hier anpassen nach Wunsch */
-    margin-bottom: 1rem;
+  
+  /* Textlinks Desktop: aktiver Zustand */
+  .nav-link[aria-current="page"],
+  .nav-link[data-active="true"] {
+    background: rgba(var(--glass-bg)/0.62);
+    backdrop-filter: blur(6px) saturate(135%);
+    -webkit-backdrop-filter: blur(6px) saturate(135%);
+    border: 1px solid rgba(var(--border)/0.26);
+    box-shadow: 0 6px 16px rgba(0,0,0,.08);
   }
-}
-
-/* ===== Consent Banner ===== */
-.consent-backdrop {
-  position: fixed; inset: 0; z-index: 1000;
-  background: rgba(0,0,0,0.45);
-  display: grid; place-items: end center;
-  padding: 16px;
-}
-
-.consent-modal {
-  width: min(680px, 100%);
-  background: rgba(255,255,255,0.88);
-  color: #002f03; /* passt zu deinem Brand-Grün */
-  border-radius: 16px;
-  padding: 16px;
-  border: 1px solid rgba(0,0,0,0.08);
-}
-
-.consent-switches { display: grid; gap: 8px; margin: 12px 0; }
-.switch { display: flex; gap: 8px; align-items: center; color: #002f03; }
-.cc-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-
-/* Basis (Desktop luftig) */
-.hero {
-  margin-top: 2rem;
-  margin-bottom: 4rem;
-}
-
-/* Tablet/Mobil: kompakter oben */
-@media (max-width: 900px) {
-  .hero { margin-top: 1.25rem; margin-bottom: 2.5rem; }
-}
-@media (max-width: 480px) {
-  .hero { margin-top: 0.75rem; margin-bottom: 2rem; }
-  .hero .h1 { margin-bottom: 0.5rem; }
-}
-
-
-/* Nav: clean default, Glass bei active/hover */
-.site-nav { display: flex; align-items: center; gap: 12px; }
-.nav-link {
-  padding: 8px 12px;
-  border-radius: 12px;
-  text-decoration: none;
-  font-weight: 600;
-  color: #3a423e;
-  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
-}
-.nav-link:hover {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.18);
-}
-.nav-link.is-active {
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.22);
-  backdrop-filter: blur(8px);
-}
-
-/* Skip-Link sichtbar beim Fokus */
-.skip-link {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  background: #fff;
-  color: #002f03;
-  padding: 8px 12px;
-  border-radius: 8px;
-  z-index: 9999;
-}
-.skip-link:focus {
-  left: 12px;
-  top: 12px;
-  outline: 2px solid #002f03;
-}
-
-/* ===== Footer ===== */
-.site-footer {
-  margin-top: 40px;
-  padding: 24px 0 24px; /* kein Extra-Padding mehr, da keine Floating-Bar */
-  background: rgba(0,0,0,0.06);
-  backdrop-filter: blur(6px);
-}
-.footer-inner {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 16px;
-}
-.footer-nav { display: flex; flex-wrap: wrap; gap: 12px; }
-.footer-nav a, .footer-nav .link, .footer-nav button.link {
-  background: none; border: 0; padding: 0;
-  color: #eafff5; text-decoration: underline; cursor: pointer;
-}
-@media (max-width: 768px) {
-  .footer-inner { flex-direction: column; }
-}
-
---- a/src/app/globals.css
-+++ b/src/app/globals.css
-@@
--  .guides-grid{
--    display:grid;
--    gap: var(--gap);
--    grid-template-columns: 1fr;
--  }
--  @media (min-width: 560px){
--    .guides-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
--  }
--  @media (min-width: 900px){
--    .guides-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
--  }
-+  .guides-grid{
-+    display:grid;
-+    gap: var(--gap);
-+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-+    align-items: stretch;
-+  }
-@@
--  .guide-card{ display:flex; flex-direction:column; padding:14px; }
-+  .guide-card{
-+    display:flex; flex-direction:column; padding:16px;
-+    transition: transform .12s ease, box-shadow .12s ease;
-+  }
-+  .guide-card:hover{ transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08); }
-@@
--  .guide-img{
--    width:100%;
--    height:140px;
--    object-fit:cover;
--    border-radius: calc(var(--radius) - 6px);
--    margin-bottom:12px;
--  }
-+  .guide-img{
-+    width:100%;
-+    aspect-ratio: 16 / 9;
-+    object-fit:cover;
-+    border-radius: calc(var(--radius) - 6px);
-+    margin-bottom:12px;
-+  }
-@@
--  .guide-actions{ margin-top: auto;
-+  .guide-actions{ margin-top: auto;
-     display:flex; justify-content:flex-start; }
-
-
-
-.bg-photo {
-  background: linear-gradient(145deg, #257083 0%, #e0f2f1 50%, #64b367 100%);
-  /* später wieder:
-  background-image: url('/dein-bild.jpg');
-  background-size: cover;
-  background-position: center;
-  */
-}
-
-
+  
+  /* Fokus für Tastatur-Nutzer – sichtbar, aber dezent */
+  .nav-link:focus-visible,
+  .nav-cta:focus-visible,
+  .mobile-cta-bar .btn:focus-visible {
+    outline: 2px solid rgba(16,58,46,.55);       /* grünlich */
+    outline-offset: 2px;
+    border-radius: 12px;
+  }
+  
+  /* Mobile CTA-Bar: aktiver Button subtil hervorgehoben */
+  .mobile-cta-bar .btn[aria-current="page"],
+  .mobile-cta-bar .btn[data-active="true"] {
+    box-shadow: 0 6px 16px rgba(0,0,0,.10);
+    border-color: rgba(0,0,0,.10);
+    transform: translateY(-1px);
+  }
+  
+  /* Logo-Badge: sorgt dafür, dass ein weißes Logo auf jedem BG sichtbar ist */
+  .brand-logo{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:80px; height:70px; border-radius:10px;
+    background: rgba(100, 119, 101, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .brand-logo img{ display:block; }
+  
+  /* Wenn du die Badge später nicht willst: einfach background + (webkit)backdrop-filter entfernen */
+  
+  
+  /* Hero – klare Breite, sauberes Spacing */
+  .hero{
+    padding-block: 16px 8px;
+  }
+  .hero-inner{
+    max-width: 980px;     /* angenehme Lesebreite am Desktop */
+    width: 100%;
+  }
+  
+  /* Typo im Hero */
+  .hero .h1{
+    font-size: clamp(32px, 5vw, 56px);
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px 0;
+  }
+  .hero .muted{
+    max-width: 62ch;
+  }
+  
+  /* Mobile Optimierung */
+  @media (max-width: 899px){
+    .hero{ padding-block: 12px 4px; }
+    .hero .h1{ font-size: clamp(28px, 7vw, 38px); }
+  }
+  
+  
+  /* ===== Hero – angenehme Breite & sauberes Scaling ===== */
+  .hero{
+    padding-block: 16px 8px; /* ober/unter Abstand innerhalb der Spalte */
+  }
+  
+  /* Begrenzt NUR den Textblock im Hero, nicht die Grid-Spalte */
+  .hero-inner{
+    max-width: 980px;   /* Desktop-Lesebreite */
+    width: 100%;
+  }
+  
+  /* Typografie-Feinschliff im Hero */
+  .hero .h1{
+    font-size: clamp(32px, 5vw, 56px);
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px 0;
+  }
+  .hero .muted{
+    max-width: 62ch;  /* Fließtext nicht zu lang werden lassen */
+  }
+  
+  /* Mobil etwas enger/flexibler */
+  @media (max-width: 899px){
+    .hero{ padding-block: 12px 4px; }
+    .hero .h1{ font-size: clamp(28px, 7vw, 38px); }
+  }
+  
+  
+  /* ===== Headings: explizite Größen (Deprecation-Fix) ===== */
+  :root{
+    /* Skaliert responsiv und ist leicht zu tweaken */
+    --fs-h1: clamp(2.25rem, 4.2vw, 3.5rem);   /* ~36px – 56px */
+    --fs-h2: clamp(1.5rem,  2.6vw, 2.25rem);  /* ~24px – 36px */
+    --fs-h3: clamp(1.25rem, 1.8vw, 1.5rem);   /* ~20px – 24px */
+    --lh-h: 1.12;
+  }
+  
+  /* Globale Defaults für Headings (egal wo sie stehen) */
+  h1{ font-size: var(--fs-h1); line-height: var(--lh-h); }
+  h2{ font-size: var(--fs-h2); line-height: var(--lh-h); }
+  h3{ font-size: var(--fs-h3); line-height: 1.18; }
+  
+  /* Spezifisch: Headings innerhalb section/article/aside/nav explizit absichern */
+  :where(section, article, aside, nav) h1{ font-size: var(--fs-h1); }
+  :where(section, article, aside, nav) h2{ font-size: var(--fs-h2); }
+  :where(section, article, aside, nav) h3{ font-size: var(--fs-h3); }
+  
+  /* Wenn du bereits .h1/.h2/.h3 Klassen nutzt, bleiben sie gültig.
+     Optional: kleine Veredelung für die "Design-Headings" */
+  .h1{ font-size: var(--fs-h1); line-height: var(--lh-h); letter-spacing: -0.01em; }
+  .h2{ font-size: var(--fs-h2); line-height: var(--lh-h); }
+  .h3{ font-size: var(--fs-h3); line-height: 1.18; }
+  
+  
+  
+  /* 1) Verhindert horizontales „Springen“, wenn der Scrollbalken erscheint/verschwindet */
+  /* Verhindert Springen – aber nur rechts Platz reservieren */
+  html {
+    overflow-y: scroll;     /* erzwingt den Scroll-Gutter */
+    scrollbar-gutter: stable;
+  }
+  
+  /* 2) Header-Geometrie hart fixieren, damit nichts „nachfedert“ */
+  .site-header { 
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+  }
+  .site-bar {
+    height: 64px;                 /* fixe Höhe */
+    display: flex;
+    align-items: center;          /* vertikal sauber zentriert */
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    height: 64px;                 /* gleiche Höhe wie .site-bar */
+  }
+  
+  /* 3) Nav-Links: immer gleiche Box-Höhe/Breite – keine Bewegungen */
+  .nav-desktop { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+  }
+  
+  .nav-link {
+    box-sizing: border-box;       /* Border zählt zur Höhe/Breite */
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 12px;
+    border: 1px solid transparent;/* gleiche Borderbreite in allen Zuständen */
+    line-height: 1;               /* kein Baseline-Geschubse */
+    font-size: 1rem;              /* hier Farbe/Größe anpassen */
+    font-weight: 700;
+    color: #0b0f0c;               /* oder #002f03, wenn du willst */
+    text-decoration: none;
+    transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, color .12s ease;
+  }
+  
+  /* Hover: leichter Glass – OHNE Größenänderung */
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    background: rgba(255 255 255 / .28);
+    backdrop-filter: blur(5px) saturate(130%);
+    -webkit-backdrop-filter: blur(5px) saturate(130%);
+    border-color: rgba(255 255 255 / .30);
+  }
+  
+  /* Aktiv: „filled glassy“, aber OHNE translateY */
+  .nav-link[aria-current="page"],
+  .nav-link[data-active="true"] {
+    background: rgba(255 255 255 / .62);
+    backdrop-filter: blur(6px) saturate(135%);
+    -webkit-backdrop-filter: blur(6px) saturate(135%);
+    border-color: rgba(255 255 255 / .26);
+    box-shadow: 0 6px 16px rgba(0,0,0,.08);
+    transform: none;              /* <— wichtig: keine vertikale Verschiebung */
+  }
+  
+  /* Primary-CTA im Header (Kontakt) – ebenfalls stabil */
+  .nav-cta {
+    box-sizing: border-box;
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 14px;
+    line-height: 1;
+  }
+  
+  /* Optional: Logo-Badge, falls das Logo auf hellem BG „verschwindet“ */
+  .brand-logo{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:80px; height:40px; border-radius:10px;
+    background: rgba(255,255,255,.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .brand-logo img{ display:block; }
+  
+  /* ========= Single Nav: nie doppelt, nie Umbruch ========= */
+  .main-nav{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+  
+    /* niemals in die 2. Zeile rutschen */
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  
+  /* Basis für Links */
+  .nav-link{
+    box-sizing: border-box;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    line-height: 1;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0b0f0c; /* oder #002f03 */
+    text-decoration: none;
+    transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, color .12s ease;
+  }
+  
+  /* Hover: leichter Glass */
+  .nav-link:hover,
+  .nav-link:focus-visible{
+    background: rgba(255 255 255 / .28);
+    backdrop-filter: blur(5px) saturate(130%);
+    -webkit-backdrop-filter: blur(5px) saturate(130%);
+    border-color: rgba(255 255 255 / .30);
+  }
+  
+  /* Aktiv: filled glassy */
+  .nav-link[aria-current="page"],
+  .nav-link[data-active="true"]{
+    background: rgba(255 255 255 / .62);
+    backdrop-filter: blur(6px) saturate(135%);
+    -webkit-backdrop-filter: blur(6px) saturate(135%);
+    border-color: rgba(255 255 255 / .26);
+    box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  }
+  
+  /* Kontakt-CTA stabil */
+  .nav-cta{
+    box-sizing: border-box;
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 14px;
+    line-height: 1;
+    font-weight: 700;
+  }
+  
+  /* --- Responsive Tuning: bleibt EINZEILIG, wird nur kompakter --- */
+  @media (max-width: 420px){
+    .main-nav{ gap: 8px; }
+    .nav-link{ font-size: .95rem; padding: 0 10px; }
+    .nav-cta{ font-size: .95rem; padding: 0 12px; }
+  }
+  @media (max-width: 360px){
+    .main-nav{ gap: 6px; }
+    .nav-link{ font-size: .90rem; padding: 0 8px; }
+    .nav-cta{ font-size: .90rem; padding: 0 10px; }
+  }
+  
+  /* Falls irgendwo noch alte Regeln existieren – deaktivieren */
+  .nav-desktop, .mobile-cta-bar{ display: none !important; }
+  
+  /* --- UI-Typografie (Buttons, Pills, Nav) --------------------------- */
+  /* Stelle sicher, dass Poppins verfügbar ist (via --font-poppins)     */
+  /* und überschreibe component-spezifische Familien konsistent.        */
+  
+  :root {
+    /* Falls noch nicht geschehen: zentrale Sans-Variable */
+    --font-sans: var(--font-poppins), system-ui, -apple-system, "Segoe UI",
+                 Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  }
+  
+  /* Globale „UI-Basis“ – alles, was klickbar ist */
+  button, .btn, .pill, .badge, .chip, .nav-link, a.btn, input[type="submit"] {
+    font-family: var(--font-sans);
+    font-weight: 600;              /* knackiges UI-Gewicht */
+    letter-spacing: 0.01em;        /* minimal mehr Luft für Lesbarkeit */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Pillen (deine Tags/Chips) */
+  .pill, .badge, .chip {
+    font-weight: 500;              /* etwas leichter als Buttons */
+    line-height: 1;                /* kompakt */
+  }
+  
+  /* Buttons nach Varianten – falls vorhanden */
+  .btn,
+  .btn-ghost,
+  .btn-primary,
+  .btn-outline,
+  .btn-link {
+    font-family: var(--font-sans);
+    font-weight: 600;
+  }
+  
+  /* Navigation oben rechts */
+  .site-header .site-bar a,
+  .nav-link {
+    font-family: var(--font-sans);
+    font-weight: 600;
+  }
+  
+  /* Kacheltitel/Meta in Cards (optional anpassen) */
+  .card-title { font-family: var(--font-sans); font-weight: 700; }
+  .card-text  { font-family: var(--font-sans); font-weight: 400; }
+  
+  /* Form Controls (einheitlich) */
+  input, select, textarea {
+    font-family: var(--font-sans);
+    font-weight: 400;
+  }
+  
+  /* Utility: überall schnell Poppins erzwingen */
+  .font-ui { font-family: var(--font-sans) !important; }
+  
+  
+  /* Abstand oberhalb der CTA-Buttons */
+  .row-cta {
+    margin-top: 1.40rem; /* ~20px */
+  }
+  
+  
+  /* Abstand & Layout für Button-Reihe */
+  .row-cta {
+    margin-top: 1.25rem;   /* Platz oberhalb der Buttons */
+    display: flex;
+    gap: 0.85rem;          /* Abstand zwischen Buttons */
+    flex-wrap: wrap;       /* Buttons umbrechen bei wenig Platz */
+  }
+  
+  
+  /* Hero Section Abstand nach unten zum nächsten Bereich */
+  .hero {
+    margin-bottom: 7rem; /* Abstand zum nächsten Block */
+  }
+  
+  /* ---- Fix: explizite Font-Size für Headings in sectioning elements ---- */
+  section h1, article h1, nav h1, aside h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); }
+  section h2, article h2, nav h2, aside h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+  section h3, article h3, nav h3, aside h3 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+  
+  /* Optional, wenn du einheitlich auf Klassen setzt (deckt ebenfalls alles ab) */
+  .h1 { font-size: clamp(2.2rem, 6vw, 4.5rem); }
+  .h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+  .h3 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+  
+  
+  /* Fix für Lighthouse Warnung: explizite font-size bei Headings in section/article/nav/aside */
+  section h1, article h1, nav h1, aside h1 {
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    line-height: 1.2;
+  }
+  
+  section h2, article h2, nav h2, aside h2 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    line-height: 1.3;
+  }
+  
+  section h3, article h3, nav h3, aside h3 {
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+    line-height: 1.4;
+  }
+  
+  
+  /* Mobile: weniger Abstand oben */
+  @media (max-width: 768px) {
+    .hero {
+      margin-top: 0,4rem;   /* hier anpassen nach Wunsch */
+      margin-bottom: 1rem;
+    }
+  }
+  
+  /* ===== Consent Banner ===== */
+  .consent-backdrop {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.45);
+    display: grid; place-items: end center;
+    padding: 16px;
+  }
+  
+  .consent-modal {
+    width: min(680px, 100%);
+    background: rgba(255,255,255,0.88);
+    color: #002f03; /* passt zu deinem Brand-Grün */
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  
+  .consent-switches { display: grid; gap: 8px; margin: 12px 0; }
+  .switch { display: flex; gap: 8px; align-items: center; color: #002f03; }
+  .cc-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  
+  /* Basis (Desktop luftig) */
+  .hero {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+  }
+  
+  /* Tablet/Mobil: kompakter oben */
+  @media (max-width: 900px) {
+    .hero { margin-top: 1.25rem; margin-bottom: 2.5rem; }
+  }
+  @media (max-width: 480px) {
+    .hero { margin-top: 0.75rem; margin-bottom: 2rem; }
+    .hero .h1 { margin-bottom: 0.5rem; }
+  }
+  
+  
+  /* Nav: clean default, Glass bei active/hover */
+  .site-nav { display: flex; align-items: center; gap: 12px; }
+  .nav-link {
+    padding: 8px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    color: #3a423e;
+    transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+  }
+  .nav-link:hover {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .nav-link.is-active {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.22);
+    backdrop-filter: blur(8px);
+  }
+  
+  /* Skip-Link sichtbar beim Fokus */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: #fff;
+    color: #002f03;
+    padding: 8px 12px;
+    border-radius: 8px;
+    z-index: 9999;
+  }
+  .skip-link:focus {
+    left: 12px;
+    top: 12px;
+    outline: 2px solid #002f03;
+  }
+  
+  /* ===== Footer ===== */
+  .site-footer {
+    margin-top: 40px;
+    padding: 24px 0 24px; /* kein Extra-Padding mehr, da keine Floating-Bar */
+    background: rgba(0,0,0,0.06);
+    backdrop-filter: blur(6px);
+  }
+  .footer-inner {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .footer-nav { display: flex; flex-wrap: wrap; gap: 12px; }
+  .footer-nav a, .footer-nav .link, .footer-nav button.link {
+    background: none; border: 0; padding: 0;
+    color: #eafff5; text-decoration: underline; cursor: pointer;
+  }
+  @media (max-width: 768px) {
+    .footer-inner { flex-direction: column; }
+  }
+  
+  /* Hintergrund: Gradient-Variante (optional) */
+  .bg-photo {
+    background: linear-gradient(145deg, #257083 0%, #e0f2f1 50%, #64b367 100%);
+    /* später wieder:
+    background-image: url('/dein-bild.jpg');
+    background-size: cover;
+    background-position: center;
+    */
+  }
+  
