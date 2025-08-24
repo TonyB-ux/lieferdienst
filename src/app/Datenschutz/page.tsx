@@ -2,11 +2,6 @@
 
 import { useEffect } from "react";
 
-export const metadata = {
-  title: "Datenschutz | lieferdienst-bio.de",
-  robots: { index: true, follow: true },
-};
-
 export default function DatenschutzPage() {
   // Optionaler „Open Consent“-Trigger per CustomEvent
   useEffect(() => {
