@@ -1,41 +1,30 @@
+// src/app/api/revalidate/route.ts
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
-type RevalidateBody = { path?: string; slug?: string };
-
 export async function POST(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const secret = searchParams.get("secret");
-  if (secret !== process.env.REVALIDATE_SECRET) {
-    return NextResponse.json({ ok: false, reason: "bad-secret" }, { status: 401 });
-  }
-
-  let body: RevalidateBody = {};
+  // Payload sicher parsen
+  let body: any = {};
   try {
-    body = (await req.json()) as RevalidateBody; // kein any
+    body = await req.json();
   } catch {
-    // body bleibt {}
+    body = {};
   }
 
-  const path =
-    typeof body.path === "string"
-      ? body.path
-      : typeof body.slug === "string"
-      ? `/lieferdienste/${body.slug}`
-      : "/lieferdienste";
+  const secret = body?.secret as string | undefined;
+  const targetPath = (body?.path as string) || "/guides";
 
-  revalidatePath(path);
-  return NextResponse.json({ ok: true, revalidated: path });
-}
-
-// src/app/api/revalidate/route.ts
-import { revalidatePath } from "next/cache";
-
-export async function POST(req: Request) {
-  const { secret, path = "/guides" } = await req.json().catch(() => ({}));
   if (secret !== process.env.REVALIDATE_SECRET) {
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
-  revalidatePath(path);
-  return Response.json({ revalidated: true, path });
+
+  try {
+    revalidatePath(targetPath);
+    return NextResponse.json({ ok: true, revalidated: true, path: targetPath });
+  } catch (err: any) {
+    return NextResponse.json(
+      { ok: false, error: err?.message || "Revalidation failed" },
+      { status: 500 }
+    );
+  }
 }
