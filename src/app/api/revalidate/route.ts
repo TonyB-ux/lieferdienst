@@ -27,3 +27,15 @@ export async function POST(req: Request) {
   revalidatePath(path);
   return NextResponse.json({ ok: true, revalidated: path });
 }
+
+// src/app/api/revalidate/route.ts
+import { revalidatePath } from "next/cache";
+
+export async function POST(req: Request) {
+  const { secret, path = "/guides" } = await req.json().catch(() => ({}));
+  if (secret !== process.env.REVALIDATE_SECRET) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+  revalidatePath(path);
+  return Response.json({ revalidated: true, path });
+}

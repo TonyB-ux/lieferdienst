@@ -2,7 +2,7 @@
 import Link from "next/link";
 import GuidesRow from "@/components/GuidesRow";
 
-export default async function GlassStarter() {
+export default function GlassStarter() {
   return (
     <main className="relative z-0">
       <div className="container" style={{ paddingTop: 16, paddingBottom: 32 }}>
@@ -10,7 +10,7 @@ export default async function GlassStarter() {
         <div className="grid-cols">
           {/* HERO */}
           <section className="col-span-6 hero">
-            {/* NEU: Breiten-Wrapper – begrenzt nur den Inhalt, nicht die Spalte */}
+            {/* Breiten-Wrapper – begrenzt nur den Inhalt, nicht die Spalte */}
             <div className="hero-inner">
               <h1 className="h1">
                 Finde den<br />
@@ -84,14 +84,16 @@ export default async function GlassStarter() {
           </section>
         </div>
 
-        {/* Guides & Ratgeber */}
-        <section style={{ marginTop: 28 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-            <h2 className="card-title" style={{ fontSize: "1.15rem" }}>Guides & Ratgeber</h2>
+        {/* Guides & Ratgeber – nur unten */}
+        <section aria-labelledby="guides-heading" style={{ marginTop: 36 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+            <h2 id="guides-heading" className="card-title" style={{ fontSize: "1.25rem" }}>
+              Guides & Ratgeber
+            </h2>
             <Link href="/guides" className="btn">Alle Guides</Link>
           </div>
 
-          <div className="guides-grid">
+          <div className="guides-grid" role="list">
             <GuidesRow />
           </div>
         </section>

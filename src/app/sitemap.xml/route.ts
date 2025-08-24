@@ -43,3 +43,19 @@ export async function GET() {
     },
   });
 }
+// src/app/sitemap.ts
+import { fetchGuideSlugs } from "@/lib/wp";
+
+export default async function sitemap() {
+  const base = "https://lieferdienst-bio.de";
+  const slugs = await fetchGuideSlugs();
+
+  return [
+    { url: `${base}/`, lastModified: new Date() },
+    { url: `${base}/guides`, lastModified: new Date() },
+    ...(slugs || []).map((s) => ({
+      url: `${base}/guides/${s}`,
+      changeFrequency: "weekly",
+    })),
+  ];
+}

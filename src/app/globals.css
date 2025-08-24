@@ -882,6 +882,54 @@ section h3, article h3, nav h3, aside h3 {
   .footer-inner { flex-direction: column; }
 }
 
+--- a/src/app/globals.css
++++ b/src/app/globals.css
+@@
+-  .guides-grid{
+-    display:grid;
+-    gap: var(--gap);
+-    grid-template-columns: 1fr;
+-  }
+-  @media (min-width: 560px){
+-    .guides-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+-  }
+-  @media (min-width: 900px){
+-    .guides-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+-  }
++  .guides-grid{
++    display:grid;
++    gap: var(--gap);
++    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
++    align-items: stretch;
++  }
+@@
+-  .guide-card{ display:flex; flex-direction:column; padding:14px; }
++  .guide-card{
++    display:flex; flex-direction:column; padding:16px;
++    transition: transform .12s ease, box-shadow .12s ease;
++  }
++  .guide-card:hover{ transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08); }
+@@
+-  .guide-img{
+-    width:100%;
+-    height:140px;
+-    object-fit:cover;
+-    border-radius: calc(var(--radius) - 6px);
+-    margin-bottom:12px;
+-  }
++  .guide-img{
++    width:100%;
++    aspect-ratio: 16 / 9;
++    object-fit:cover;
++    border-radius: calc(var(--radius) - 6px);
++    margin-bottom:12px;
++  }
+@@
+-  .guide-actions{ margin-top: auto;
++  .guide-actions{ margin-top: auto;
+     display:flex; justify-content:flex-start; }
+
+
 
 .bg-photo {
   background: linear-gradient(145deg, #257083 0%, #e0f2f1 50%, #64b367 100%);

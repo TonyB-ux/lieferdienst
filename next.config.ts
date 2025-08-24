@@ -16,3 +16,11 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+export default {
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "dein-wordpress.example", pathname: "/**" },
+    ],
+  },
+};

@@ -18,9 +18,9 @@ export default async function GuidesRow() {
     ];
 
     return (
-      <div className="guides-grid">
+      <div className="guides-grid" role="list">
         {fallback.map((g) => (
-          <Card key={g.href} className="guide-card">
+          <Card key={g.href} className="guide-card" role="listitem">
             <h3 className="guide-title">{g.title}</h3>
             <p className="guide-excerpt">Kurzer Guide – ideal für Einsteiger.</p>
             <div className="guide-actions">
@@ -33,9 +33,9 @@ export default async function GuidesRow() {
   }
 
   return (
-    <div className="guides-grid">
+    <div className="guides-grid" role="list">
       {guides.map((g) => (
-        <Card key={g.id} className="guide-card">
+        <Card key={g.id} className="guide-card" role="listitem">
           {g.featuredImage?.node?.sourceUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img

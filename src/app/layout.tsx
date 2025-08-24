@@ -9,6 +9,7 @@ import ConsentProvider from "@/components/ConsentProvider";
 import ConsentBanner from "@/components/ConsentBanner";
 import GA4 from "@/components/GA4";
 import ConsentEvents from "@/components/ConsentEvents";
+import GuidesRow from "@/components/GuidesRow";
 
 // robust: relative Imports (entspricht deiner aktuellen Struktur)
 import SkipLink from "../components/SkipLink";
@@ -48,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Suspense>
 
           <ConsentEvents />
-
+          <GuidesRow />
           {/* Fixer Header */}
           <header className="site-header">
             <div className="container site-bar">

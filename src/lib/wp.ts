@@ -198,6 +198,11 @@ export async function fetchGuideSlugs(): Promise<string[]> {
   const nodes = data?.posts?.nodes ?? [];
   return nodes.map((n) => n.slug).filter(Boolean);
 }
+// Alias für die Routen-Datei /guides/[slug]/page.tsx
+export async function fetchAllGuideSlugs(): Promise<string[]> {
+  return fetchGuideSlugs();
+}
+
 
 /* ============================================================================
    GraphQL – LIEFERBETRIEBE (CPT + Fallback auf Posts)

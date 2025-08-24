@@ -6,11 +6,7 @@ import { fetchGuideBySlug, fetchGuideSlugs } from "../../../lib/wp";
 
 export const revalidate = 1800;
 
-function GlassCard({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={["glass", className].filter(Boolean).join(" ")}>{children}</div>;
-}
-
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
   try {
     const slugs = await fetchGuideSlugs();
     return (slugs || []).map((slug) => ({ slug }));
@@ -19,21 +15,25 @@ export async function generateStaticParams() {
   }
 }
 
+function strip(html?: string) {
+  return html ? html.replace(/<[^>]*>/g, "").trim() : "";
+}
+
 export async function generateMetadata(
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: { slug: string } }
 ): Promise<Metadata> {
   try {
-    const { slug } = await params;
+    const { slug } = params;
     const g = await fetchGuideBySlug(slug);
 
-    const desc = g?.excerpt?.replace(/<[^>]*>/g, "") || "";
+    const desc = strip(g?.excerpt);
     const ogImg = g?.featuredImage?.node?.sourceUrl
       ? [{ url: g.featuredImage.node.sourceUrl }]
       : undefined;
 
     return {
       title: g?.title || "Guide",
-      description: desc,
+      description: desc || undefined,
       alternates: { canonical: `https://lieferdienst-bio.de/guides/${slug}` },
       openGraph: { title: g?.title, description: desc || undefined, images: ogImg },
     };
@@ -42,13 +42,15 @@ export async function generateMetadata(
   }
 }
 
-export default async function GuidePage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function GuidePage(
+  { params }: { params: { slug: string } }
+) {
+  const { slug } = params;
   const g = await fetchGuideBySlug(slug);
 
   if (!g) {
     // Keine Daten -> 404 statt 500
-    notFound();
+    return notFound();
   }
 
   return (
@@ -57,7 +59,9 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
       <div className="noise-overlay" aria-hidden />
 
       <article className="max-w-3xl mx-auto px-5 py-10 prose prose-invert">
-        <Link href="/guides" className="underline text-white/80 hover:text-white">← Alle Guides</Link>
+        <Link href="/guides" className="underline text-white/80 hover:text-white">
+          ← Alle Guides
+        </Link>
         <h1 className="mb-2">{g.title}</h1>
 
         {/* eslint-disable-next-line @next/next/no-img-element */}
