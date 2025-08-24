@@ -1,57 +1,45 @@
 // src/app/api/revalidate/route.ts
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
-type RevalidateBody = {
-  path?: string;       // z.B. "/guides" oder "/guides/mein-guide"
-  slug?: string;       // z.B. "mein-betrieb" -> wird zu "/lieferdienste/mein-betrieb"
-  paths?: string[];    // optional: mehrere Pfade auf einmal
-};
+type Body = { path?: string; tag?: string; slug?: string };
 
 export async function POST(req: Request) {
-  // Secret aus der Query lesen, z.B. /api/revalidate?secret=...
   const { searchParams } = new URL(req.url);
   const secret = searchParams.get("secret");
-
   if (secret !== process.env.REVALIDATE_SECRET) {
     return NextResponse.json({ ok: false, reason: "bad-secret" }, { status: 401 });
   }
 
-  // Body optional und typsicher parsen
-  let body: RevalidateBody = {};
-  try {
-    body = (await req.json()) as RevalidateBody;
-  } catch {
-    // kein Body → bleibt {}
+  let body: Body = {};
+  try { body = (await req.json()) as Body; } catch { /* empty body allowed */ }
+
+  // Wenn slug übergeben wurde -> ableiten
+  const path =
+    typeof body.path === "string" ? body.path :
+    typeof body.slug === "string" ? `/guides/${body.slug}` :
+    undefined;
+
+  // Standard-Fall: Guides haben sich geändert -> Home + /guides + Tag
+  if (!path && !body.tag) {
+    revalidatePath("/");
+    revalidatePath("/guides");
+    revalidateTag("guides");
+    return NextResponse.json({ ok: true, revalidated: ["/", "/guides"], tags: ["guides"] });
   }
 
-  // Zielpfade sammeln
-  const targets = new Set<string>();
-
-  // mehrere Pfade
-  if (Array.isArray(body.paths)) {
-    for (const p of body.paths) if (typeof p === "string" && p.startsWith("/")) targets.add(p);
+  if (path) {
+    revalidatePath(path);
+    // Wenn es eine Guides-Seite ist, aktualisiere zusätzlich Home und Liste
+    if (path === "/guides" || path.startsWith("/guides/")) {
+      revalidatePath("/");
+      revalidateTag("guides");
+    }
   }
 
-  // einzelner Pfad
-  if (typeof body.path === "string" && body.path.startsWith("/")) {
-    targets.add(body.path);
+  if (typeof body.tag === "string" && body.tag) {
+    revalidateTag(body.tag);
   }
 
-  // slug -> /lieferdienste/<slug>
-  if (typeof body.slug === "string" && body.slug.trim()) {
-    targets.add(`/lieferdienste/${body.slug.trim()}`);
-  }
-
-  // Fallback: wenn nichts angegeben wurde, nimm /guides
-  if (targets.size === 0) {
-    targets.add("/guides");
-  }
-
-  // Revalidieren
-  for (const p of targets) {
-    revalidatePath(p);
-  }
-
-  return NextResponse.json({ ok: true, revalidated: Array.from(targets) });
+  return NextResponse.json({ ok: true, path: path ?? null, tag: body.tag ?? null });
 }

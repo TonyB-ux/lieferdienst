@@ -911,6 +911,11 @@
   display: grid !important; 
 }
 
+.btn .icon-left{
+  margin-right: 8px;
+  display: inline-block;
+  vertical-align: -2px; /* optische Ausrichtung zum Text */
+}
 
   /* Hintergrund: Gradient-Variante (optional) */
   .bg-photo {
