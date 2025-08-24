@@ -11,7 +11,8 @@ export async function generateStaticParams(): Promise<{ slugs: string }[]> {
   return (slugs || []).map((s) => ({ slugs: s }));
 }
 
-const strip = (html?: string) =>
+// akzeptiert string | null | undefined
+const strip = (html: string | null | undefined): string =>
   html ? html.replace(/<[^>]*>/g, "").trim() : "";
 
 export async function generateMetadata({ params }: any): Promise<Metadata> {
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
     return { title: "Guide nicht gefunden | lieferdienst-bio.de", robots: { index: false, follow: true } };
   }
 
-  const desc = strip(g.excerpt)?.slice(0, 160);
+  const desc = strip(g.excerpt).slice(0, 160);
   const ogImg = g.featuredImage?.node?.sourceUrl
     ? [{ url: g.featuredImage.node.sourceUrl }]
     : undefined;
