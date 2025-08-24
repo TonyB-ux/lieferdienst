@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 import { fetchGuideSlugs } from "@/lib/wp";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = "https://lieferdienst-bio.de"; // ggf. anpassen für Preview
+  const base = "https://lieferdienst-bio.de"; // ggf. für Preview anpassen
   let slugs: string[] = [];
   try {
     slugs = await fetchGuideSlugs();
