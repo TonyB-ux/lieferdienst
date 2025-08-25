@@ -1,31 +1,21 @@
 // src/app/sitemap.ts
 import type { MetadataRoute } from "next";
-import { fetchGuideSlugs } from "@/lib/wp";
+import { getGuideSlugs } from "@/lib/wp";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = "https://lieferdienst-bio.de"; // ggf. für Preview anpassen
-  const now = new Date();
+  const base = "https://lieferdienst-bio.de";
+  const now = new Date().toISOString();
+  const slugs = await getGuideSlugs(200).catch(() => []);
+  const guides = slugs.map((slug) => ({
+    url: `${base}/guides/${slug}`,
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.6,
+  }));
 
-  let slugs: string[] = [];
-  try {
-    slugs = await fetchGuideSlugs();
-  } catch {
-    slugs = [];
-  }
-
-  const dynamicItems: MetadataRoute.Sitemap = slugs.map<MetadataRoute.Sitemap[number]>(
-    (s) => ({
-      url: `${base}/guides/${s}`,
-      changeFrequency: "weekly", // ← Literal bleibt "weekly", nicht string
-      lastModified: now,
-    })
-  );
-
-  const items: MetadataRoute.Sitemap = [
-    { url: `${base}/`, lastModified: now },
-    { url: `${base}/guides`, lastModified: now },
-    ...dynamicItems,
+  return [
+    { url: `${base}/`, lastModified: now, priority: 1 },
+    { url: `${base}/guides`, lastModified: now, priority: 0.8 },
+    ...guides,
   ];
-
-  return items;
 }

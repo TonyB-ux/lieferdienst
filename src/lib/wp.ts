@@ -355,3 +355,111 @@ export async function fetchLieferbetriebSlugs(): Promise<string[]> {
     return nodes.map((n) => n.slug).filter(Boolean);
   }
 }
+export type GuidePost = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt?: string | null;
+  date?: string | null;
+  featuredImage?: {
+    node?: {
+      sourceUrl?: string | null;
+      altText?: string | null;
+      srcSet?: string | null;
+    } | null;
+  } | null;
+};
+export const GuidesQuery = gql`
+  query Guides($first: Int!) {
+    posts(
+      where: { categoryName: "guides", orderby: { field: DATE, order: DESC } }
+      first: $first
+    ) {
+      nodes {
+        id
+        slug
+        title
+        excerpt
+        date
+        featuredImage { node { sourceUrl altText srcSet } }
+      }
+    }
+  }
+`;
+
+export async function getGuides(limit: number = 9): Promise<GuidePost[]> {
+  const data = await wp.request<{ posts: { nodes: GuidePost[] } }>(GuidesQuery, { first: limit });
+  return data.posts.nodes;
+}
+
+
+// Für Static Params / SSG
+export const GuideSlugsQuery = gql`
+  query GuideSlugs($first: Int!) {
+    posts(
+      where: { categoryName: "guides", orderby: { field: DATE, order: DESC } }
+      first: $first
+    ) {
+      nodes { slug }
+    }
+  }
+`;
+
+export async function getGuideSlugs(first = 50): Promise<string[]> {
+  const data = await wp.request<{ posts: { nodes: { slug: string }[] } }>(
+    GuideSlugsQuery,
+    { first }
+  );
+  return data.posts.nodes.map(n => n.slug);
+}
+
+// Detail-Ansicht
+export type GuideDetail = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt?: string | null;
+  date?: string | null;
+  content?: string | null;
+  featuredImage?: { node?: { sourceUrl?: string | null; altText?: string | null } | null } | null;
+};
+
+export const GuideBySlugQuery = gql`
+  query GuideBySlug($slug: ID!) {
+    post(id: $slug, idType: SLUG) {
+      id
+      slug
+      title
+      excerpt
+      date
+      content
+      featuredImage { node { sourceUrl altText } }
+    }
+  }
+`;
+
+export async function getGuideBySlug(slug: string): Promise<GuideDetail | null> {
+  const data = await wp.request<{ post: GuideDetail | null }>(GuideBySlugQuery, { slug });
+  return data.post ?? null;
+}
+
+export const RelatedGuidesQuery = gql`
+  query RelatedGuides($slug: ID!, $first: Int!) {
+    post(id: $slug, idType: SLUG) {
+      categories { nodes { id name slug } }
+    }
+    posts(
+      where: { categoryName: "guides", orderby: { field: DATE, order: DESC } }
+      first: $first
+    ) {
+      nodes { id slug title excerpt featuredImage { node { sourceUrl altText } } }
+    }
+  }
+`;
+
+export async function getRelatedGuides(slug: string, first = 6) {
+  // Minimaler Ansatz: gleiche Kategorie (guides), außer aktueller slug
+  const data = await wp.request<any>(RelatedGuidesQuery, { slug, first: first + 1 });
+  const list = data?.posts?.nodes ?? [];
+  return list.filter((n: any) => n.slug !== slug).slice(0, first);
+}

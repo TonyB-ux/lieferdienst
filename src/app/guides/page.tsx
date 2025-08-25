@@ -2,7 +2,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { HTMLAttributes, ReactNode } from "react";
-import { fetchGuides } from "@/lib/wp";
+import { getGuides } from "@/lib/wp";
+import Image from "next/image";
 
 export const revalidate = 600; // ISR 10min
 
@@ -24,15 +25,26 @@ function Card({ children, className = "", ...rest }: CardProps) {
   );
 }
 
-export default async function GuidesIndex() {
-  const guides = await fetchGuides(12);
+export default async function GuidesIndexPage() {
+  const posts = await getGuides(24);
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: posts.map((p: any, i: number) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://lieferdienst-bio.de/guides/${p.slug}`,
+      name: p.title,
+    })),
+  };
 
   return (
     <main className="container guides-index" style={{ paddingTop: 96, paddingBottom: 48 }}>
       <h1 className="h2" style={{ marginBottom: 12, color: "#002f03" }}>Guides & Ratgeber</h1>
 
       <div className="guides-grid" role="list">
-        {guides.length === 0 ? (
+        {!posts?.length ? (
           <Card className="guide-card" role="listitem">
             <h3 className="guide-title">Noch keine Beiträge vorhanden</h3>
             <p className="guide-excerpt">
@@ -40,27 +52,34 @@ export default async function GuidesIndex() {
             </p>
           </Card>
         ) : (
-          guides.map((g) => (
-            <Card key={g.id} className="guide-card" role="listitem">
-              {g.featuredImage?.node?.sourceUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  className="guide-img"
-                  src={g.featuredImage.node.sourceUrl}
-                  alt={g.featuredImage.node.altText || g.title}
-                />
+          posts.map((p: any) => (
+            <Card key={p.id} className="guide-card" role="listitem">
+              {p.featuredImage?.node?.sourceUrl && (
+                <div className="guide-img relative aspect-[16/9] w-full overflow-hidden">
+                  <Image
+                    src={p.featuredImage.node.sourceUrl}
+                    alt={p.featuredImage.node.altText ?? p.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               )}
-              <h3 className="guide-title">{g.title}</h3>
-              {g.excerpt && (
-                <div className="guide-excerpt" dangerouslySetInnerHTML={{ __html: g.excerpt }} />
+              <h3 className="guide-title">{p.title}</h3>
+              {p.excerpt && (
+                <div className="guide-excerpt" dangerouslySetInnerHTML={{ __html: p.excerpt }} />
               )}
               <div className="guide-actions">
-                <Link href={`/guides/${g.slug}`} className="btn btn-ghost">Lesen</Link>
+                <Link href={`/guides/${p.slug}`} className="btn btn-ghost">Lesen</Link>
               </div>
             </Card>
           ))
         )}
       </div>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
     </main>
   );
 }

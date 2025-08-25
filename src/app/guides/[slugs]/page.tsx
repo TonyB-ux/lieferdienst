@@ -1,85 +1,89 @@
 // src/app/guides/[slugs]/page.tsx
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchGuideBySlug, fetchGuideSlugs } from "@/lib/wp";
+import Link from "next/link";
+import Image from "next/image";
+import { getGuideBySlug, getGuideSlugs } from "@/lib/wp";
 
-export const revalidate = 1800; // 30min ISR
+export const revalidate = 600; // ISR 10 min
 
+// Statische Pfade (Ordner heißt [slugs] => Key = "slugs")
 export async function generateStaticParams(): Promise<{ slugs: string }[]> {
-  const slugs = await fetchGuideSlugs().catch(() => []);
-  return (slugs || []).map((s) => ({ slugs: s }));
+  const slugs = await getGuideSlugs(50).catch(() => []);
+  return slugs.map((s) => ({ slugs: s }));
 }
 
-// akzeptiert string | null | undefined
-const strip = (html: string | null | undefined): string =>
-  html ? html.replace(/<[^>]*>/g, "").trim() : "";
+// Helper: HTML → Plaintext für Meta
+const stripHtml = (html?: string | null) =>
+  (html ?? "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
 
-export async function generateMetadata({ params }: any): Promise<Metadata> {
-  const slug: string | undefined = params?.slugs ?? params?.slug;
-  if (!slug) {
-    return { title: "Guide | lieferdienst-bio.de", robots: { index: false, follow: true } };
-  }
-
-  const g = await fetchGuideBySlug(slug).catch(() => null);
-  if (!g) {
+// ⬇️ WICHTIG: slugs direkt aus params herausziehen (destructuring)
+export async function generateMetadata(
+  { params }: { params: { slugs: string } }
+): Promise<Metadata> {
+  const { slugs } = params; // ✅ statt später params.slugs
+  const post = await getGuideBySlug(slugs).catch(() => null);
+  if (!post) {
     return { title: "Guide nicht gefunden | lieferdienst-bio.de", robots: { index: false, follow: true } };
   }
-
-  const desc = strip(g.excerpt).slice(0, 160);
-  const ogImg = g.featuredImage?.node?.sourceUrl
-    ? [{ url: g.featuredImage.node.sourceUrl }]
-    : undefined;
+  const title = post.title ?? "Guide";
+  const description = post.excerpt ? stripHtml(post.excerpt).slice(0, 160) : undefined;
+  const images = post.featuredImage?.node?.sourceUrl ? [{ url: post.featuredImage.node.sourceUrl }] : undefined;
 
   return {
-    title: `${g.title} | lieferdienst-bio.de`,
-    description: desc,
-    alternates: { canonical: `https://lieferdienst-bio.de/guides/${slug}` },
-    openGraph: { title: g.title, description: desc, images: ogImg },
+    title: `${title} | lieferdienst-bio.de`,
+    description,
+    alternates: { canonical: `https://lieferdienst-bio.de/guides/${slugs}` },
+    openGraph: { title, description, images, type: "article" },
+    twitter: { card: "summary_large_image", title, description, images },
     robots: { index: true, follow: true },
   };
 }
 
-export default async function GuidePage(props: any) {
-  const slug: string | undefined = props?.params?.slugs ?? props?.params?.slug;
-  if (!slug) return notFound();
+// ⬇️ Auch hier: slugs direkt im Parameter auslesen
+export default async function GuideDetailPage(
+  { params }: { params: { slugs: string } }
+) {
+  const { slugs } = params; // ✅ statt const slug = params.slugs
+  const post = await getGuideBySlug(slugs).catch(() => null);
+  if (!post) return notFound();
 
-  const g = await fetchGuideBySlug(slug).catch(() => null);
-  if (!g) return notFound();
-
-  const img = g.featuredImage?.node?.sourceUrl;
-  const imgAlt = g.featuredImage?.node?.altText || g.title;
+  const img = post.featuredImage?.node?.sourceUrl;
+  const imgAlt = post.featuredImage?.node?.altText ?? post.title ?? "Bild";
 
   return (
-    <main className="relative min-h-screen">
-      <article className="max-w-3xl mx-auto px-5 py-10 prose prose-invert">
-        <Link href="/guides" className="underline text-white/80 hover:text-white">
+    <main className="mx-auto w-full max-w-3xl px-4 py-8">
+      <article className="prose prose-neutral max-w-none">
+        <Link href="/guides" className="text-sm underline">
           ← Alle Guides
         </Link>
-        <h1 className="mb-2">{g.title}</h1>
 
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        {img && (
-          <img
-            src={img}
-            alt={imgAlt}
-            className="w-full rounded-lg border border-white/10"
-          />
+        <header className="mb-6">
+          <h1 className="font-serif text-3xl font-bold">{post.title}</h1>
+          {img && (
+            <div className="relative mt-4 aspect-[16/9] w-full overflow-hidden rounded-2xl">
+              <Image src={img} alt={imgAlt} fill className="object-cover" />
+            </div>
+          )}
+        </header>
+
+        {/* WP liefert HTML */}
+        {post.content ? (
+          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        ) : (
+          <p>Für diesen Guide liegt noch kein Inhalt vor.</p>
         )}
 
-        <div dangerouslySetInnerHTML={{ __html: g.content || "" }} />
-
+        {/* JSON-LD (minimal) */}
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Article",
-              headline: g.title,
-              // datePublished weggelassen, weil im Typ nicht vorhanden
+              headline: post.title,
               image: img ? [img] : undefined,
-              mainEntityOfPage: `https://lieferdienst-bio.de/guides/${slug}`,
+              mainEntityOfPage: `https://lieferdienst-bio.de/guides/${slugs}`,
             }),
           }}
         />

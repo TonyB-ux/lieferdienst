@@ -917,9 +917,10 @@
   vertical-align: -2px; /* optische Ausrichtung zum Text */
 }
 
+
   /* Hintergrund: Gradient-Variante (optional) */
   .bg-photo {
-    background: linear-gradient(145deg, #257083 0%, #e0f2f1 50%, #64b367 100%);
+    background: linear-gradient(145deg, #0f0280 0%, #e0f2f1 50%, #152b74 100%);
     /* später wieder:
     background-image: url('/dein-bild.jpg');
     background-size: cover;
