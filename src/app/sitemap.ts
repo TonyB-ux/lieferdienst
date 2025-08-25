@@ -4,12 +4,13 @@ import { getGuideSlugs } from "@/lib/wp";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = "https://lieferdienst-bio.de";
-  const now = new Date().toISOString();
+  const now = new Date();
+
   const slugs = await getGuideSlugs(200).catch(() => []);
-  const guides = slugs.map((slug) => ({
+  const guides: MetadataRoute.Sitemap = slugs.map((slug) => ({
     url: `${base}/guides/${slug}`,
     lastModified: now,
-    changeFrequency: "weekly",
+    changeFrequency: "weekly", // union-typisiert dank obigem Array-Typ
     priority: 0.6,
   }));
 
