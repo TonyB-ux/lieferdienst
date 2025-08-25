@@ -17,11 +17,11 @@ export async function generateStaticParams(): Promise<{ slugs: string }[]> {
 const stripHtml = (html?: string | null) =>
   (html ?? "").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
 
-// ⬇️ WICHTIG: slugs direkt aus params herausziehen (destructuring)
+// ⬇️ Next.js 15: params ist ein Promise → im Parameter als Promise typisieren und direkt awaiten
 export async function generateMetadata(
-  { params }: { params: { slugs: string } }
+  { params }: { params: Promise<{ slugs: string }> }
 ): Promise<Metadata> {
-  const { slugs } = params; // ✅ statt später params.slugs
+  const { slugs } = await params; // ✅ params awaiten
   const post = await getGuideBySlug(slugs).catch(() => null);
   if (!post) {
     return { title: "Guide nicht gefunden | lieferdienst-bio.de", robots: { index: false, follow: true } };
@@ -40,11 +40,10 @@ export async function generateMetadata(
   };
 }
 
-// ⬇️ Auch hier: slugs direkt im Parameter auslesen
 export default async function GuideDetailPage(
-  { params }: { params: { slugs: string } }
+  { params }: { params: Promise<{ slugs: string }> }
 ) {
-  const { slugs } = params; // ✅ statt const slug = params.slugs
+  const { slugs } = await params; // ✅ params awaiten
   const post = await getGuideBySlug(slugs).catch(() => null);
   if (!post) return notFound();
 
