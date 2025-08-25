@@ -17,7 +17,7 @@ function Card({ children, className = "", ...rest }: CardProps) {
   );
 }
 
-export default async function GuidesRow() {
+export default async function GuidesRow({ showHeading = true }: { showHeading?: boolean }) {
   // 9 = 3 Seiten à 3 Cards im Slider
   const posts = await getGuides(9);
 
@@ -45,15 +45,17 @@ export default async function GuidesRow() {
     );
   }
 
-  // Slider-Variante mit Header
+  // Slider-Variante mit optionalem Header
   return (
     <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-6">
-      <header className="mb-3 flex items-end justify-between">
-        <h2 className="font-serif text-xl font-bold">Guides & Ratgeber</h2>
-        <Link href="/guides" className="text-sm underline">
-          Alle ansehen
-        </Link>
-      </header>
+      {showHeading && (
+        <header className="mb-3 flex items-end justify-between">
+          <h2 className="font-serif text-xl font-bold">Guides & Ratgeber</h2>
+          <Link href="/guides" className="text-sm underline">
+            Alle ansehen
+          </Link>
+        </header>
+      )}
       <GuideSlider posts={posts} />
     </section>
   );

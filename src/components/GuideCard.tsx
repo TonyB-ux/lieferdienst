@@ -1,3 +1,4 @@
+// src/components/GuideCard.tsx
 import Link from "next/link";
 import Image from "next/image";
 import type { GuidePost } from "@/lib/wp";
@@ -21,8 +22,8 @@ export default function GuideCard({ post }: { post: GuidePost }) {
           }
         }}
       >
-        {/* Bildbereich mit fester Max-Höhe → kein „Hero“-Look */}
-        <div className="relative aspect-[16/9] w-full max-h-[240px] overflow-hidden">
+        {/* Feste Höhe → verhindert Hero-Übergröße */}
+        <div className="relative h-[240px] w-full overflow-hidden">
           {img ? (
             <Image
               src={img}

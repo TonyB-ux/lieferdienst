@@ -11,7 +11,7 @@ export default function Page() {
   return (
     <>
       <GlassStarter />
-      <GuidesRow />
+      <GuidesRow showHeading={false} />
     </>
   );
 }

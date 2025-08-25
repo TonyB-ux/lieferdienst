@@ -1,5 +1,5 @@
 // src/components/GlassStarter.tsx
-import GuidesRow from "@/components/GuidesRow";
+
 import Image from "next/image";
 import NextLink from "next/link";
 
@@ -104,7 +104,7 @@ export default function GlassStarter() {
           </div>
 
           {/* kein zusätzlicher wrapper mit role="list" */}
-          <GuidesRow />
+         
         </section>
       </div>
     </main>
