@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import useEmblaCarousel, { EmblaOptionsType } from "embla-carousel-react";
+import useEmblaCarousel from "embla-carousel-react";
+import type { EmblaOptionsType } from "embla-carousel";
 import type { GuidePost } from "@/lib/wp";
 import GuideCard from "@/components/GuideCard";
 
@@ -80,7 +81,6 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
               key={post.id}
               className="min-w-0 flex-[0_0_100%] p-2 lg:flex-[0_0_calc(33.333%_-_0px)]"
             >
-              {/* h-full, damit die Card die ganze Slide-Höhe nutzt */}
               <div className="h-full">
                 <GuideCard post={post} />
               </div>
