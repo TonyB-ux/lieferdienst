@@ -1,4 +1,3 @@
-// src/components/GuideCard.tsx
 import Link from "next/link";
 import Image from "next/image";
 import type { GuidePost } from "@/lib/wp";
@@ -8,10 +7,10 @@ export default function GuideCard({ post }: { post: GuidePost }) {
   const alt = post.featuredImage?.node?.altText ?? post.title;
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md">
+    <article className="group grid h-full grid-rows-[200px_1fr] overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md">
       <Link
         href={`/guides/${post.slug}`}
-        className="grid h-full grid-rows-[auto_1fr]"
+        className="contents" // lässt die Grid-Zeilen auf dem Link wirken
         onClick={() => {
           if (typeof window !== "undefined") {
             window.dispatchEvent(
@@ -22,8 +21,8 @@ export default function GuideCard({ post }: { post: GuidePost }) {
           }
         }}
       >
-        {/* Feste Höhe → verhindert Hero-Übergröße */}
-        <div className="relative h-[240px] w-full overflow-hidden">
+        {/* Bildzeile (fix 200px) */}
+        <div className="relative h-[200px] w-full overflow-hidden">
           {img ? (
             <Image
               src={img}
@@ -31,6 +30,7 @@ export default function GuideCard({ post }: { post: GuidePost }) {
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
               className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+              priority={false}
             />
           ) : (
             <div className="absolute inset-0 grid place-items-center bg-neutral-100 text-neutral-500">
@@ -39,7 +39,8 @@ export default function GuideCard({ post }: { post: GuidePost }) {
           )}
         </div>
 
-        <div className="flex flex-1 flex-col gap-2 p-4">
+        {/* Contentzeile */}
+        <div className="flex min-h-0 flex-col gap-2 p-4">
           <h3 className="font-serif text-lg font-bold leading-snug">{post.title}</h3>
           {post.excerpt && (
             <div
@@ -48,6 +49,9 @@ export default function GuideCard({ post }: { post: GuidePost }) {
               dangerouslySetInnerHTML={{ __html: post.excerpt }}
             />
           )}
+          <span className="mt-auto inline-block text-sm font-medium text-green-700">
+            Lesen →
+          </span>
         </div>
       </Link>
     </article>

@@ -1,5 +1,4 @@
 // src/components/GlassStarter.tsx
-
 import Image from "next/image";
 import NextLink from "next/link";
 
@@ -7,7 +6,7 @@ export default function GlassStarter() {
   return (
     <main className="relative z-0">
       <div className="container" style={{ paddingTop: 16, paddingBottom: 32 }}>
-        {/* Reihe 1: Hero + 2 Karten */}
+        {/* === Reihe 1: Hero + 2 Karten === */}
         <div className="grid-cols">
           {/* HERO */}
           <section className="col-span-6 hero">
@@ -28,7 +27,7 @@ export default function GlassStarter() {
               </p>
 
               <div className="row section">
-                <span className="pill">Neutral & unabhängig</span>
+                <span className="pill">Neutral &amp; unabhängig</span>
                 <span className="pill">DACH-weit</span>
                 <span className="pill">Direkte Links</span>
               </div>
@@ -37,7 +36,7 @@ export default function GlassStarter() {
                 <NextLink href="/lieferdienste" className="btn btn-primary">
                   <Image
                     src="/img/lieferwagen.png"
-                    alt=""                 // dekorativ
+                    alt=""
                     aria-hidden="true"
                     width={24}
                     height={24}
@@ -47,7 +46,10 @@ export default function GlassStarter() {
                   />
                   Lieferdienste entdecken
                 </NextLink>
-                <NextLink href="/guides" className="btn">Alle Beiträge</NextLink>
+
+                <NextLink href="/guides" className="btn">
+                  Alle Beiträge
+                </NextLink>
               </div>
             </div>
           </section>
@@ -56,56 +58,63 @@ export default function GlassStarter() {
           <section className="col-span-3 card">
             <h2 className="card-title">Schnellstart</h2>
             <ul className="card-text" style={{ marginTop: 6 }}>
-              <li>Neutral & unabhängig – kein Marktplatz</li>
+              <li>Neutral &amp; unabhängig – kein Marktplatz</li>
               <li>DACH-weit – verifizierte Betriebe</li>
               <li>Direkte Webshop-Links</li>
             </ul>
             <div className="row section">
-              <NextLink href="/lieferdienste?land=DE" className="pill">Deutschland</NextLink>
-              <NextLink href="/lieferdienste?land=AT" className="pill">Österreich</NextLink>
-              <NextLink href="/lieferdienste?land=CH" className="pill">Schweiz</NextLink>
+              <NextLink href="/lieferdienste?land=DE" className="pill">
+                Deutschland
+              </NextLink>
+              <NextLink href="/lieferdienste?land=AT" className="pill">
+                Österreich
+              </NextLink>
+              <NextLink href="/lieferdienste?land=CH" className="pill">
+                Schweiz
+              </NextLink>
             </div>
           </section>
 
           {/* Regionen & Städte */}
           <section className="col-span-3 card">
-            <h2 className="card-title">Regionen & Städte</h2>
+            <h2 className="card-title">Regionen &amp; Städte</h2>
             <p className="card-text">Finde Anbieter in deiner Nähe – von Berlin bis Zürich.</p>
             <div className="section">
-              <NextLink href="/lieferdienste" className="btn">Zur Liste</NextLink>
+              <NextLink href="/lieferdienste" className="btn">
+                Zur Liste
+              </NextLink>
             </div>
           </section>
 
-          {/* Reihe 2: 2 Karten */}
+          {/* === Reihe 2: 2 Karten === */}
           <section className="col-span-3 card">
             <h2 className="card-title">Kategorien</h2>
-            <p className="card-text">Gemüsekiste, Abo, Vegan, Familienbox – was passt zu dir?</p>
+            <p className="card-text">
+              Gemüsekiste, Abo, Vegan, Familienbox – was passt zu dir?
+            </p>
             <div className="section">
-              <NextLink href="/lieferdienste" className="btn">Entdecken</NextLink>
+              <NextLink href="/lieferdienste" className="btn">
+                Entdecken
+              </NextLink>
             </div>
           </section>
 
           <section className="col-span-3 card">
             <h2 className="card-title">Direkt zum Shop</h2>
-            <p className="card-text">Verifizierte Bio-Betriebe mit direkter Weiterleitung zum Webshop.</p>
+            <p className="card-text">
+              Verifizierte Bio-Betriebe mit direkter Weiterleitung zum Webshop.
+            </p>
             <div className="section">
-              <NextLink href="/lieferdienste" className="btn btn-primary">Jetzt stöbern</NextLink>
+              <NextLink href="/lieferdienste" className="btn btn-primary">
+                Jetzt stöbern
+              </NextLink>
             </div>
           </section>
         </div>
 
-        {/* Guides & Ratgeber – nur **ein** Grid (kommt aus <GuidesRow/>) */}
-        <section id="home-guides" className="home-guides" aria-labelledby="guides-heading" style={{ marginTop: 36 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <h2 id="guides-heading" className="card-title" style={{ fontSize: "1.25rem" }}>
-              Guides & Ratgeber
-            </h2>
-            <NextLink href="/guides" className="btn">Alle Guides</NextLink>
-          </div>
-
-          {/* kein zusätzlicher wrapper mit role="list" */}
-         
-        </section>
+        {/* WICHTIG:
+           Die frühere „Guides & Ratgeber“-Sektion wurde entfernt.
+           Die Guides kommen jetzt ausschließlich aus <GuidesRow /> in src/app/page.tsx. */}
       </div>
     </main>
   );
