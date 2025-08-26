@@ -12,13 +12,14 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
   const options: EmblaOptionsType = { loop: false, align: "start", slidesToScroll: 1 };
   const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
+  const trackRef = React.useRef<HTMLDivElement | null>(null);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [scrollSnaps, setScrollSnaps] = React.useState<number[]>([]);
   const autoplayRef = React.useRef<number | null>(null);
 
   const prefersReducedMotion = React.useMemo(() => {
     if (typeof window === "undefined") return false;
-    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
   }, []);
 
   const stopAutoplay = React.useCallback(() => {
@@ -33,9 +34,17 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
     autoplayRef.current = window.setInterval(() => {
       if (!emblaApi) return;
       if (emblaApi.canScrollNext()) emblaApi.scrollNext();
-      else stopAutoplay();
+      else stopAutoplay(); // Ende: kein Loop
     }, AUTOPLAY_MS);
   }, [emblaApi, stopAutoplay]);
+
+  // Hardening: stelle sicher, dass der Track immer sichtbar/flex ist
+  React.useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const cs = getComputedStyle(el);
+    if (cs.display === "none") el.style.display = "flex";
+  }, []);
 
   React.useEffect(() => {
     if (!emblaApi) return;
@@ -51,14 +60,22 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
     return () => stopAutoplay();
   }, [emblaApi, startAutoplay, stopAutoplay, prefersReducedMotion]);
 
+  if (!posts?.length) return null;
+
   return (
-    <section aria-label="Guides Slider" className="relative">
-      <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex">
+    <section aria-label="Guides Slider" className="embla relative">
+      {/* Viewport */}
+      <div className="embla__viewport overflow-hidden" ref={emblaRef}>
+        {/* Track */}
+        <div
+          ref={trackRef}
+          className="embla__container flex"
+          style={{ display: "flex" }} // überschreibt fremde Regeln
+        >
           {posts.map((post) => (
             <div
               key={post.id}
-              className="min-w-0 basis-full p-2 sm:basis-1/2 lg:basis-1/3"
+              className="embla__slide min-w-0 basis-full p-2 sm:basis-1/2 lg:basis-1/3"
             >
               <GuideCard post={post} />
             </div>
@@ -67,7 +84,7 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
       </div>
 
       {/* Dots */}
-      <div className="mt-2 flex justify-center gap-2">
+      <div className="embla__dots mt-2 flex justify-center gap-2">
         {scrollSnaps.map((_, i) => (
           <button
             key={i}

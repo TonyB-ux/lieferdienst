@@ -2,6 +2,7 @@
 import dynamic from "next/dynamic";
 import GuidesRow from "@/components/GuidesRow";
 
+
 // Startseite aktualisiert sich alle 10 Minuten
 export const revalidate = 600;
 
@@ -11,6 +12,7 @@ export default function Page() {
   return (
     <>
       <GlassStarter />
+      {/* Slider ohne doppeltes Heading aus Hero-Kontext */}
       <GuidesRow showHeading={false} />
     </>
   );

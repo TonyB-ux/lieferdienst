@@ -889,34 +889,69 @@
   }
   
 
-  /* --- Sichtbarkeit der Guides auf der Startseite steuern --- */
-/* Falls irgendwo im oberen Grid (.grid-cols) versehentlich ein guides-grid gerendert wird: verstecken */
-.grid-cols .guides-grid { display: none !important; }
+ /* === Guides: Sichtbarkeit & Layout (bereinigt) =====================
+   Ziel:
+   - /guides: klassisches Grid sichtbar
+   - Startseite: Slider übernimmt (GuidesRow), kein globales hide/show mehr nötig
+   - Keine !important-Hämmer, die andere Komponenten brechen
+   ================================================================== */
 
-/* Der dedizierte Block unten bleibt sichtbar */
-.home-guides .guides-grid { display: grid !important; }
+/* Entferne ALLE früheren Regeln wie:
+   .guides-grid { display: none !important; }
+   .home-guides .guides-grid { display: grid !important; }
+   .guides-index .guides-grid { display: grid !important; }
+   (und ähnliche Varianten)
+*/
 
-/* --- Sichtbarkeit der Guides-Kacheln steuern (robust) --- */
-.guides-grid { 
-  display: none !important;          /* standardmäßig überall ausblenden */
+/* Standard-Layout für die Grid-Seite (/guides) */
+.guides-index .guides-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
 }
 
-/* Nur im dedizierten Home-Block unten sichtbar */
-.home-guides .guides-grid { 
-  display: grid !important; 
+@media (min-width: 640px) {
+  .guides-index .guides-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .guides-index .guides-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
-/* Und auf der /guides Indexseite sichtbar */
-.guides-index .guides-grid { 
-  display: grid !important; 
+/* Karten-Basics (passen zu deiner /guides Seite) */
+.guides-index .guide-card {
+  border-radius: 1rem; /* ~ rounded-2xl */
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #fff;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.02);
+  overflow: hidden;
+}
+.guides-index .guide-title {
+  font-weight: 700;
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.125rem;
+  line-height: 1.25rem;
+  margin: 0.75rem 0 0.25rem 0;
+}
+.guides-index .guide-excerpt {
+  color: #525252; /* neutral-600 */
+  font-size: 0.95rem;
+}
+.guides-index .guide-actions {
+  margin-top: 0.5rem;
 }
 
-.btn .icon-left{
-  margin-right: 8px;
-  display: inline-block;
-  vertical-align: -2px; /* optische Ausrichtung zum Text */
+/* Der Slider (GuidesRow) kapselt sich selbst via data-scope, keine globalen Hides nötig */
+[data-scope="guides-row"] {
+  overflow: hidden; /* verhindert horizontales Bleeding */
 }
-
+/* Slider-Track hart als Flex, falls externe CSS irrtümlich display:none setzt */
+[data-scope="guides-row"] .flex {
+  display: flex;
+}
 
   /* Hintergrund: Gradient-Variante (optional) */
   .bg-photo {
