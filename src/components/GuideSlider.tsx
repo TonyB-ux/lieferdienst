@@ -9,6 +9,7 @@ import GuideCard from "@/components/GuideCard";
 const AUTOPLAY_MS = 5000;
 
 export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
+  // Keine Endlosschleife (endet am letzten Slide), ausgerichtet links
   const options: EmblaOptionsType = { loop: false, align: "start", slidesToScroll: 1 };
   const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
@@ -38,7 +39,7 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
     }, AUTOPLAY_MS);
   }, [emblaApi, stopAutoplay]);
 
-  // Hardening: stelle sicher, dass der Track immer sichtbar/flex ist
+  // Hardening: Track bleibt sichtbar/flex – überschreibt evtl. globale Regeln
   React.useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
@@ -70,12 +71,12 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
         <div
           ref={trackRef}
           className="embla__container flex"
-          style={{ display: "flex" }} // überschreibt fremde Regeln
+          style={{ display: "flex" }} // überschreibt fremde Regeln zuverlässig
         >
           {posts.map((post) => (
             <div
               key={post.id}
-              className="embla__slide min-w-0 basis-full p-2 sm:basis-1/2 lg:basis-1/3"
+              className="embla__slide min-w-0 shrink-0 basis-full p-2 sm:basis-1/2 lg:basis-1/3"
             >
               <GuideCard post={post} />
             </div>
@@ -89,7 +90,9 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
           <button
             key={i}
             onClick={() => emblaApi?.scrollTo(i)}
-            className={`h-2 w-2 rounded-full ${i === selectedIndex ? "bg-black" : "bg-neutral-300"}`}
+            className={`h-2 w-2 rounded-full ${
+              i === selectedIndex ? "bg-black" : "bg-neutral-300"
+            }`}
             aria-label={`Slide ${i + 1} anzeigen`}
           />
         ))}

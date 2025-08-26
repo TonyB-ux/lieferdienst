@@ -7,16 +7,10 @@ export default function GuideCard({ post }: { post: GuidePost }) {
   const alt = post.featuredImage?.node?.altText ?? post.title ?? "";
 
   return (
-    // Karte wie auf /guides: kein Anker, sondern neutrales Card-Layout
-    <article
-      className="
-        grid h-full grid-rows-[200px_1fr]
-        overflow-hidden rounded-2xl border bg-white shadow-sm transition
-        hover:shadow-md
-      "
-    >
+    // ⚠️ WICHTIG: „glass card“ sorgt für dein Glass-Design
+    <article className="glass card h-full">
       {/* Bild-Zeile (fix 200px) */}
-      <div className="relative h-full w-full overflow-hidden">
+      <div className="relative h-[200px] w-full overflow-hidden rounded-t-2xl">
         {img ? (
           <Image
             src={img}
@@ -37,17 +31,15 @@ export default function GuideCard({ post }: { post: GuidePost }) {
       <div
         className="
           flex min-h-0 flex-col gap-2 p-4
-          not-prose
           [&_a]:no-underline [&_a]:text-inherit [&_a:hover]:underline
         "
-        // Fängt vererbte Textdeko aggressiv ab, falls global etwas drüberbügelt
         style={{ textDecoration: "none" }}
       >
         <h3 className="font-serif text-lg font-bold leading-snug">{post.title}</h3>
 
         {post.excerpt && (
           <div
-            className="line-clamp-2 text-sm text-neutral-600"
+            className="line-clamp-2 text-sm text-neutral-700"
             suppressHydrationWarning
             dangerouslySetInnerHTML={{ __html: post.excerpt }}
           />
