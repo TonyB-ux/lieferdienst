@@ -12,8 +12,8 @@ export default function Page() {
   return (
     <>
       <GlassStarter />
-      {/* Slider ohne doppeltes Heading aus Hero-Kontext */}
-      <GuidesRow showHeading={false} />
+      {/* Überschrift wieder aktivieren und Slider unterhalb der Hero-Karten */}
+      <GuidesRow /* showHeading defaults to true */ />
     </>
   );
 }

@@ -8,9 +8,9 @@ export default function GuideCard({ post }: { post: GuidePost }) {
 
   return (
     // ⚠️ WICHTIG: „glass card“ sorgt für dein Glass-Design
-    <article className="glass card h-full">
+    <article className="glass card h-full flex flex-col">
       {/* Bild-Zeile (fix 200px) */}
-      <div className="relative h-[200px] w-full overflow-hidden rounded-t-2xl">
+      <div className="relative h-[200px] w-full overflow-hidden rounded-t-2xl bg-neutral-100">
         {img ? (
           <Image
             src={img}
@@ -30,7 +30,7 @@ export default function GuideCard({ post }: { post: GuidePost }) {
       {/* Content-Zeile */}
       <div
         className="
-          flex min-h-0 flex-col gap-2 p-4
+          flex flex-col gap-2 p-6 flex-grow
           [&_a]:no-underline [&_a]:text-inherit [&_a:hover]:underline
         "
         style={{ textDecoration: "none" }}
