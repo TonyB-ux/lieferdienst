@@ -380,18 +380,18 @@
   .hero-logo{
     position: absolute;
     right: clamp(24px, 8vw, 160px);
-    top: clamp(40px, 18vh, 260px);
-    width: clamp(96px, 12vw, 200px);
+    top: clamp(20px, 18vh, 260px);
+    width: clamp(120px, 12vw, 200px);
     height: auto;
     pointer-events: none;
-    opacity: .9; /* ggf. .6 für dezenter */
+    opacity: .6; /* ggf. .6 für dezenter */
     filter: drop-shadow(0 6px 18px rgba(0,0,0,.18));
   }
   @media (max-width: 900px){
     .hero-logo{
       right: 16px;
-      top: 72px;
-      width: 96px;
+      top: 190px;
+      width: 190px;
       opacity: .85;
     }
   }
