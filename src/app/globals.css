@@ -29,7 +29,8 @@
   
   @media (max-width: 900px){
     :root{
-      --header-h: 128px;  /* Mobil: + CTA-Zeile */
+      /* Mobile: kompakter Header + Safe-Area berücksichtigen */
+      --header-h: calc(72px + var(--safe-top, 0px));
       --gap: 14px;
       --radius: 16px;
       --blur: 5px;
@@ -376,14 +377,15 @@
   
   @media (min-width: 900px){
     .grid-cols{ grid-template-columns: repeat(12, minmax(0,1fr)); }
+    :root{ --hero-card-h: 240px; --short-card-h: 260px; }
     .col-span-2{ grid-column: span 2 / span 2; }
     .col-span-3{ grid-column: span 3 / span 3; }
     .col-span-4{ grid-column: span 4 / span 4; }
     .col-span-6{ grid-column: span 6 / span 6; }
     .col-span-8{ grid-column: span 8 / span 8; }
     /* Einheitliche Höhen für Startseiten-Karten */
-    .hero-card{ height: 220px; display:flex; flex-direction:column; }
-    .short-card{ height: 260px; display:flex; flex-direction:column; }
+    .hero-card{ height: var(--hero-card-h); display:flex; flex-direction:column; }
+    .short-card{ height: var(--short-card-h); display:flex; flex-direction:column; }
   }
   @media (max-width: 899px){
     .col-span-2,
