@@ -1,6 +1,6 @@
 // src/app/layout.tsx
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react"; // ⬅️ wichtig: für GA4
@@ -24,12 +24,19 @@ export const metadata: Metadata = {
     "Bio-Lieferservices in DE/AT/CH – neutraler Überblick, direkte Webshop-Links, Kategorien & Regionen.",
   metadataBase: new URL("https://lieferdienst-bio.de"),
   alternates: { canonical: "/" },
+  themeColor: "#0c2740",
   openGraph: {
     title: "lieferdienst-bio.de",
     description: "Finde den passenden Bio-Lieferservice – schnell, neutral, DACH-weit.",
     url: "https://lieferdienst-bio.de",
     siteName: "lieferdienst-bio.de",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

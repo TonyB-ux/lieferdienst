@@ -48,7 +48,8 @@
   body{
     margin: 0;
     color: #0b0f0c;
-    background: transparent; /* kein Milchfilm */
+    /* Fülle iOS Safe-Area mit passender Farbe (falls BG-Layer nicht greift) */
+    background: #0c2740; /* Fallback-Farbe hinter iOS-UI */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   
@@ -79,7 +80,7 @@
     padding-inline: 16px;
   }
   
-  .page-main{ padding-top: var(--header-h); }
+  .page-main{ padding-top: var(--header-h); padding-bottom: var(--safe-bottom, 0px); }
   
   .row, .row-cta, .section{ display:flex; flex-wrap:wrap; gap:8px; }
   
@@ -436,6 +437,7 @@
     max-width: 100%;
     overflow-x: clip;
   }
+  :root{ --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
   @supports not (overflow-x: clip) {
     html, body { overflow-x: hidden; }
   }
