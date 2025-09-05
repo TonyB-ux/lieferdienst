@@ -9,6 +9,7 @@ import ConsentProvider from "@/components/ConsentProvider";
 import ConsentBanner from "@/components/ConsentBanner";
 import GA4 from "@/components/GA4";
 import ConsentEvents from "@/components/ConsentEvents";
+import HeaderFX from "@/components/HeaderFX";
 
 
 // robust: relative Imports (entspricht deiner aktuellen Struktur)
@@ -47,6 +48,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="bg-photo" aria-hidden />
         <div className="bg-layer" aria-hidden />
 
+        {/* Sentinel für HeaderFX (Apex des Dokuments) */}
+        <div id="top-sentinel" aria-hidden></div>
+        <HeaderFX />
+
         <SkipLink />
 
         <ConsentProvider>
@@ -58,7 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ConsentEvents />
          
           {/* Fixer Header */}
-          <header className="site-header">
+          <header id="site-header" className="site-header">
             <div className="container site-bar">
               {/* Logo links – klickbar */}
               <Link href="/" className="brand" aria-label="lieferdienst-bio.de">

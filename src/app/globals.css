@@ -128,20 +128,24 @@
      ========================= */
   
   /* Header: KEIN globales Glass – nur eine dezente, transparente Fläche,
-     die den Inhalt darunter nicht „milchig“ macht. */
+     die den Inhalt darunter nicht „milchig" macht. */
   .site-header{
     position: fixed;
     inset: 0 0 auto 0;
     z-index: 50;
-  
-    /* transparent; optional sehr leichte Top-Fade, fast unsichtbar */
-    background: linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0));
+
+    /* transparenter Start; echte Glass-Optik erst bei Scroll */
+    background: linear-gradient(to bottom, rgba(255,255,255,0.02), rgba(255,255,255,0));
     border-bottom: 0;
     box-shadow: none;
-  
+
     /* keine backdrop-filter, damit der BG nicht milchig wird */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+
+    /* Notch-Safe: oben Platz lassen, ohne Layout zu verschieben */
+    padding-top: var(--safe-top, 0px);
+    transition: background-color .25s ease, backdrop-filter .25s ease, box-shadow .25s ease;
   }
   
   .site-bar{
@@ -167,6 +171,15 @@
   }
   @media (min-width: 900px){
     .nav-desktop{ display: flex; }
+  }
+
+  /* Beim Scrollen: leichte Glass-Schicht, damit Elemente im Header sichtbar bleiben */
+  .site-header.is-scrolled{
+    background: rgba(255,255,255,.18);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    border-bottom: 1px solid rgba(255,255,255,.28);
+    box-shadow: 0 6px 18px rgba(0,0,0,.10);
   }
   
   /* Textlinks: default = PLAIN TEXT (kein Glass),
