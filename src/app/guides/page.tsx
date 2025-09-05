@@ -54,16 +54,14 @@ export default async function GuidesIndexPage() {
         ) : (
           posts.map((p: any) => (
             <Card key={p.id} className="guide-card" role="listitem">
-              {p.featuredImage?.node?.sourceUrl && (
-                <div className="guide-img relative aspect-[16/9] w-full overflow-hidden">
-                  <Image
-                    src={p.featuredImage.node.sourceUrl}
-                    alt={p.featuredImage.node.altText ?? p.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
+              <div className="guide-img relative aspect-[16/9] w-full overflow-hidden">
+                <Image
+                  src={p.featuredImage?.node?.sourceUrl || "/file.svg"}
+                  alt={p.featuredImage?.node?.sourceUrl ? (p.featuredImage?.node?.altText ?? p.title) : ""}
+                  fill
+                  className="object-cover"
+                />
+              </div>
               <h3 className="guide-title">{p.title}</h3>
               {p.excerpt && (
                 <div className="guide-excerpt" dangerouslySetInnerHTML={{ __html: p.excerpt }} />

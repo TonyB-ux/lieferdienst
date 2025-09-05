@@ -105,8 +105,21 @@
     position: fixed;
     inset: 0;
     z-index: -9;
-    background: transparent;
+    /* Sanfte Overlays: reduzieren harte Lichtflecken und verbessern Lesbarkeit */
+    background:
+      radial-gradient(40% 35% at 25% 60%, rgba(255,255,255,.18), rgba(255,255,255,0) 60%),
+      radial-gradient(30% 25% at 85% 20%, rgba(255,255,255,.10), rgba(255,255,255,0) 50%),
+      linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.10));
     pointer-events: none;
+  }
+
+  @media (max-width: 900px){
+    .bg-layer{
+      /* Auf Mobil etwas stärker abdunkeln für bessere Kontraste */
+      background:
+        radial-gradient(45% 40% at 20% 55%, rgba(255,255,255,.16), rgba(255,255,255,0) 60%),
+        linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.14));
+    }
   }
   
   /* =========================
@@ -229,6 +242,25 @@
     outline-offset: 2px;
     border-radius: 12px;
   }
+
+  /* Globaler Fokus-Stil für alle interaktiven Elemente */
+  :where(a, button, [role="button"], input, select, textarea):focus-visible{
+    outline: 2px solid rgba(16,58,46,.55);
+    outline-offset: 3px;
+    border-radius: 10px;
+  }
+
+  /* High-Contrast Nutzerpräferenz: stärkere Overlays und Fokus-Ringe */
+  @media (prefers-contrast: more){
+    .bg-layer{
+      background:
+        radial-gradient(40% 35% at 25% 60%, rgba(255,255,255,.22), rgba(255,255,255,0) 60%),
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.16));
+    }
+    :where(a, button, [role="button"], input, select, textarea):focus-visible{
+      outline-width: 3px;
+    }
+  }
   
   /* =========================
      Buttons (Basis)
@@ -253,6 +285,7 @@
   }
   .btn:hover{ transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.08); }
   .btn:active{ transform: translateY(0);   box-shadow: 0 3px  8px rgba(0,0,0,.08); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; transform:none; box-shadow:0 4px 10px rgba(0,0,0,.06); }
   
   .btn-primary{
     background: #103a2e;

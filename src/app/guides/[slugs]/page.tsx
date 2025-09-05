@@ -47,8 +47,9 @@ export default async function GuideDetailPage(
   const post = await getGuideBySlug(slugs).catch(() => null);
   if (!post) return notFound();
 
-  const img = post.featuredImage?.node?.sourceUrl;
-  const imgAlt = post.featuredImage?.node?.altText ?? post.title ?? "Bild";
+  const img = post.featuredImage?.node?.sourceUrl || "/file.svg";
+  const hasRealImg = Boolean(post.featuredImage?.node?.sourceUrl);
+  const imgAlt = hasRealImg ? (post.featuredImage?.node?.altText ?? post.title ?? "Bild") : "";
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8">
@@ -59,11 +60,9 @@ export default async function GuideDetailPage(
 
         <header className="mb-6">
           <h1 className="font-serif text-3xl font-bold">{post.title}</h1>
-          {img && (
-            <div className="relative mt-4 aspect-[16/9] w-full overflow-hidden rounded-2xl">
-              <Image src={img} alt={imgAlt} fill className="object-cover" />
-            </div>
-          )}
+          <div className="relative mt-4 aspect-[16/9] w-full overflow-hidden rounded-2xl">
+            <Image src={img} alt={imgAlt} fill className="object-cover" />
+          </div>
         </header>
 
         {/* WP liefert HTML */}

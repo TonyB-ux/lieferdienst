@@ -16,6 +16,8 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
   const trackRef = React.useRef<HTMLDivElement | null>(null);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [scrollSnaps, setScrollSnaps] = React.useState<number[]>([]);
+  const [canPrev, setCanPrev] = React.useState(false);
+  const [canNext, setCanNext] = React.useState(false);
   const autoplayRef = React.useRef<number | null>(null);
 
   const prefersReducedMotion = React.useMemo(() => {
@@ -50,7 +52,11 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
   React.useEffect(() => {
     if (!emblaApi) return;
 
-    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+      setCanPrev(emblaApi.canScrollPrev());
+      setCanNext(emblaApi.canScrollNext());
+    };
     setScrollSnaps(emblaApi.scrollSnapList());
     onSelect();
     emblaApi.on("select", onSelect);
@@ -64,7 +70,16 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
   if (!posts?.length) return null;
 
   return (
-    <section aria-label="Guides Slider" className="embla relative">
+    <section
+      aria-label="Guides Slider"
+      className="embla relative"
+      onKeyDown={(e) => {
+        if (!emblaApi) return;
+        if (e.key === "ArrowLeft") emblaApi.scrollPrev();
+        if (e.key === "ArrowRight") emblaApi.scrollNext();
+      }}
+      tabIndex={0}
+    >
       {/* Viewport */}
       <div className="embla__viewport overflow-hidden w-full" ref={emblaRef}>
         {/* Track */}
@@ -82,6 +97,28 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Controls */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1">
+        <button
+          type="button"
+          aria-label="Vorheriger Slide"
+          className="pointer-events-auto btn btn-sm"
+          onClick={() => emblaApi?.scrollPrev()}
+          disabled={!canPrev}
+        >
+          ‹
+        </button>
+        <button
+          type="button"
+          aria-label="Nächster Slide"
+          className="pointer-events-auto btn btn-sm"
+          onClick={() => emblaApi?.scrollNext()}
+          disabled={!canNext}
+        >
+          ›
+        </button>
       </div>
 
       {/* Dots */}

@@ -11,20 +11,14 @@ export default function GuideCard({ post }: { post: GuidePost }) {
     <article className="glass card h-full flex flex-col">
       {/* Bild-Zeile (fix 200px) */}
       <div className="relative h-[200px] w-full overflow-hidden rounded-t-2xl bg-neutral-100">
-        {img ? (
-          <Image
-            src={img}
-            alt={alt}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
-            className="object-cover transition-transform duration-500 hover:scale-[1.03]"
-            priority={false}
-          />
-        ) : (
-          <div className="absolute inset-0 grid place-items-center bg-neutral-100 text-neutral-500">
-            Kein Bild
-          </div>
-        )}
+        <Image
+          src={img || "/file.svg"}
+          alt={img ? alt : ""}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
+          className="object-cover transition-transform duration-500 hover:scale-[1.03]"
+          priority={false}
+        />
       </div>
 
       {/* Content-Zeile */}
