@@ -12,7 +12,7 @@ export default function GuideCard({ post }: { post: GuidePost }) {
       {/* Bild-Zeile (fix 200px) */}
       <div className="relative h-[200px] w-full overflow-hidden rounded-t-2xl bg-neutral-100">
         <Image
-          src={img || "/file.svg"}
+          src={img || "/placeholder.jpg"}
           alt={img ? alt : ""}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"

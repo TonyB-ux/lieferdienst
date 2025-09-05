@@ -4,7 +4,7 @@
    Design Tokens
    ========================= */
    :root{
-    --container-max: 1200px;
+    --container-max: 1320px;
     --gap: 18px;
     --radius: 18px;
   
@@ -292,6 +292,16 @@
     color: #fff;
     border-color: rgba(16,58,46,.2);
   }
+
+  /* Ghost-Button (transparent, dezente Kontur) */
+  .btn-ghost{
+    background: transparent;
+    color: #0b0f0c;
+    border-color: rgba(0,0,0,.18);
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  }
+  .btn-ghost:hover{ background: rgba(255,255,255,.5); }
+  .btn-ghost:focus-visible{ background: rgba(255,255,255,.7); }
   
   .btn-sm{
     font-size:14px; line-height:1.15;

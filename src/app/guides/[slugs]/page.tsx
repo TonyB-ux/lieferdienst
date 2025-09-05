@@ -47,7 +47,7 @@ export default async function GuideDetailPage(
   const post = await getGuideBySlug(slugs).catch(() => null);
   if (!post) return notFound();
 
-  const img = post.featuredImage?.node?.sourceUrl || "/file.svg";
+  const img = post.featuredImage?.node?.sourceUrl || "/placeholder.jpg";
   const hasRealImg = Boolean(post.featuredImage?.node?.sourceUrl);
   const imgAlt = hasRealImg ? (post.featuredImage?.node?.altText ?? post.title ?? "Bild") : "";
 

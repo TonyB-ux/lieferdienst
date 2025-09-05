@@ -56,7 +56,7 @@ export default async function GuidesIndexPage() {
             <Card key={p.id} className="guide-card" role="listitem">
               <div className="guide-img relative aspect-[16/9] w-full overflow-hidden">
                 <Image
-                  src={p.featuredImage?.node?.sourceUrl || "/file.svg"}
+                  src={p.featuredImage?.node?.sourceUrl || "/placeholder.jpg"}
                   alt={p.featuredImage?.node?.sourceUrl ? (p.featuredImage?.node?.altText ?? p.title) : ""}
                   fill
                   className="object-cover"

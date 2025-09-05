@@ -80,7 +80,17 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
       }}
       tabIndex={0}
     >
-      {/* Viewport */}
+      {/* Controls ausserhalb + Viewport */}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          aria-label="Vorheriger Slide"
+          className="btn btn-ghost btn-sm hidden md:inline-flex"
+          onClick={() => emblaApi?.scrollPrev()}
+          disabled={!canPrev}
+        >
+          &lsaquo;
+        </button>
       <div className="embla__viewport overflow-hidden w-full" ref={emblaRef}>
         {/* Track */}
         <div
@@ -91,35 +101,25 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
           {posts.map((post) => (
             <div
               key={post.id}
-              className="embla__slide min-w-0 shrink-0 basis-full sm:basis-1/2 lg:basis-1/3"
+              className="embla__slide min-w-0 shrink-0 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
             >
               <GuideCard post={post} />
             </div>
           ))}
         </div>
       </div>
-
-      {/* Controls */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-1">
         <button
           type="button"
-          aria-label="Vorheriger Slide"
-          className="pointer-events-auto btn btn-sm"
-          onClick={() => emblaApi?.scrollPrev()}
-          disabled={!canPrev}
-        >
-          ‹
-        </button>
-        <button
-          type="button"
-          aria-label="Nächster Slide"
-          className="pointer-events-auto btn btn-sm"
+          aria-label="Naechster Slide"
+          className="btn btn-ghost btn-sm hidden md:inline-flex"
           onClick={() => emblaApi?.scrollNext()}
           disabled={!canNext}
         >
-          ›
+          &rsaquo;
         </button>
       </div>
+
+      
 
       {/* Dots */}
       <div className="embla__dots mt-2 flex justify-center gap-2">
@@ -137,3 +137,4 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
     </section>
   );
 }
+
