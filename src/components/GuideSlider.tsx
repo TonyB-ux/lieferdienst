@@ -91,7 +91,7 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
         >
           &lsaquo;
         </button>
-      <div className="embla__viewport overflow-hidden w-full" ref={emblaRef}>
+      <div className="embla__viewport overflow-hidden w-full mask-fade" ref={emblaRef}>
         {/* Track */}
         <div
           ref={trackRef}
@@ -101,7 +101,7 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
           {posts.map((post) => (
             <div
               key={post.id}
-              className="embla__slide min-w-0 shrink-0 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+              className="embla__slide min-w-0 shrink-0 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-[24%]"
             >
               <GuideCard post={post} />
             </div>

@@ -29,7 +29,7 @@ export default function GuideCard({ post }: { post: GuidePost }) {
         "
         style={{ textDecoration: "none" }}
       >
-        <h3 className="font-serif text-lg font-bold leading-snug">{post.title}</h3>
+        <h3 className="guide-title">{post.title}</h3>
 
         {post.excerpt && (
           <div
