@@ -463,6 +463,8 @@
      ========================= */
   .mask-fade{
     --fade: 16px;
+    padding-left: var(--fade);
+    padding-right: calc(var(--fade) + 16px); /* kompensiert Gap rechts */
     -webkit-mask-image: linear-gradient(to right,
       transparent 0,
       #000 var(--fade),
