@@ -374,18 +374,36 @@
      Grid-System (Cards)
      ========================= */
   .grid-cols{ display:grid; gap:var(--gap); grid-template-columns: 1fr; }
+
+  /* Hero: dekoratives Logo rechts positionieren */
+  .hero{ position: relative; }
+  .hero-logo{
+    position: absolute;
+    right: clamp(24px, 8vw, 160px);
+    top: clamp(40px, 18vh, 260px);
+    width: clamp(96px, 12vw, 200px);
+    height: auto;
+    pointer-events: none;
+    opacity: .9; /* ggf. .6 für dezenter */
+    filter: drop-shadow(0 6px 18px rgba(0,0,0,.18));
+  }
+  @media (max-width: 900px){
+    .hero-logo{
+      right: 16px;
+      top: 72px;
+      width: 96px;
+      opacity: .85;
+    }
+  }
   
   @media (min-width: 900px){
     .grid-cols{ grid-template-columns: repeat(12, minmax(0,1fr)); }
-    :root{ --hero-card-h: 240px; --short-card-h: 260px; }
     .col-span-2{ grid-column: span 2 / span 2; }
     .col-span-3{ grid-column: span 3 / span 3; }
     .col-span-4{ grid-column: span 4 / span 4; }
     .col-span-6{ grid-column: span 6 / span 6; }
     .col-span-8{ grid-column: span 8 / span 8; }
-    /* Einheitliche Höhen für Startseiten-Karten */
-    .hero-card{ height: var(--hero-card-h); display:flex; flex-direction:column; }
-    .short-card{ height: var(--short-card-h); display:flex; flex-direction:column; }
+    /* Entfernt feste Höhen: Karten wachsen mit Inhalt; rechte Gruppe sorgt intern für Gleichheit */
   }
   @media (max-width: 899px){
     .col-span-2,
@@ -393,6 +411,20 @@
     .col-span-4,
     .col-span-6,
     .col-span-8{ grid-column: 1 / -1; }
+  }
+
+  /* Rechte 2er-Gruppe neben dem Hero: gleiche Höhe untereinander, unabhängig vom Hero */
+  .right-hero-grid{ display:grid; gap:var(--gap); }
+  @media (min-width: 900px){
+    .right-hero-grid{
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      align-items: stretch;
+      align-self: end; /* richtet den Block unten an der Zeilenunterkante aus */
+    }
+    .right-hero-grid > .card{ display:flex; flex-direction:column; }
+  }
+  @media (min-width: 1200px){
+    .right-hero-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
   }
   
   /* =========================
