@@ -7,7 +7,7 @@ export default function GlassStarter() {
     <main className="relative z-0">
       <div className="container" style={{ paddingTop: 16, paddingBottom: 32 }}>
         {/* === Reihe 1: Hero + 2 Karten === */}
-        <div className="grid-cols">
+        <div className="grid-cols" style={{ alignItems: "start" }}>
           {/* HERO */}
           <section className="col-span-6 hero">
             <div className="hero-inner">
@@ -55,14 +55,16 @@ export default function GlassStarter() {
           </section>
 
           {/* Schnellstart */}
-          <section className="col-span-3 card">
+          <section className="col-span-3 card hero-card">
             <h2 className="card-title">Schnellstart</h2>
             <ul className="card-text" style={{ marginTop: 6 }}>
               <li>Neutral &amp; unabhängig – kein Marktplatz</li>
               <li>DACH-weit – verifizierte Betriebe</li>
               <li>Direkte Webshop-Links</li>
             </ul>
-            <div className="row section">
+            <div className="row section" style={{ marginTop: 8 }}>
+              {/* kleines Icon mittig darüber */}
+              <Image src="/logo_pin_horizontal.svg" alt="" width={28} height={28} aria-hidden="true" />
               <NextLink href="/lieferdienste?land=DE" className="pill">
                 Deutschland
               </NextLink>
@@ -76,7 +78,7 @@ export default function GlassStarter() {
           </section>
 
           {/* Regionen & Städte */}
-          <section className="col-span-3 card">
+          <section className="col-span-3 card hero-card">
             <h2 className="card-title">Regionen &amp; Städte</h2>
             <p className="card-text">Finde Anbieter in deiner Nähe – von Berlin bis Zürich.</p>
             <div className="section">
@@ -87,7 +89,7 @@ export default function GlassStarter() {
           </section>
 
           {/* === Reihe 2: 2 Karten === */}
-          <section className="col-span-3 card">
+          <section className="col-span-3 card short-card">
             <h2 className="card-title">Kategorien</h2>
             <p className="card-text">
               Gemüsekiste, Abo, Vegan, Familienbox – was passt zu dir?
@@ -99,7 +101,7 @@ export default function GlassStarter() {
             </div>
           </section>
 
-          <section className="col-span-3 card">
+          <section className="col-span-3 card short-card">
             <h2 className="card-title">Direkt zum Shop</h2>
             <p className="card-text">
               Verifizierte Bio-Betriebe mit direkter Weiterleitung zum Webshop.

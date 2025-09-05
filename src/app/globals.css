@@ -307,6 +307,24 @@
     border-color: rgba(16,58,46,.2);
   }
 
+  /* Link-Pills für kurze CTA-Links (z. B. Länder) */
+  .pill{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.75);
+    color: #0b0f0c;
+    text-decoration: none;
+    font-weight: 700;
+    border: 1px solid rgba(0,0,0,.08);
+    box-shadow: 0 2px 6px rgba(0,0,0,.06);
+    transition: transform .08s ease, box-shadow .12s ease, background-color .12s ease;
+  }
+  .pill:hover{ transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,.10); background: #fff; }
+  .pill:focus-visible{ outline: 2px solid rgba(16,58,46,.55); outline-offset: 2px; }
+
   /* Ghost-Button (transparent, dezente Kontur) */
   .btn-ghost{
     background: transparent;
@@ -349,6 +367,7 @@
     backface-visibility: hidden;
   }
   .card{ padding: 18px; }
+  .card{ overflow: hidden; }
   
   /* =========================
      Grid-System (Cards)
@@ -362,6 +381,9 @@
     .col-span-4{ grid-column: span 4 / span 4; }
     .col-span-6{ grid-column: span 6 / span 6; }
     .col-span-8{ grid-column: span 8 / span 8; }
+    /* Einheitliche Höhen für Startseiten-Karten */
+    .hero-card{ height: 220px; display:flex; flex-direction:column; }
+    .short-card{ height: 260px; display:flex; flex-direction:column; }
   }
   @media (max-width: 899px){
     .col-span-2,
