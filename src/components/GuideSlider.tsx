@@ -66,17 +66,17 @@ export default function GuideSlider({ posts }: { posts: GuidePost[] }) {
   return (
     <section aria-label="Guides Slider" className="embla relative">
       {/* Viewport */}
-      <div className="embla__viewport overflow-hidden" ref={emblaRef}>
+      <div className="embla__viewport overflow-hidden w-full" ref={emblaRef}>
         {/* Track */}
         <div
           ref={trackRef}
-          className="embla__container flex"
+          className="embla__container flex gap-4"
           style={{ display: "flex" }} // überschreibt fremde Regeln zuverlässig
         >
           {posts.map((post) => (
             <div
               key={post.id}
-              className="embla__slide min-w-0 shrink-0 basis-full p-2 sm:basis-1/2 lg:basis-1/3"
+              className="embla__slide min-w-0 shrink-0 basis-full sm:basis-1/2 lg:basis-1/3"
             >
               <GuideCard post={post} />
             </div>
