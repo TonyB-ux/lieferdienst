@@ -11,8 +11,8 @@ export default async function GuidesRow({ showHeading = true }: Props) {
 
   return (
     <section data-scope="guides-row" className="relative z-10 py-6">
-      {/* exakt wie Hero/obere Bereiche */}
-      <div className="mx-auto w-full max-w-7xl px-4">
+      {/* exakt wie Hero/obere Bereiche: nutze die globale .container-Breite */}
+      <div className="container">
         {showHeading && (
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-extrabold text-green-900">
