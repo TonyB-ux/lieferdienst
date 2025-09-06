@@ -50,8 +50,8 @@
   body{
     margin: 0;
     color: #0b0f0c;
-    /* Fülle iOS Safe-Area mit passender Farbe (falls BG-Layer nicht greift) */
-    background: #0c2740; /* Fallback-Farbe hinter iOS-UI */
+    /* Hintergrund durchsichtig – feste Layer decken den Screen ab */
+    background: transparent;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   
@@ -83,6 +83,7 @@
   }
   
   .page-main{ padding-top: var(--header-h); padding-bottom: var(--safe-bottom, 0px); }
+  @media (max-width: 900px){ .page-main{ padding-top: 0; } }
   
   .row, .row-cta, .section{ display:flex; flex-wrap:wrap; gap:8px; }
   
@@ -148,6 +149,11 @@
     /* Notch-Safe: oben Platz lassen, ohne Layout zu verschieben */
     padding-top: var(--safe-top, 0px);
     transition: background-color .25s ease, backdrop-filter .25s ease, box-shadow .25s ease;
+  }
+
+  /* Mobile: Header sticky statt fixed, damit er nicht ‚wegscrollt‘ */
+  @media (max-width: 900px){
+    .site-header{ position: sticky; top: 0; inset: auto; }
   }
   
   .site-bar{
