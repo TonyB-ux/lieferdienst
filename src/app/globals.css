@@ -4,7 +4,8 @@
    Design Tokens
    ========================= */
    :root{
-    --container-max: 1320px;
+    /* Desktop-Breite etwas schmaler */
+    --container-max: 1280px;
     --gap: 18px;
     --radius: 18px;
   
@@ -172,6 +173,11 @@
   }
   @media (min-width: 900px){
     .nav-desktop{ display: flex; }
+  }
+
+  /* Header-Logo auf Mobil ausblenden */
+  @media (max-width: 900px){
+    .site-header .brand{ display: none; }
   }
 
   /* Beim Scrollen: leichte Glass-Schicht, damit Elemente im Header sichtbar bleiben */
