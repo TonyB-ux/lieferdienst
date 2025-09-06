@@ -175,9 +175,9 @@
     .nav-desktop{ display: flex; }
   }
 
-  /* Header-Logo auf Mobil ausblenden */
+  /* Hero-Logo: auf Mobil ausblenden, Header-Logo bleibt sichtbar */
   @media (max-width: 900px){
-    .site-header .brand{ display: none; }
+    .hero-logo{ display: none; }
   }
 
   /* Beim Scrollen: leichte Glass-Schicht, damit Elemente im Header sichtbar bleiben */
