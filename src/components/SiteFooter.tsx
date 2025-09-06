@@ -23,6 +23,7 @@ export default function SiteFooter() {
           <button className="link" onClick={openBanner}>Cookie-Einstellungen</button>
           <Link href="/impressum">Impressum</Link>
           <Link href="/datenschutz">Datenschutz</Link>
+          <Link href="/barrierefreiheit">Barrierefreiheit</Link>
         </nav>
       </div>
     </footer>

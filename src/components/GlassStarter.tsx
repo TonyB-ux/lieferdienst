@@ -74,8 +74,8 @@ export default function GlassStarter() {
                 <li>Direkte Webshop-Links</li>
               </ul>
               <div className="row section" style={{ marginTop: 8 }}>
-                {/* kleines Icon */}
-                <Image src="/logo_pin_horizontal.svg" alt="" width={28} height={28} aria-hidden="true" />
+                {/* kleines Logo-Icon */}
+                <Image src="/logo.png" alt="" width={22} height={14} aria-hidden="true" />
                 <NextLink href="/lieferdienste?land=DE" className="pill">Deutschland</NextLink>
                 <NextLink href="/lieferdienste?land=AT" className="pill">Österreich</NextLink>
                 <NextLink href="/lieferdienste?land=CH" className="pill">Schweiz</NextLink>
@@ -88,6 +88,12 @@ export default function GlassStarter() {
               <p className="card-text">Finde Anbieter in deiner Nähe – von Berlin bis Zürich.</p>
               <div className="section">
                 <NextLink href="/lieferdienste" className="btn">Zur Liste</NextLink>
+              </div>
+              <div className="row section" style={{ marginTop: 6 }}>
+                <NextLink href="/lieferdienste?stadt=Berlin" className="pill">Berlin</NextLink>
+                <NextLink href="/lieferdienste?stadt=Hamburg" className="pill">Hamburg</NextLink>
+                <NextLink href="/lieferdienste?stadt=Frankfurt" className="pill">Frankfurt</NextLink>
+                <NextLink href="/lieferdienste?stadt=München" className="pill">München</NextLink>
               </div>
             </section>
 
