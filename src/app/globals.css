@@ -180,6 +180,19 @@
     .hero-logo{ display: none; }
   }
 
+  /* Hero: dekorative Grafik rechts neben der Überschrift */
+  .hero{ position: relative; }
+  .hero-art{
+    position: absolute;
+    right: clamp(24px, 6vw, 140px);
+    top: clamp(24px, 12vh, 200px);
+    width: clamp(220px, 28vw, 420px);
+    height: auto;
+    pointer-events: none;
+    filter: drop-shadow(0 12px 30px rgba(0,0,0,.22));
+  }
+  @media (max-width: 900px){ .hero-art{ display:none; } }
+
   /* Beim Scrollen: leichte Glass-Schicht, damit Elemente im Header sichtbar bleiben */
   .site-header.is-scrolled{
     background: rgba(255,255,255,.18);

@@ -52,14 +52,14 @@ export default function GlassStarter() {
                 </NextLink>
               </div>
             </div>
-            {/* Dekoratives Logo rechts im Hero */}
+            {/* Dekorative Hero-Grafik rechts (aus /public/hero-image.png) */}
             <Image
-              src="/logo.png"
+              src="/hero-image.png"
               alt=""
-              width={180}
-              height={116}
+              width={320}
+              height={320}
               priority={false}
-              className="hero-logo"
+              className="hero-art"
             />
           </section>
 
