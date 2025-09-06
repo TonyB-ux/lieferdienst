@@ -51,7 +51,7 @@
     margin: 0;
     color: #0b0f0c;
     /* Fallback-Hintergrund für iOS Safe-Area (verhindert weißes Aufblitzen) */
-    background: #0c2740;
+    background: transparent;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   
@@ -108,7 +108,7 @@
     filter: none;
     pointer-events: none;
   }
-  @supports (height: 100svh){ .bg-photo{ height: 100svh; } }
+  @supports (height: 100dvh){ .bg-photo{ height: 100svh; } }
   
   /* Overlay-Schicht – standardmäßig aus */
   .bg-layer{
@@ -124,7 +124,7 @@
       linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.10));
     pointer-events: none;
   }
-  @supports (height: 100svh){ .bg-layer{ height: 100svh; } }
+  @supports (height: 100dvh){ .bg-layer{ height: 100svh; } }
 
   @media (max-width: 900px){
     .bg-layer{
@@ -256,6 +256,14 @@
   
     transition: background-color .12s ease, border-color .12s ease, box-shadow .12s ease, transform .08s ease, color .12s ease;
   }
+  /* Lesbarkeit: oben transparent -> helle Links; nach Scroll -> dunkle Links */
+  .site-header:not(.is-scrolled) .nav-link{ color:#f7fbf9; text-shadow:0 1px 2px rgba(0,0,0,.45); }
+  .site-header:not(.is-scrolled) .nav-link:hover,
+  .site-header:not(.is-scrolled) .nav-link:focus-visible{
+    background: rgba(255,255,255,.14);
+    border-color: rgba(255,255,255,.26);
+  }
+  .site-header.is-scrolled .nav-link{ color:#0b0f0c; text-shadow:none; }
   
   /* Hover = nur Hauch von Glass */
   .nav-link:hover,
