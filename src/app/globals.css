@@ -83,6 +83,10 @@
   }
   
   .page-main{ padding-top: var(--header-h); padding-bottom: var(--safe-bottom, 0px); }
+  /* Mobil: kein zusätzlicher Bottom-Safe-Padding – UI-Leiste überlagert Inhalt ohnehin */
+  @media (max-width: 900px){
+    .page-main{ padding-bottom: 0; }
+  }
   
   .row, .row-cta, .section{ display:flex; flex-wrap:wrap; gap:8px; }
   
@@ -140,6 +144,7 @@
   .site-header{
     position: fixed;
     inset: 0 0 auto 0;
+    top: 0; left: 0; right: 0;
     z-index: 50;
 
     /* transparenter Start; echte Glass-Optik erst bei Scroll */
@@ -154,6 +159,9 @@
     /* Notch-Safe: oben Platz lassen, ohne Layout zu verschieben */
     padding-top: var(--safe-top, 0px);
     transition: background-color .25s ease, backdrop-filter .25s ease, box-shadow .25s ease;
+    /* iOS: Fixed-Stabilisierung */
+    transform: translateZ(0);
+    will-change: transform;
   }
 
   /* Header bleibt fixed auf allen Viewports (stabil über iOS-UI) */
