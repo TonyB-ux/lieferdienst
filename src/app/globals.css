@@ -426,6 +426,13 @@
   @media (min-width: 1200px){
     .right-hero-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
   }
+
+  /* Karten-Reihe unter dem Hero: auf Desktop nebeneinander */
+  .under-hero-grid{ display:grid; gap: var(--gap); }
+  @media (min-width: 900px){
+    .under-hero-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); align-items: stretch; }
+    .under-hero-grid > .card{ display:flex; flex-direction:column; }
+  }
   
   /* =========================
      Guides & Ratgeber – Farben & Layout
