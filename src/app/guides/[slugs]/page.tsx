@@ -6,10 +6,11 @@ import Image from "next/image";
 import { getGuideBySlug, getGuideSlugs } from "@/lib/wp";
 
 export const revalidate = 600; // ISR 10 min
+export const dynamicParams = true; // allow rendering slugs beyond prebuilt list
 
 // Statische Pfade (Ordner heißt [slugs] => Key = "slugs")
 export async function generateStaticParams(): Promise<{ slugs: string }[]> {
-  const slugs = await getGuideSlugs(50).catch(() => []);
+  const slugs = await getGuideSlugs(200).catch(() => []);
   return slugs.map((s) => ({ slugs: s }));
 }
 
