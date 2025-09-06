@@ -93,6 +93,8 @@
   .bg-photo{
     position: fixed;
     inset: 0;
+    width: 100vw;
+    height: 100vh;
     z-index: -10;
     background-image: url("/bg.jpg");
     background-size: cover;
@@ -102,11 +104,14 @@
     filter: none;
     pointer-events: none;
   }
+  @supports (height: 100svh){ .bg-photo{ height: 100svh; } }
   
   /* Overlay-Schicht – standardmäßig aus */
   .bg-layer{
     position: fixed;
     inset: 0;
+    width: 100vw;
+    height: 100vh;
     z-index: -9;
     /* Sanfte Overlays: reduzieren harte Lichtflecken und verbessern Lesbarkeit */
     background:
@@ -115,6 +120,7 @@
       linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.10));
     pointer-events: none;
   }
+  @supports (height: 100svh){ .bg-layer{ height: 100svh; } }
 
   @media (max-width: 900px){
     .bg-layer{
@@ -211,6 +217,14 @@
     -webkit-backdrop-filter: blur(10px) saturate(140%);
     border-bottom: 1px solid rgba(255,255,255,.28);
     box-shadow: 0 6px 18px rgba(0,0,0,.10);
+  }
+  @media (max-width: 900px){
+    .site-header.is-scrolled{
+      /* iOS: Backdrop-Filter reduzieren, um Fixed-Jitter zu vermeiden */
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: rgba(255,255,255,.24);
+    }
   }
   
   /* Textlinks: default = PLAIN TEXT (kein Glass),
