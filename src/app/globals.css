@@ -185,13 +185,22 @@
   .hero-art{
     position: absolute;
     right: clamp(24px, 6vw, 140px);
-    top: clamp(24px, 12vh, 200px);
+    /* ~1 cm höher: min nach oben, vh-Anteil leicht reduziert */
+    top: clamp(8px, 10vh, 180px);
     width: clamp(220px, 28vw, 420px);
     height: auto;
     pointer-events: none;
     filter: drop-shadow(0 12px 30px rgba(0,0,0,.22));
   }
-  @media (max-width: 900px){ .hero-art{ display:none; } }
+  @media (max-width: 900px){
+    .hero-art{
+      /* Auf Mobil beibehalten, aber kompakter und rechts neben der Headline */
+      display: block;
+      right: 12px;
+      top: calc(24px + var(--safe-top, 0px));
+      width: clamp(110px, 34vw, 160px);
+    }
+  }
 
   /* Beim Scrollen: leichte Glass-Schicht, damit Elemente im Header sichtbar bleiben */
   .site-header.is-scrolled{
